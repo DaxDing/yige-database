@@ -1,0 +1,80 @@
+openapi: 3.0.3
+info:
+  title: 跨域项目查询接口
+  version: 1.0.0
+  x-api-id: xhs.pgy.project.search.v1
+  x-category: basic_info
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/pgy/project/search_project:
+    get:
+      summary: 跨域项目查询接口
+      operationId: xhs_pgy_project_search_v1
+      tags:
+      - basic_info
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: 蒲公英-项目查询
+      x-pagination:
+        type: page
+        list_path: data.list
+        page_param: page_num
+        size_param: page_size
+        start_page: 1
+        page_size: 20
+      parameters:
+      - name: user_id
+        in: query
+        schema:
+          type: string
+          default: 5cf89d080000000018003029
+          x-source:
+            type: env
+            name: USER_ID
+        example: 5cf89d080000000018003029
+      - name: report_brand_user_id
+        in: query
+        schema:
+          type: string
+          x-source:
+            type: var
+            name: report_brand_user_id
+        example: <var:report_brand_user_id>
+      - name: project_name
+        in: query
+        schema:
+          type: string
+          default: 施耐德电气
+          x-source:
+            type: var
+            name: project_name
+        example: 施耐德电气
+      - name: auth_status
+        in: query
+        schema:
+          type: string
+          x-source:
+            type: var
+            name: auth_status
+        example: <var:auth_status>
+      - name: page_num
+        in: query
+        schema:
+          type: string
+          x-source:
+            type: var
+            name: page_num
+        example: <var:page_num>
+      - name: page_size
+        in: query
+        schema:
+          type: integer
+          default: 20
+        example: 20

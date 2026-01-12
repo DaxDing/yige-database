@@ -1,0 +1,179 @@
+openapi: 3.0.3
+info:
+  title: 人群包报表 V2
+  version: 2.0.0
+  x-api-id: xhs.jg.report.offline.audience_group.v2
+  x-category: offline_reports
+  x-update-time: '2025-12-15'
+servers:
+- url: https://ad.xiaohongshu.com
+paths:
+  /api/idea/group_report_v2:
+    post:
+      summary: 人群包报表 V2
+      operationId: xhs_jg_report_offline_audience_group_v2
+      tags:
+      - offline_reports
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: 'timeUnit: DAY-分天 | WEEK-分周 | SUMMARY-汇总; reportType: REPORT|CAMPAIGN|UNIT|CREATIVITY|SPU|NOTE'
+      x-pagination:
+        type: page
+        list_path: data.data_list
+        page_param: pageNum
+        size_param: pageSize
+        start_page: 1
+        page_size: 20
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertiserId
+                - pageNum
+                - pageSize
+                - startDate
+                - endDate
+                - timeUnit
+                - reportType
+                - dataCaliber
+                - columns
+              properties:
+                advertiserId:
+                  type: integer
+                  description: 广告主ID
+                  default: 7152346
+                  x-source:
+                    type: var
+                    name: advertiser_id
+                pageNum:
+                  type: integer
+                  description: 页码
+                  default: 1
+                  x-source:
+                    type: var
+                    name: page_num
+                pageSize:
+                  type: integer
+                  description: 分页大小
+                  default: 20
+                startDate:
+                  type: string
+                  description: 开始时间，格式 yyyy-MM-dd
+                  default: '2025-10-26'
+                  x-source:
+                    type: var
+                    name: start_date
+                endDate:
+                  type: string
+                  description: 结束时间，格式 yyyy-MM-dd
+                  default: '2025-10-28'
+                  x-source:
+                    type: var
+                    name: end_date
+                timeUnit:
+                  type: string
+                  description: 时间维度：DAY-分天, WEEK-分周, SUMMARY-汇总
+                  default: DAY
+                  enum:
+                    - DAY
+                    - WEEK
+                    - SUMMARY
+                reportType:
+                  type: string
+                  description: 报表类型
+                  default: REPORT
+                  enum:
+                    - REPORT
+                    - CAMPAIGN
+                    - UNIT
+                    - CREATIVITY
+                    - SPU
+                    - NOTE
+                dataCaliber:
+                  type: integer
+                  description: 数据口径：0-归因时间，1-转化时间
+                  default: 0
+                  enum:
+                    - 0
+                    - 1
+                columns:
+                  type: array
+                  description: 指标列表
+                  items:
+                    type: string
+                  default:
+                    - groupName
+                    - groupId
+                    - fee
+                    - impNum
+                    - clickNum
+                    - ctr
+                    - acp
+                    - cpm
+                sorts:
+                  type: array
+                  description: 排序
+                  items:
+                    type: object
+                    properties:
+                      column:
+                        type: string
+                      sort:
+                        type: string
+                        enum:
+                          - asc
+                          - desc
+                filters:
+                  type: array
+                  description: 过滤条件
+                  items:
+                    type: object
+                    properties:
+                      column:
+                        type: string
+                      operator:
+                        type: string
+                      values:
+                        type: array
+                needTotal:
+                  type: boolean
+                  description: 是否需要总数
+                  default: true
+                needList:
+                  type: boolean
+                  description: 是否需要列表
+                  default: true
+                needSize:
+                  type: boolean
+                  description: 是否需要大小
+                  default: true
+            example:
+              advertiserId: 7152346
+              pageNum: 1
+              pageSize: 20
+              startDate: '2025-10-26'
+              endDate: '2025-10-28'
+              timeUnit: DAY
+              reportType: REPORT
+              dataCaliber: 0
+              columns:
+                - groupName
+                - groupId
+                - fee
+                - impNum
+                - clickNum
+                - ctr
+                - acp
+                - cpm
+              needTotal: true
+              needList: true
+              needSize: true

@@ -1,0 +1,116 @@
+openapi: 3.0.3
+info:
+  title: 获取笔记列表
+  version: 1.0.0
+  x-api-id: xhs.jg.note.list.v1
+  x-category: resource_management
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/jg/note/list:
+    post:
+      summary: 获取笔记列表
+      operationId: xhs_jg_note_list_v1
+      tags:
+      - resource_management
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: 1个笔记可以对应多个spu
+      x-pagination:
+        type: page
+        list_path: data.notes
+        page_param: page
+        size_param: page_size
+        start_page: 1
+        page_size: 20
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                advertiser_id:
+                  type: integer
+                  default: 7152346
+                  x-source:
+                    type: var
+                    name: advertiser_id
+                note_type:
+                  type: integer
+                  default: 2
+                  x-source:
+                    type: var
+                    name: note_type
+                placement_type:
+                  type: string
+                  x-source:
+                    type: var
+                    name: placement_type
+                keyword:
+                  type: string
+                  x-source:
+                    type: var
+                    name: keyword
+                page:
+                  type: integer
+                  default: 1
+                  x-source:
+                    type: var
+                    name: page
+                page_size:
+                  type: integer
+                  default: 20
+                note_content_type:
+                  type: string
+                  x-source:
+                    type: var
+                    name: note_content_type
+                market_target:
+                  type: string
+                  x-source:
+                    type: var
+                    name: market_target
+                spu_id:
+                  type: string
+                  x-source:
+                    type: var
+                    name: spu_id
+                base_only:
+                  type: string
+                  default: 'true'
+                  x-source:
+                    type: var
+                    name: base_only
+                order_field:
+                  type: string
+                  x-source:
+                    type: var
+                    name: order_field
+                order_type:
+                  type: string
+                  x-source:
+                    type: var
+                    name: order_type
+                filter_taobao:
+                  type: string
+                  x-source:
+                    type: var
+                    name: filter_taobao
+                spu_type:
+                  type: string
+                  x-source:
+                    type: var
+                    name: spu_type
+            example:
+              advertiser_id: 7152346
+              note_type: 2
+              base_only: 'true'
+              page: 1
+              page_size: 20
