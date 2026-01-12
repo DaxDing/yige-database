@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小红书营销数据仓库 - 数据来源</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/datasource.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>小红书营销数据仓库</h1>
+                    <p>投流 · 种草 · 转化 全链路分析</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html" class="nav-link">数仓结构</a>
+                <a href="dictionary.html" class="nav-link">数据字典</a>
+                <a href="datasource.html" class="nav-link active">数据来源</a>
+            </nav>
+            <div class="header-meta">
+                <div id="version">设计版本 v2.0</div>
+                <div id="update-date">2026年1月</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">数据来源</span>
+                <span class="total-count">6</span>
+            </div>
+            <nav class="sidebar-nav">
+                <!-- 接口数据 -->
+                <div class="nav-group-title">接口数据</div>
+                <div class="nav-item active" data-source="xhs-report">
+                    <span class="nav-dot" style="background: #FF2442;"></span>
+                    <div class="nav-text">
+                        <div class="nav-title">小红书离线报表</div>
+                        <div class="nav-desc">聚光平台报表API</div>
+                    </div>
+                    <span class="nav-count">5</span>
+                </div>
+                <div class="nav-item" data-source="xhs-grass-effect">
+                    <span class="nav-dot" style="background: #FF6B35;"></span>
+                    <div class="nav-text">
+                        <div class="nav-title">小红书种草</div>
+                        <div class="nav-desc">蒲公英平台API</div>
+                    </div>
+                    <span class="nav-count">1</span>
+                </div>
+
+                <!-- 项目管理中心 -->
+                <div class="nav-group-title">项目管理中心</div>
+                <div class="nav-item" data-source="xhs-grass">
+                    <span class="nav-dot" style="background: #10B981;"></span>
+                    <div class="nav-text">
+                        <div class="nav-title">转化数据</div>
+                        <div class="nav-desc">站外转化数据</div>
+                    </div>
+                    <span class="nav-count">3</span>
+                </div>
+                <div class="nav-item" data-source="yige-mysql">
+                    <span class="nav-dot" style="background: #3B82F6;"></span>
+                    <div class="nav-text">
+                        <div class="nav-title">预算数据</div>
+                        <div class="nav-desc">业务系统数据</div>
+                    </div>
+                    <span class="nav-count">2</span>
+                </div>
+                <div class="nav-item" data-source="dim-data">
+                    <span class="nav-dot" style="background: #8B5CF6;"></span>
+                    <div class="nav-text">
+                        <div class="nav-title">维度数据</div>
+                        <div class="nav-desc">维度主数据</div>
+                    </div>
+                    <span class="nav-count">4</span>
+                </div>
+                <div class="nav-item" data-source="cost-data">
+                    <span class="nav-dot" style="background: #F59E0B;"></span>
+                    <div class="nav-text">
+                        <div class="nav-title">成本数据</div>
+                        <div class="nav-desc">投流账户流水</div>
+                    </div>
+                    <span class="nav-count">1</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- 小红书离线报表 -->
+            <div id="xhs-report-content" class="source-content active">
+                <div class="layer-header">
+                    <div class="layer-title">
+                        <span class="layer-badge" style="background: #FF2442;">小红书离线报表</span>
+                        <h3>聚光平台报表API</h3>
+                    </div>
+                    <p class="layer-desc">
+                        通过小红书聚光平台开放API获取广告投放离线报表数据。
+                        <a href="https://ad-market.xiaohongshu.com/docs-center?bizType=943&articleId=2737" target="_blank" class="doc-link">
+                            <i class="fas fa-external-link-alt"></i> 查看官方文档
+                        </a>
+                    </p>
+                </div>
+
+                <div class="source-section">
+                    <h4>同步策略</h4>
+                    <table class="source-table">
+                        <thead>
+                            <tr>
+                                <th>报表类型</th>
+                                <th>同步时间</th>
+                                <th>同步方式</th>
+                                <th>数据延迟</th>
+                                <th>对应ODS表</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>创意层小时离线报表</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_creative_report_hi</code></td>
+                            </tr>
+                            <tr>
+                                <td>人群包离线报表</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_audience_report_di</code></td>
+                            </tr>
+                            <tr>
+                                <td>SPU层离线报表</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_spu_report_di</code></td>
+                            </tr>
+                            <tr>
+                                <td>搜索词离线报表</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_search_term_report_di</code></td>
+                            </tr>
+                            <tr>
+                                <td>关键词离线报表</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_keyword_report_di</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 小红书种草 -->
+            <div id="xhs-grass-effect-content" class="source-content">
+                <div class="layer-header">
+                    <div class="layer-title">
+                        <span class="layer-badge" style="background: #FF6B35;">小红书种草</span>
+                        <h3>蒲公英平台API</h3>
+                    </div>
+                    <p class="layer-desc">
+                        通过小红书蒲公英平台开放API获取种草效果数据，追踪笔记的投后表现。
+                        <a href="https://ad-market.xiaohongshu.com/docs-center?bizType=944&articleId=3199" target="_blank" class="doc-link">
+                            <i class="fas fa-external-link-alt"></i> 查看官方文档
+                        </a>
+                    </p>
+                </div>
+
+                <div class="source-section">
+                    <h4>同步策略</h4>
+                    <table class="source-table">
+                        <thead>
+                            <tr>
+                                <th>报表类型</th>
+                                <th>同步时间</th>
+                                <th>同步方式</th>
+                                <th>数据延迟</th>
+                                <th>对应ODS表</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>投后数据笔记层报表</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_post_note_report_di</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 转化数据 -->
+            <div id="xhs-grass-content" class="source-content">
+                <div class="layer-header">
+                    <div class="layer-title">
+                        <span class="layer-badge" style="background: #10B981;">转化数据</span>
+                        <h3>站外转化数据</h3>
+                    </div>
+                    <p class="layer-desc">
+                        种草联盟提供站外电商平台（淘宝、京东、唯品会等）的转化归因数据。
+                    </p>
+                </div>
+
+                <div class="source-section">
+                    <h4>同步策略</h4>
+                    <table class="source-table">
+                        <thead>
+                            <tr>
+                                <th>报表类型</th>
+                                <th>同步时间</th>
+                                <th>同步方式</th>
+                                <th>数据延迟</th>
+                                <th>对应ODS表</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>聚光投流转化每日数据</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T-2</td>
+                                <td><code>ods_xhs_grass_ad_conversion_di</code></td>
+                            </tr>
+                            <tr>
+                                <td>星河任务组数据+京东任务组数据</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T-2</td>
+                                <td><code>ods_xhs_grass_task_conversion_di</code></td>
+                            </tr>
+                            <tr>
+                                <td>星河内容组数据+京东内容组数据</td>
+                                <td>每日 11:00</td>
+                                <td>增量同步</td>
+                                <td>T-2</td>
+                                <td><code>ods_xhs_grass_content_conversion_di</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 预算数据 -->
+            <div id="yige-mysql-content" class="source-content">
+                <div class="layer-header">
+                    <div class="layer-title">
+                        <span class="layer-badge" style="background: #3B82F6;">预算数据</span>
+                        <h3>业务系统数据</h3>
+                    </div>
+                    <p class="layer-desc">
+                        原业务系统的MySQL数据库，存储预算规划、项目管理等业务数据。
+                    </p>
+                </div>
+
+                <div class="source-section">
+                    <h4>同步策略</h4>
+                    <table class="source-table">
+                        <thead>
+                            <tr>
+                                <th>报表类型</th>
+                                <th>同步时间</th>
+                                <th>同步方式</th>
+                                <th>数据延迟</th>
+                                <th>对应ODS表</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>总预算规划</td>
+                                <td>每日 06:00</td>
+                                <td>全量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_budget_plan_df</code></td>
+                            </tr>
+                            <tr>
+                                <td>投流预算规划</td>
+                                <td>每日 06:00</td>
+                                <td>全量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_budget_plan_df</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 维度数据 -->
+            <div id="dim-data-content" class="source-content">
+                <div class="layer-header">
+                    <div class="layer-title">
+                        <span class="layer-badge" style="background: #8B5CF6;">维度数据</span>
+                        <h3>维度主数据</h3>
+                    </div>
+                    <p class="layer-desc">
+                        业务系统维度主数据，包括项目、任务组、投放产品、计划等维度信息。维度数据经轻量清洗后直接入DIM层。
+                    </p>
+                </div>
+
+                <div class="source-section">
+                    <h4>同步策略</h4>
+                    <table class="source-table">
+                        <thead>
+                            <tr>
+                                <th>报表类型</th>
+                                <th>同步时间</th>
+                                <th>同步方式</th>
+                                <th>数据延迟</th>
+                                <th>对应DIM表</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>项目维度</td>
+                                <td>每日 06:00</td>
+                                <td>全量同步</td>
+                                <td>T+1</td>
+                                <td><code>dim_xhs_project_df</code></td>
+                            </tr>
+                            <tr>
+                                <td>任务组维度</td>
+                                <td>每日 06:00</td>
+                                <td>全量同步</td>
+                                <td>T+1</td>
+                                <td><code>dim_xhs_task_group_df</code></td>
+                            </tr>
+                            <tr>
+                                <td>投放产品维度</td>
+                                <td>每日 06:00</td>
+                                <td>全量同步</td>
+                                <td>T+1</td>
+                                <td><code>dim_xhs_product_df</code></td>
+                            </tr>
+                            <tr>
+                                <td>计划维度</td>
+                                <td>每日 06:00</td>
+                                <td>全量同步</td>
+                                <td>T+1</td>
+                                <td><code>dim_xhs_campaign_df</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 成本数据 -->
+            <div id="cost-data-content" class="source-content">
+                <div class="layer-header">
+                    <div class="layer-title">
+                        <span class="layer-badge" style="background: #F59E0B;">成本数据</span>
+                        <h3>投流账户流水</h3>
+                    </div>
+                    <p class="layer-desc">
+                        投流账户每日流水数据，记录广告消耗、充值、退款等资金变动。
+                    </p>
+                </div>
+
+                <div class="source-section">
+                    <h4>同步策略</h4>
+                    <table class="source-table">
+                        <thead>
+                            <tr>
+                                <th>报表类型</th>
+                                <th>同步时间</th>
+                                <th>同步方式</th>
+                                <th>数据延迟</th>
+                                <th>对应ODS表</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>投流账户每日流水</td>
+                                <td>每日 06:00</td>
+                                <td>全量同步</td>
+                                <td>T+1</td>
+                                <td><code>ods_xhs_account_flow_df</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navItems = document.querySelectorAll('.nav-item');
+            const contents = document.querySelectorAll('.source-content');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const sourceId = item.dataset.source;
+
+                    // 更新导航状态
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // 更新内容显示
+                    contents.forEach(content => {
+                        content.classList.toggle('active', content.id === `${sourceId}-content`);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
