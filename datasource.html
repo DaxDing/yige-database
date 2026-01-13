@@ -39,7 +39,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <span class="sidebar-title">数据来源</span>
-                <span class="total-count">6</span>
+                <span class="total-count">7</span>
             </div>
             <nav class="sidebar-nav">
                 <!-- 接口数据 -->
@@ -52,11 +52,30 @@
                     </div>
                     <span class="nav-count">5</span>
                 </div>
+                <div class="nav-item" data-source="xhs-realtime">
+                    <span class="nav-dot" style="background: #FF7875;"></span>
+                    <div class="nav-text">
+                        <div class="nav-title">小红书实时报表</div>
+                        <div class="nav-desc">聚光平台实时API</div>
+                    </div>
+                    <span class="nav-count">1</span>
+                </div>
                 <div class="nav-item" data-source="xhs-grass-effect">
                     <span class="nav-dot" style="background: #FF6B35;"></span>
                     <div class="nav-text">
                         <div class="nav-title">小红书种草</div>
                         <div class="nav-desc">蒲公英平台API</div>
+                    </div>
+                    <span class="nav-count">1</span>
+                </div>
+
+                <!-- DWD 实时效果 -->
+                <div class="nav-group-title">DWD 明细层</div>
+                <div class="nav-item" data-source="dwd-realtime">
+                    <span class="nav-dot" style="background: #06B6D4;"></span>
+                    <div class="nav-text">
+                        <div class="nav-title">实时效果</div>
+                        <div class="nav-desc">实时明细数据表</div>
                     </div>
                     <span class="nav-count">1</span>
                 </div>
@@ -128,40 +147,80 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr data-api="xhs_jg_report_offline_creativity_v1">
                                 <td>创意层小时离线报表</td>
                                 <td>每日 11:00</td>
                                 <td>增量同步</td>
                                 <td>T+1</td>
                                 <td><code>ods_xhs_creative_report_hi</code></td>
                             </tr>
-                            <tr>
+                            <tr data-api="xhs_jg_report_offline_audience_group_v2">
                                 <td>人群包离线报表</td>
                                 <td>每日 11:00</td>
                                 <td>增量同步</td>
                                 <td>T+1</td>
                                 <td><code>ods_xhs_audience_report_di</code></td>
                             </tr>
-                            <tr>
+                            <tr data-api="xhs_jg_report_offline_spu_v1">
                                 <td>SPU层离线报表</td>
                                 <td>每日 11:00</td>
                                 <td>增量同步</td>
                                 <td>T+1</td>
                                 <td><code>ods_xhs_spu_report_di</code></td>
                             </tr>
-                            <tr>
+                            <tr data-api="xhs_jg_report_offline_searchword_v1">
                                 <td>搜索词离线报表</td>
                                 <td>每日 11:00</td>
                                 <td>增量同步</td>
                                 <td>T+1</td>
                                 <td><code>ods_xhs_search_term_report_di</code></td>
                             </tr>
-                            <tr>
+                            <tr data-api="xhs_jg_report_offline_keyword_v1">
                                 <td>关键词离线报表</td>
                                 <td>每日 11:00</td>
                                 <td>增量同步</td>
                                 <td>T+1</td>
                                 <td><code>ods_xhs_keyword_report_di</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 小红书实时报表 -->
+            <div id="xhs-realtime-content" class="source-content">
+                <div class="layer-header">
+                    <div class="layer-title">
+                        <span class="layer-badge" style="background: #FF7875;">小红书实时报表</span>
+                        <h3>聚光平台实时API</h3>
+                    </div>
+                    <p class="layer-desc">
+                        通过小红书聚光平台开放API获取广告投放实时报表数据，支持小时级数据更新。
+                        <a href="https://ad-market.xiaohongshu.com/docs-center?bizType=943&articleId=2734" target="_blank" class="doc-link">
+                            <i class="fas fa-external-link-alt"></i> 查看官方文档
+                        </a>
+                    </p>
+                </div>
+
+                <div class="source-section">
+                    <h4>同步策略</h4>
+                    <table class="source-table">
+                        <thead>
+                            <tr>
+                                <th>报表类型</th>
+                                <th>同步时间</th>
+                                <th>同步方式</th>
+                                <th>数据延迟</th>
+                                <th>对应ODS表</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-api="xhs_jg_report_realtime_creativity_v1">
+                                <td>创意层小时实时报表</td>
+                                <td>每小时5分</td>
+                                <td>增量同步</td>
+                                <td>T+0（小时级）</td>
+                                <td><code>ods_xhs_jg_creativity_realtime_hi</code></td>
                             </tr>
                         </tbody>
                     </table>
@@ -196,7 +255,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr data-api="xhs_pgy_note_post_invest_v1">
                                 <td>投后数据笔记层报表</td>
                                 <td>每日 11:00</td>
                                 <td>增量同步</td>
@@ -205,6 +264,84 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- DWD 实时效果 -->
+            <div id="dwd-realtime-content" class="source-content">
+                <div class="layer-header">
+                    <div class="layer-title">
+                        <span class="layer-badge" style="background: #06B6D4;">DWD 实时效果</span>
+                        <h3>实时明细数据表</h3>
+                    </div>
+                    <p class="layer-desc">
+                        基于 ODS 层实时数据清洗转换的明细宽表，支持小时级业务分析。
+                    </p>
+                </div>
+
+                <div class="source-section">
+                    <h4>数据表</h4>
+                    <table class="source-table">
+                        <thead>
+                            <tr>
+                                <th>表名</th>
+                                <th>中文名</th>
+                                <th>更新频率</th>
+                                <th>数据来源</th>
+                                <th>字段数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>dwd_xhs_creativity_realtime_hi</code></td>
+                                <td>创意层小时实时明细表</td>
+                                <td>每小时5分</td>
+                                <td><code>ods_xhs_jg_creativity_realtime_hi</code></td>
+                                <td>30</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="source-section">
+                    <h4>主要字段分类</h4>
+                    <div class="field-category-grid">
+                        <div class="field-category">
+                            <h5>标识字段</h5>
+                            <ul>
+                                <li>advertiser_id - 投放账号ID</li>
+                                <li>creativity_id - 创意ID</li>
+                                <li>unit_id - 单元ID</li>
+                                <li>campaign_id - 计划ID</li>
+                                <li>note_id - 笔记ID</li>
+                            </ul>
+                        </div>
+                        <div class="field-category">
+                            <h5>策略字段</h5>
+                            <ul>
+                                <li>placement - 投放位置</li>
+                                <li>marketing_target - 营销目标</li>
+                                <li>bidding_strategy - 竞价策略</li>
+                                <li>event_bid - 出价</li>
+                            </ul>
+                        </div>
+                        <div class="field-category">
+                            <h5>展现指标</h5>
+                            <ul>
+                                <li>fee - 消费</li>
+                                <li>impression - 展现量</li>
+                                <li>click - 点击量</li>
+                            </ul>
+                        </div>
+                        <div class="field-category">
+                            <h5>笔记指标</h5>
+                            <ul>
+                                <li>like/comment/collect - 点赞/评论/收藏</li>
+                                <li>share/follow - 分享/关注</li>
+                                <li>interaction - 互动量</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -400,25 +537,747 @@
         </main>
     </div>
 
+    <!-- 侧拉抽屉 -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="apiDrawer">
+        <div class="drawer-header">
+            <div class="drawer-title">
+                <span class="method-badge post">POST</span>
+                <h3 id="drawerTitle">API 详情</h3>
+            </div>
+            <button class="drawer-close" id="drawerClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="drawer-body" id="drawerBody">
+            <!-- 动态内容 -->
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script>
+        // API 数据定义
+        const API_DATA = {
+            'xhs_jg_report_realtime_creativity_v1': {
+                title: '创意层级实时数据',
+                method: 'POST',
+                endpoint: '/api/open/jg/data/report/realtime/creativity',
+                server: 'https://adapi.xiaohongshu.com',
+                notes: '支持小时数据 (need_hourly_data=true, 仅今日)',
+                params: [
+                    { name: 'advertiser_id', type: 'integer', required: true, desc: '广告主ID' },
+                    { name: 'start_date', type: 'string', required: true, desc: '开始日期，格式 YYYY-MM-DD' },
+                    { name: 'end_date', type: 'string', required: true, desc: '结束日期，格式 YYYY-MM-DD' },
+                    { name: 'page_num', type: 'integer', required: false, desc: '页码，默认 1' },
+                    { name: 'page_size', type: 'integer', required: false, desc: '每页数量，默认 20' },
+                    { name: 'need_hourly_data', type: 'boolean', required: false, desc: '是否返回小时数据，默认 false' },
+                    { name: 'name', type: 'string', required: false, desc: '按名称筛选' },
+                    { name: 'id', type: 'string', required: false, desc: '按创意ID筛选' },
+                    { name: 'placement_list', type: 'string', required: false, desc: '投放位置列表' },
+                    { name: 'creativity_filter_state', type: 'string', required: false, desc: '创意状态筛选' }
+                ],
+                example: {
+                    request: {
+                        advertiser_id: 7152346,
+                        start_date: "2026-01-13",
+                        end_date: "2026-01-13",
+                        need_hourly_data: true,
+                        page_num: 1,
+                        page_size: 20
+                    },
+                    response: {
+                        code: 0,
+                        success: true,
+                        msg: "成功",
+                        request_id: "48a2b7b069739bd2",
+                        page: { page_index: 1, total_count: 552 },
+                        total_data: {
+                            fee: "209.18",
+                            impression: "3917",
+                            click: "270",
+                            ctr: "6.89%",
+                            cpm: "53.4",
+                            acp: "0.77",
+                            cpi: "11.62",
+                            like: "10",
+                            comment: "0",
+                            collect: "8",
+                            share: "0",
+                            follow: "0",
+                            interaction: "18",
+                            search_cmt_click: "3",
+                            search_cmt_after_read: "1"
+                        },
+                        creativity_dtos: [{
+                            base_creativity_dto: {
+                                creativity_id: 3437479586,
+                                creativity_name: "善弈+信息流+互点+菠萝橘子酱+施耐德品牌资产人群+1.7",
+                                creativity_filter_state: 8,
+                                creativity_enable: 1,
+                                creativity_type: 12,
+                                programmatic: 0,
+                                audit_status: 1,
+                                unit_id: 485522692,
+                                note_id: "695deca2000000000a03cdc7",
+                                creativity_create_time: "2026-01-07 18:59:40"
+                            },
+                            base_unit_dto: {
+                                unit_id: 485522692,
+                                unit_name: "善弈+信息流+互点+菠萝橘子酱+施耐德品牌资产人群+1.7",
+                                unit_filter_state: 10,
+                                unit_enable: 1,
+                                campaign_id: 167978148,
+                                event_bid: 75
+                            },
+                            base_campaign_dto: {
+                                campaign_id: 167978148,
+                                campaign_name: "善弈+信息流+互点+菠萝橘子酱+施耐德品牌资产人群+1.7",
+                                campaign_filter_state: 1,
+                                campaign_enable: 1,
+                                placement: 1,
+                                marketing_target: 4,
+                                promotion_target: 1,
+                                optimize_target: 1,
+                                bidding_strategy: 7
+                            },
+                            data: {
+                                fee: "94.48",
+                                impression: "1450",
+                                click: "118",
+                                ctr: "8.14%",
+                                cpm: "65.16",
+                                acp: "0.8",
+                                cpi: "7.87",
+                                like: "6",
+                                collect: "6",
+                                interaction: "12",
+                                pic_save: "2"
+                            },
+                            hourly_data: [
+                                {
+                                    time: "2026-01-13 14:00 - 14:59",
+                                    fee: "21.98",
+                                    impression: "259",
+                                    click: "22",
+                                    ctr: "8.49%",
+                                    cpm: "84.86",
+                                    acp: "1.0",
+                                    cpi: "3.66",
+                                    like: "3",
+                                    collect: "3",
+                                    interaction: "6"
+                                },
+                                {
+                                    time: "2026-01-13 13:00 - 13:59",
+                                    fee: "16.04",
+                                    impression: "252",
+                                    click: "19",
+                                    ctr: "7.54%",
+                                    cpm: "63.65",
+                                    acp: "0.84",
+                                    like: "0",
+                                    collect: "0",
+                                    interaction: "0"
+                                }
+                            ]
+                        }]
+                    }
+                }
+            },
+
+            // 离线报表 - 创意层
+            'xhs_jg_report_offline_creativity_v1': {
+                title: '创意层级离线报表数据',
+                method: 'POST',
+                endpoint: '/api/open/jg/data/report/offline/creative',
+                server: 'https://adapi.xiaohongshu.com',
+                notes: 'time_unit: DAY-分天 | HOUR-分时 | SUMMARY-汇总（默认分天）',
+                params: [
+                    { name: 'advertiser_id', type: 'integer', required: true, desc: '广告主ID' },
+                    { name: 'start_date', type: 'string', required: true, desc: '开始日期，格式 YYYY-MM-DD' },
+                    { name: 'end_date', type: 'string', required: true, desc: '结束日期，格式 YYYY-MM-DD' },
+                    { name: 'time_unit', type: 'string', required: false, desc: '时间维度: DAY/HOUR/SUMMARY' },
+                    { name: 'page_num', type: 'integer', required: false, desc: '页码，默认 1' },
+                    { name: 'page_size', type: 'integer', required: false, desc: '每页数量，默认 20' },
+                    { name: 'split_columns', type: 'array', required: false, desc: '拆分维度列表' },
+                    { name: 'marketing_target', type: 'string', required: false, desc: '营销目标' },
+                    { name: 'placement', type: 'string', required: false, desc: '投放位置' },
+                    { name: 'bidding_strategy', type: 'string', required: false, desc: '竞价策略' }
+                ],
+                example: {
+                    request: { advertiser_id: 7152346, start_date: "2026-01-10", end_date: "2026-01-12", time_unit: "DAY", page_num: 1, page_size: 20, split_columns: ["marketingTarget", "placement"] },
+                    response: {
+                        code: 0, success: true, msg: "成功", request_id: "213b357acb44b9ed",
+                        data: {
+                            total_count: 0,
+                            data_list: [],
+                            aggregation_data: {
+                                fee: "0", impression: "0", click: "0", ctr: "0.0%", cpm: "0.0", acp: "0.0", cpi: "0.0",
+                                like: "0", comment: "0", collect: "0", share: "0", follow: "0", interaction: "0",
+                                action_button_click: "0", action_button_ctr: "0.0%", screenshot: "0", pic_save: "0", reserve_pv: "0",
+                                video_play_5s_cnt: "0", video_play_5s_rate: "0%",
+                                search_cmt_click: "0", search_cmt_click_cvr: "0.0%", search_cmt_after_read: "0", search_cmt_after_read_avg: "0.0",
+                                i_user_num: "0", i_user_price: "0.0", ti_user_num: "0", ti_user_price: "0.0",
+                                leads: "0", leads_cvr: "0.0%", leads_cpl: "0.0", leads_button_impression: "0",
+                                valid_leads: "0", valid_leads_cpl: "0.0", landing_page_visit: "0",
+                                message_user: "0", message: "0", message_consult: "0", message_consult_cpl: "0.0",
+                                initiative_message: "0", initiative_message_cpl: "0.0", msg_leads_num: "0", msg_leads_cost: "0.0",
+                                phone_call_cnt: "0", phone_call_succ_cnt: "0", identity_certi_cnt: "0",
+                                fst_message_reply_in_45s_rate: "0%", message_reply_in_3min_rate: "0%", message_fst_reply_time_avg: "0",
+                                invoke_app_open_cnt: "0", invoke_app_open_cost: "0.0",
+                                invoke_app_enter_store_cnt: "0", invoke_app_enter_store_cost: "0.0",
+                                invoke_app_engagement_cnt: "0", invoke_app_engagement_cost: "0.0",
+                                invoke_app_payment_cnt: "0", invoke_app_payment_cost: "0.0",
+                                invoke_app_payment_amount: "0", invoke_app_payment_unit_price: "0.0", invoke_app_payment_roi: "0.0",
+                                search_invoke_button_click_cnt: "0", search_invoke_button_click_cost: "0.0",
+                                app_activate_cnt: "0", app_activate_ctr: "0%", app_activate_cost: "0",
+                                app_register_cnt: "0", app_register_ctr: "0%", app_register_cost: "0",
+                                first_app_pay_cnt: "0", first_app_pay_ctr: "0%", first_app_pay_cost: "0",
+                                current_app_pay_cnt: "0", current_app_pay_cost: "0",
+                                app_key_action_cnt: "0", app_key_action_ctr: "0%", app_key_action_cost: "0",
+                                app_pay_cnt_7d: "0", app_pay_cost_7d: "0", app_pay_amount: "0", app_pay_roi: "0",
+                                app_activate_amount_1d: "0", app_activate_amount_1d_roi: "0",
+                                app_activate_amount_3d: "0", app_activate_amount_3d_roi: "0",
+                                app_activate_amount_7d: "0", app_activate_amount_7d_roi: "0",
+                                retention_1d_cnt: "0", retention_3d_cnt: "0", retention_7d_cnt: "0",
+                                app_download_button_click_cnt: "0", app_download_button_click_ctr: "0%", app_download_button_click_cost: "0",
+                                external_goods_visit_7: "0", external_goods_visit_price_7: "0.0", external_goods_visit_rate_7: "0.0%",
+                                external_goods_order_7: "0", external_goods_order_price_7: "0.0", external_goods_order_rate_7: "0.0%",
+                                external_rgmv_7: "0", external_roi_7: "0.0",
+                                external_goods_order_15: "0", external_goods_order_price_15: "0.0", external_goods_order_rate_15: "0.0%",
+                                external_rgmv_15: "0", external_roi_15: "0.0",
+                                external_goods_order_30: "0", external_goods_order_price_30: "0.0", external_goods_order_rate_30: "0.0%",
+                                external_rgmv_30: "0", external_roi_30: "0.0",
+                                external_goods_visit_24h: "0", external_goods_visit_price_24h: "0", external_goods_visit_rate_24h: "0%",
+                                external_leads: "0", external_leads_cpl: "0",
+                                out_click_enter_store_cnt7d: "0", out_click_enter_store_cost7d: "0", out_click_enter_store_cvr7d: "0%",
+                                out_click_enter_store_cnt15d: "0", out_click_enter_store_cost15d: "0", out_click_enter_store_cvr15d: "0%",
+                                out_click_enter_store_cnt30d: "0", out_click_enter_store_cost30d: "0", out_click_enter_store_cvr30d: "0%",
+                                goods_visit: "0", goods_visit_price: "0.0", goods_order: "0", goods_order_price: "0.0",
+                                success_goods_order: "0", shopping_cart_add: "0", add_cart_price: "0.0",
+                                rgmv: "0", roi: "0.0", click_order_cvr: "0.0%",
+                                seller_visit: "0", seller_visit_price: "0.0", commodity_buy_cnt: "0",
+                                wechat_copy_cnt: "0", wechat_copy_succ_cnt: "0",
+                                wechat_talk_count: "0", wechat_talk_cost: "0.0",
+                                add_wechat_count: "0", add_wechat_cost: "0.0", add_wechat_suc_count: "0", add_wechat_suc_cost: "0.0",
+                                wechat_applets_open_cnt: "0", wechat_applets_activate_cnt: "0",
+                                wechat_applets_pay_cnt: "0", wechat_applets_pay_amount: "0",
+                                wechat_applets_pay_cnt_3d: "0", wechat_applets_pay_amount_3d: "0",
+                                wechat_applets_pay_cnt_7d: "0", wechat_applets_pay_amount_7d: "0",
+                                current_wechat_applets_activate_cnt: "0", current_wechat_applets_pay_cnt: "0",
+                                current_wechat_applets_pay_amount: "0",
+                                current_wechat_applets_first_pay_cnt: "0", cut_wechat_applets_first_pay_amount: "0",
+                                purchase_order_gmv_7d: "0", purchase_order_price_7d: "0.0", purchase_order_roi_7d: "0.0",
+                                presale_order_num_7d: "0", presale_order_gmv_7d: "0",
+                                shop_poi_click_num: "0", shop_poi_page_pv: "0", shop_poi_page_visit_price: "0.0",
+                                shop_poi_page_navigate_click: "0",
+                                clk_live_entry_pv: "0", clk_live_entry_pv_cost: "0.0",
+                                clk_live_5s_entry_pv: "0", clk_live_5s_entry_uv_cost: "0.0",
+                                clk_live_avg_view_time: "0", clk_live_comment: "0", clk_live_all_follow: "0",
+                                clk_live_room_order_num: "0", clk_live_room_rgmv: "0", clk_live_room_roi: "0.0",
+                                live_average_order_cost: "0.0",
+                                jd_task_fee: "0", jd_task_read_user_cnt: "0", jd_active_user_num: "0",
+                                jd_active_user_num_cvr: "0.00%", jd_active_user_num_cvr_new: "0.00%", jd_active_user_num_cpl: "0.0"
+                            }
+                        }
+                    }
+                }
+            },
+
+            // 离线报表 - 人群包
+            'xhs_jg_report_offline_audience_group_v2': {
+                title: '人群包报表 V2',
+                method: 'POST',
+                endpoint: '/api/idea/group_report_v2',
+                server: 'https://ad.xiaohongshu.com',
+                notes: 'timeUnit: DAY-分天 | WEEK-分周 | SUMMARY-汇总; reportType: REPORT/CAMPAIGN/UNIT/CREATIVITY/SPU/NOTE',
+                params: [
+                    { name: 'advertiserId', type: 'integer', required: true, desc: '广告主ID' },
+                    { name: 'startDate', type: 'string', required: true, desc: '开始日期，格式 YYYY-MM-DD' },
+                    { name: 'endDate', type: 'string', required: true, desc: '结束日期，格式 YYYY-MM-DD' },
+                    { name: 'timeUnit', type: 'string', required: true, desc: '时间维度: DAY/WEEK/SUMMARY' },
+                    { name: 'reportType', type: 'string', required: true, desc: '报表类型' },
+                    { name: 'dataCaliber', type: 'integer', required: true, desc: '数据口径: 0-归因时间, 1-转化时间' },
+                    { name: 'columns', type: 'array', required: true, desc: '指标列表' },
+                    { name: 'pageNum', type: 'integer', required: false, desc: '页码' },
+                    { name: 'pageSize', type: 'integer', required: false, desc: '每页数量' }
+                ],
+                example: {
+                    request: { advertiserId: 7152346, startDate: "2026-01-10", endDate: "2026-01-12", timeUnit: "DAY", reportType: "REPORT", dataCaliber: 0, columns: ["groupName", "groupId", "fee", "impNum", "clickNum"], pageNum: 1, pageSize: 20 },
+                    response: {
+                        code: 0, success: true, msg: "成功",
+                        data: {
+                            response: { msg: "", success: true },
+                            page: { pageIndex: 1, totalCount: 3 },
+                            dataUpdateTime: "2026-01-12",
+                            aggregationData: {
+                                fee: "0.05", impression: "14", click: "1", ctr: "7.14%", cpm: "3.57", acp: "0.05", cpi: "0.0",
+                                like: "0", comment: "0", collect: "0", share: "0", follow: "0", interaction: "0",
+                                actionButtonClick: "0", actionButtonCtr: "0.0%", screenshot: "0", picSave: "0", reservePV: "0",
+                                searchCmtClick: "0", searchCmtClickCvr: "0.0%", searchCmtAfterRead: "0", searchCmtAfterReadAvg: "0.0",
+                                leads: "0", leadsCvr: "0.0%", leadsCpl: "0.0", leadsButtonImpression: "0",
+                                validLeads: "0", validLeadsCpl: "0.0", landingPageVisit: "0",
+                                messageUser: "0", message: "0", messageConsult: "0", messageConsultCpl: "0.0",
+                                initiativeMessage: "0", initiativeMessageCpl: "0.0", msgLeadsNum: "0", msgLeadsCost: "0.0",
+                                fstMessageReplyIn45sRate: "0", messageReplyIn3MinRate: "0", messageFstReplyTimeAvg: "0",
+                                goodsVisit: "0", goodsVisitPrice: "0.0", goodsOrder: "0", goodsOrderPrice: "0.0",
+                                successGoodsOrder: "0", shoppingCartAdd: "0", addCartPrice: "0.0",
+                                rgmv: "0.0", roi: "0.0", clickOrderCvr: "0.0%",
+                                sellerVisit: "0", sellerVisitPrice: "0.0",
+                                outsideShopVisit: "0", outsideShopVisitPrice: "0.0", outsideShopVisitRate: "0.00%",
+                                purchaseOrderGmv7d: "0.0", purchaseOrderPrice7d: "0.0", purchaseOrderRoi7d: "0.0",
+                                presaleOrderNum7d: "0", presaleOrderGmv7d: "0.0",
+                                clkLiveEntryPv: "0", clkLiveEntryPvCost: "0.0",
+                                clkLive5sEntryUvCost: "0.0", clkLiveAvgViewTime: "0",
+                                clkLiveComment: "0", clkLiveAllFollow: "0",
+                                clkLiveRoomOrderNum: "0", clkLiveRoomRgmv: "0.0", clkLiveRoomRoi: "0.0",
+                                liveAverageOrderCost: "0.0",
+                                jdActiveUserNum: "0", jdActiveUserNumCvr: "0.00%", jdActiveUserNumCpl: "0.0",
+                                groupId: "-", groupName: "-", campaignId: "-", campaignName: "-",
+                                unitId: "-", unitName: "-", creativityId: "-", creativityName: "-",
+                                spuId: "-", spuName: "-"
+                            },
+                            dataList: [{
+                                time: "2025-10-01~2025-12-25",
+                                groupId: "16855654", groupName: "秋冬女装-实穿主义人群",
+                                campaignName: "9.23-全站-打开-葱葱儿-通勤+秋冬",
+                                unitName: "9.18-全站-打开-葱葱儿-智能_复制_复制_20250923_105624",
+                                creativityName: "9.20-全站-打开-葱葱儿-智能",
+                                spuName: "1688-鞋靴-休闲鞋女",
+                                noteTitle: "无笔记标题",
+                                fee: "0.0", impression: "1", click: "1", ctr: "100.0%", cpm: "0.0", acp: "0.0",
+                                like: "0", comment: "0", collect: "0", share: "0", follow: "0", interaction: "0",
+                                actionButtonClick: "0", actionButtonCtr: "0.0%", screenshot: "0", picSave: "0",
+                                leads: "0", leadsCvr: "0.0%", leadsCpl: "0.0",
+                                validLeads: "0", validLeadsCpl: "0.0", landingPageVisit: "0",
+                                messageUser: "0", message: "0", messageConsult: "0", messageConsultCpl: "0.0",
+                                goodsVisit: "0", goodsVisitPrice: "0.0", goodsOrder: "0", goodsOrderPrice: "0.0",
+                                rgmv: "0.0", roi: "0.0", clickOrderCvr: "0.0%"
+                            }]
+                        }
+                    }
+                }
+            },
+
+            // 离线报表 - SPU层
+            'xhs_jg_report_offline_spu_v1': {
+                title: 'SPU层级离线报表数据',
+                method: 'POST',
+                endpoint: '/api/open/jg/data/report/offline/spu',
+                server: 'https://adapi.xiaohongshu.com',
+                notes: 'time_unit: DAY-分天 | HOUR-分时 | SUMMARY-汇总（默认分天）',
+                params: [
+                    { name: 'advertiser_id', type: 'integer', required: true, desc: '广告主ID' },
+                    { name: 'start_date', type: 'string', required: true, desc: '开始日期，格式 YYYY-MM-DD' },
+                    { name: 'end_date', type: 'string', required: true, desc: '结束日期，格式 YYYY-MM-DD' },
+                    { name: 'time_unit', type: 'string', required: false, desc: '时间维度: DAY/HOUR/SUMMARY' },
+                    { name: 'page_num', type: 'integer', required: false, desc: '页码' },
+                    { name: 'page_size', type: 'integer', required: false, desc: '每页数量' },
+                    { name: 'sort_column', type: 'string', required: false, desc: '排序字段' },
+                    { name: 'sort', type: 'string', required: false, desc: '排序方向' }
+                ],
+                example: {
+                    request: { advertiser_id: 7152346, start_date: "2025-07-06", end_date: "2025-10-06", time_unit: "SUMMARY", page_num: 1, page_size: 20 },
+                    response: {
+                        code: 0, success: true, msg: "", request_id: "79cf24ec7fd9393c",
+                        data: {
+                            total_count: 2,
+                            aggregation_data: {
+                                fee: "279320.36", impression: "4905471", click: "485833", ctr: "9.9%", cpm: "56.94", acp: "0.57", cpi: "52.82",
+                                like: "4213", comment: "108", collect: "666", share: "184", follow: "117", interaction: "5288",
+                                action_button_click: "65", action_button_ctr: "0.01%", screenshot: "409", pic_save: "121",
+                                i_user_num: "98200", i_user_price: "2.84", ti_user_num: "59456", ti_user_price: "4.7",
+                                leads: "0", leads_cvr: "0.0%", leads_cpl: "0.0", leads_button_impression: "0",
+                                valid_leads: "0", valid_leads_cpl: "0.0", landing_page_visit: "0",
+                                external_leads: "0", external_leads_cpl: "0.0",
+                                goods_visit: "776", goods_visit_price: "359.95",
+                                shopping_cart_add: "28", add_cart_price: "9975.73"
+                            },
+                            data_list: [{
+                                time: "2025-07-06~2025-10-06",
+                                spu_id: "1568728", spu_name: "康夫F9吹风机",
+                                fee: "200058.51", impression: "3708181", click: "431434", ctr: "11.63%", cpm: "53.95", acp: "0.46", cpi: "40.4",
+                                like: "3995", comment: "87", collect: "598", share: "163", follow: "109", interaction: "4952",
+                                action_button_click: "63", action_button_ctr: "0.01%", screenshot: "367", pic_save: "87",
+                                i_user_num: "88674", i_user_price: "2.26", ti_user_num: "53913", ti_user_price: "3.71",
+                                leads: "0", leads_cvr: "0.0%", leads_cpl: "0.0", leads_button_impression: "0",
+                                valid_leads: "0", valid_leads_cpl: "0.0", landing_page_visit: "0",
+                                external_leads: "0", external_leads_cpl: "0.0",
+                                goods_visit: "421", goods_visit_price: "475.2",
+                                shopping_cart_add: "17", add_cart_price: "11768.15"
+                            }]
+                        }
+                    }
+                }
+            },
+
+            // 离线报表 - 搜索词
+            'xhs_jg_report_offline_searchword_v1': {
+                title: '搜索词层级离线报表数据',
+                method: 'POST',
+                endpoint: '/api/open/jg/data/report/offline/search/word',
+                server: 'https://adapi.xiaohongshu.com',
+                notes: 'time_unit: DAY-分天 | HOUR-分时 | SUMMARY-汇总（默认分天）',
+                params: [
+                    { name: 'advertiser_id', type: 'integer', required: true, desc: '广告主ID' },
+                    { name: 'start_date', type: 'string', required: true, desc: '开始日期，格式 YYYY-MM-DD' },
+                    { name: 'end_date', type: 'string', required: true, desc: '结束日期，格式 YYYY-MM-DD' },
+                    { name: 'time_unit', type: 'string', required: false, desc: '时间维度: DAY/HOUR/SUMMARY' },
+                    { name: 'page_num', type: 'integer', required: false, desc: '页码' },
+                    { name: 'page_size', type: 'integer', required: false, desc: '每页数量' },
+                    { name: 'marketing_target', type: 'string', required: false, desc: '营销目标' },
+                    { name: 'placement', type: 'string', required: false, desc: '投放位置' }
+                ],
+                example: {
+                    request: { advertiser_id: 7152346, start_date: "2025-07-06", end_date: "2025-10-06", time_unit: "DAY", page_num: 1, page_size: 20 },
+                    response: {
+                        code: 0, success: true, msg: "成功", request_id: "d41c0aa27a8a7a9d",
+                        data: {
+                            total_count: 829,
+                            aggregation_data: {
+                                fee: "151080.44", impression: "2947265", click: "112012", ctr: "3.8%", cpm: "51.26", acp: "1.35", cpi: "40.07",
+                                like: "3023", comment: "75", collect: "460", share: "129", follow: "83", interaction: "3770",
+                                action_button_click: "115", action_button_ctr: "0.1%", screenshot: "276", pic_save: "73", reserve_pv: "0",
+                                search_cmt_click: "298", search_cmt_click_cvr: "0.27%", search_cmt_after_read: "192", search_cmt_after_read_avg: "0.64",
+                                i_user_num: "108868", i_user_price: "1.39", ti_user_num: "39252", ti_user_price: "3.85",
+                                leads: "0", leads_cvr: "0.0%", leads_cpl: "0.0", leads_button_impression: "0",
+                                valid_leads: "0", valid_leads_cpl: "0.0", landing_page_visit: "0",
+                                message_user: "5", message: "94", message_consult: "5", message_consult_cpl: "30216.09",
+                                initiative_message: "5", initiative_message_cpl: "30216.09", msg_leads_num: "0", msg_leads_cost: "0.0",
+                                phone_call_cnt: "0", phone_call_succ_cnt: "0", identity_certi_cnt: "0",
+                                fst_message_reply_in_45s_rate: "0%", message_reply_in_3min_rate: "0%", message_fst_reply_time_avg: "0",
+                                goods_visit: "192", goods_visit_price: "786.88", goods_order: "3", goods_order_price: "50360.15",
+                                success_goods_order: "3", shopping_cart_add: "10", add_cart_price: "15108.04",
+                                rgmv: "809.7", roi: "0.01", click_order_cvr: "0.0%",
+                                seller_visit: "40", seller_visit_price: "3777.01", commodity_buy_cnt: "0",
+                                purchase_order_gmv_7d: "809.7", purchase_order_price_7d: "50360.15", purchase_order_roi_7d: "0.01",
+                                presale_order_num_7d: "0", presale_order_gmv_7d: "0.0",
+                                jd_task_fee: "68687.27", jd_task_read_user_cnt: "280971",
+                                jd_active_user_num: "7247", jd_active_user_num_cvr: "11.94%", jd_active_user_num_cvr_new: "2.58%", jd_active_user_num_cpl: "9.48"
+                            },
+                            data_list: [{
+                                time: "2025-07-06",
+                                note_id: "65c0e6cf000000002c03dac0",
+                                note_title: "教你如何挑选高速吹风机！主要看这几点",
+                                note_jump_url: "https://www.xiaohongshu.com/discovery/item/65c0e6cf000000002c03dac0",
+                                fee: "0.0", impression: "1", click: "0", ctr: "0.0%", cpm: "0.0", acp: "0.0", cpi: "0.0",
+                                like: "0", comment: "0", collect: "0", share: "0", follow: "0", interaction: "0",
+                                action_button_click: "0", action_button_ctr: "0.0%", screenshot: "0", pic_save: "0",
+                                i_user_num: "0", i_user_price: "0.0", ti_user_num: "0", ti_user_price: "0.0",
+                                leads: "0", leads_cvr: "0.0%", leads_cpl: "0.0",
+                                goods_visit: "0", goods_visit_price: "0.0", goods_order: "0", goods_order_price: "0.0",
+                                rgmv: "0.0", roi: "0.0"
+                            }]
+                        }
+                    }
+                }
+            },
+
+            // 蒲公英 - 投后数据笔记层
+            'xhs_pgy_note_post_invest_v1': {
+                title: '获取投后数据',
+                method: 'POST',
+                endpoint: '/api/open/pgy/note/post/data',
+                server: 'https://adapi.xiaohongshu.com',
+                notes: '蒲公英平台投后数据，支持按笔记维度查询，date_type: 1-发布时间, 2-数据时间',
+                params: [
+                    { name: 'user_id', type: 'string', required: true, desc: '品牌账号ID' },
+                    { name: 'start_time', type: 'string', required: true, desc: '开始日期，格式 YYYY-MM-DD' },
+                    { name: 'end_time', type: 'string', required: true, desc: '结束日期，格式 YYYY-MM-DD' },
+                    { name: 'date_type', type: 'integer', required: false, desc: '日期类型: 1-发布时间, 2-数据时间' },
+                    { name: 'page_num', type: 'integer', required: false, desc: '页码，默认 1' },
+                    { name: 'page_size', type: 'integer', required: false, desc: '每页数量，默认 20' },
+                    { name: 'date_key', type: 'string', required: false, desc: '日期键' }
+                ],
+                example: {
+                    request: { user_id: "5cf89d080000000018003029", start_time: "2026-01-10", end_time: "2026-01-12", date_type: 2, page_num: 1, page_size: 20 },
+                    response: {
+                        code: 0, msg: "success", request_id: "f8e2a1b7c3d456e9",
+                        data: {
+                            total: 156,
+                            datas: [{
+                                // 笔记信息
+                                note_id: "678a1b2c000000001234abcd",
+                                note_title: "冬季护肤必备！这款面霜真的绝了",
+                                note_link: "https://www.xiaohongshu.com/explore/678a1b2c000000001234abcd",
+                                note_publish_time: "2026-01-08 15:30:22",
+                                note_type: "视频笔记",
+                                // KOL信息
+                                kol_id: "5d8e7f6a000000001a2b3c4d",
+                                kol_nick_name: "护肤小达人",
+                                kol_link: "https://www.xiaohongshu.com/user/profile/5d8e7f6a000000001a2b3c4d",
+                                kol_fan_num: 125600,
+                                kol_credit_level: "A",
+                                // 核心指标
+                                imp_num: 85420,
+                                read_num: 32150,
+                                like_num: 2856,
+                                fav_num: 1523,
+                                cmt_num: 186,
+                                share_num: 324,
+                                engage_num: 4889,
+                                // 人群画像 - 性别
+                                female_percent: "78.5%",
+                                male_percent: "21.5%",
+                                // 人群画像 - 年龄
+                                age1_percent: "5.2%",
+                                age2_percent: "28.6%",
+                                age3_percent: "42.1%",
+                                age4_percent: "18.3%",
+                                age5_percent: "5.8%",
+                                // 人群画像 - 省份TOP3
+                                province_top1: "广东",
+                                province_top1_percent: "15.2%",
+                                province_top2: "江苏",
+                                province_top2_percent: "9.8%",
+                                province_top3: "浙江",
+                                province_top3_percent: "8.6%",
+                                // 人群画像 - 手机TOP3
+                                phone_top1: "苹果",
+                                phone_top1_percent: "52.3%",
+                                phone_top2: "华为",
+                                phone_top2_percent: "18.6%",
+                                phone_top3: "小米",
+                                phone_top3_percent: "12.1%",
+                                // 阅读来源
+                                read_discovery: 18520,
+                                read_search: 8640,
+                                read_homepage: 2150,
+                                read_follow: 1680,
+                                read_other: 1160,
+                                // 第三方数据
+                                jd_brief_dto: null,
+                                third_project_data: null,
+                                third_jd_project_data: null,
+                                third_wph_project_data: null
+                            }]
+                        }
+                    }
+                }
+            },
+
+            // 离线报表 - 关键词
+            'xhs_jg_report_offline_keyword_v1': {
+                title: '关键词层级离线报表数据',
+                method: 'POST',
+                endpoint: '/api/open/jg/data/report/offline/keyword',
+                server: 'https://adapi.xiaohongshu.com',
+                notes: 'time_unit: DAY-分天 | HOUR-分时 | SUMMARY-汇总（默认分天）',
+                params: [
+                    { name: 'advertiser_id', type: 'integer', required: true, desc: '广告主ID' },
+                    { name: 'start_date', type: 'string', required: true, desc: '开始日期，格式 YYYY-MM-DD' },
+                    { name: 'end_date', type: 'string', required: true, desc: '结束日期，格式 YYYY-MM-DD' },
+                    { name: 'time_unit', type: 'string', required: false, desc: '时间维度: DAY/HOUR/SUMMARY' },
+                    { name: 'page_num', type: 'integer', required: false, desc: '页码' },
+                    { name: 'page_size', type: 'integer', required: false, desc: '每页数量' },
+                    { name: 'marketing_target', type: 'string', required: false, desc: '营销目标' },
+                    { name: 'bidding_strategy', type: 'string', required: false, desc: '竞价策略' }
+                ],
+                example: {
+                    request: { advertiser_id: 7152346, start_date: "2025-07-06", end_date: "2025-07-31", time_unit: "SUMMARY", page_num: 1, page_size: 20 },
+                    response: {
+                        code: 0, success: true, msg: "成功", request_id: "29a853053a32ceeb",
+                        data: {
+                            total_count: 218,
+                            aggregation_data: {
+                                fee: "68118.98", impression: "993177", click: "59756", ctr: "6.02%", cpm: "68.59", acp: "1.14", cpi: "76.54",
+                                like: "597", comment: "12", collect: "199", share: "39", follow: "43", interaction: "890",
+                                action_button_click: "71", action_button_ctr: "0.12%", screenshot: "128", pic_save: "60", reserve_pv: "0",
+                                search_cmt_click: "0", search_cmt_click_cvr: "0%", search_cmt_after_read: "0", search_cmt_after_read_avg: "0",
+                                leads: "0", leads_cvr: "0.0%", leads_cpl: "0.0", leads_button_impression: "0",
+                                valid_leads: "0", valid_leads_cpl: "0.0", landing_page_visit: "0",
+                                message_user: "2", message: "9", message_consult: "2", message_consult_cpl: "34059.49",
+                                initiative_message: "2", initiative_message_cpl: "34059.49", msg_leads_num: "0", msg_leads_cost: "0.0",
+                                phone_call_cnt: "0", phone_call_succ_cnt: "0", identity_certi_cnt: "0",
+                                fst_message_reply_in_45s_rate: "0%", message_reply_in_3min_rate: "0%", message_fst_reply_time_avg: "0",
+                                goods_visit: "0", goods_visit_price: "0.0", goods_order: "0", goods_order_price: "0.0",
+                                success_goods_order: "0", shopping_cart_add: "0", add_cart_price: "0.0",
+                                rgmv: "0.0", roi: "0.0", click_order_cvr: "0.0%",
+                                seller_visit: "0", seller_visit_price: "0.0", commodity_buy_cnt: "0",
+                                external_goods_visit_7: "0", external_goods_visit_price_7: "0.0", external_goods_visit_rate_7: "0.0%",
+                                external_goods_order_7: "0", external_goods_order_price_7: "0.0", external_goods_order_rate_7: "0.0%",
+                                external_rgmv_7: "0.0", external_roi_7: "0.0",
+                                external_goods_order_15: "0", external_goods_order_price_15: "0.0", external_goods_order_rate_15: "0.0%",
+                                external_rgmv_15: "0.0", external_roi_15: "0.0",
+                                external_goods_order_30: "0", external_goods_order_price_30: "0.0", external_goods_order_rate_30: "0.0%",
+                                external_rgmv_30: "0.0", external_roi_30: "0.0",
+                                external_goods_visit_24h: "0", external_goods_visit_price_24h: "0", external_goods_visit_rate_24h: "0%",
+                                external_leads: "0", external_leads_cpl: "0",
+                                purchase_order_gmv_7d: "0.0", purchase_order_price_7d: "0.0", purchase_order_roi_7d: "0.0",
+                                presale_order_num_7d: "0", presale_order_gmv_7d: "0.0",
+                                word_avg_location: "2.16"
+                            },
+                            data_list: [{
+                                time: "2025-07-06~2025-07-31",
+                                keyword: "智能搭建词包", build_type: "1", word_avg_location: "1.98",
+                                campaign_id: "118577793", campaign_name: "【泛类小红盟】全站智投-多笔记-智能定向-5.21",
+                                unit_id: "257448437", unit_name: "【泛类小红盟】全站智投-多笔记-智能定向-5.21",
+                                marketing_target: "4", promotion_target: "1", optimize_target: "18", bidding_strategy: "3", placement: "4",
+                                fee: "15782.06", impression: "380875", click: "19970", ctr: "5.24%", cpm: "41.44", acp: "0.79", cpi: "37.85",
+                                like: "262", comment: "2", collect: "119", share: "14", follow: "20", interaction: "417",
+                                action_button_click: "22", action_button_ctr: "0.11%", screenshot: "47", pic_save: "5",
+                                leads: "0", leads_cvr: "0.0%", leads_cpl: "0.0",
+                                goods_visit: "0", goods_visit_price: "0.0", goods_order: "0", goods_order_price: "0.0",
+                                rgmv: "0.0", roi: "0.0"
+                            }]
+                        }
+                    }
+                }
+            }
+        };
+
+        // JSON 语法高亮
+        function syntaxHighlight(json) {
+            if (typeof json !== 'string') {
+                json = JSON.stringify(json, null, 2);
+            }
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                        match = match.replace(/"/g, '').replace(/:$/, '') + ':';
+                        return '<span class="' + cls + '">"' + match.slice(0, -1) + '"</span>:';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        // 渲染抽屉内容
+        function renderDrawerContent(apiKey) {
+            const api = API_DATA[apiKey];
+            if (!api) return '';
+
+            const paramsHtml = api.params.map(p => `
+                <div class="param-item${p.required ? ' required' : ''}">
+                    <div class="param-header">
+                        <span class="param-name">${p.name}</span>
+                        <span class="param-type ${p.type}">${p.type}</span>
+                        ${p.required ? '<span class="param-required">必填</span>' : ''}
+                    </div>
+                    <div class="param-desc">${p.desc}</div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="api-info-section">
+                    <h4><i class="fas fa-link"></i> 接口端点</h4>
+                    <div class="api-endpoint">
+                        <span class="method">${api.method}</span>
+                        <span class="url">${api.server}${api.endpoint}</span>
+                    </div>
+                    ${api.notes ? `<p style="margin-top: 0.5rem; font-size: 0.8125rem; color: var(--text-tertiary);"><i class="fas fa-info-circle"></i> ${api.notes}</p>` : ''}
+                </div>
+
+                <div class="api-info-section">
+                    <h4><i class="fas fa-sliders-h"></i> 请求参数</h4>
+                    <div class="param-list">
+                        ${paramsHtml}
+                    </div>
+                </div>
+
+                <div class="api-info-section">
+                    <h4><i class="fas fa-paper-plane"></i> 请求示例</h4>
+                    <div class="json-block">
+                        <div class="json-header">
+                            <span>Request Body</span>
+                            <button class="json-copy" onclick="copyJson('request')">复制</button>
+                        </div>
+                        <div class="json-content">
+                            <pre id="requestJson">${syntaxHighlight(api.example.request)}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="api-info-section">
+                    <h4><i class="fas fa-reply"></i> 响应示例</h4>
+                    <div class="json-block">
+                        <div class="json-header">
+                            <span>Response</span>
+                            <button class="json-copy" onclick="copyJson('response')">复制</button>
+                        </div>
+                        <div class="json-content">
+                            <pre id="responseJson">${syntaxHighlight(api.example.response)}</pre>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 复制 JSON
+        function copyJson(type) {
+            const apiKey = document.getElementById('apiDrawer').dataset.currentApi;
+            const api = API_DATA[apiKey];
+            const json = type === 'request' ? api.example.request : api.example.response;
+            navigator.clipboard.writeText(JSON.stringify(json, null, 2));
+        }
+
+        // 打开抽屉
+        function openDrawer(apiKey) {
+            const api = API_DATA[apiKey];
+            if (!api) return;
+
+            const drawer = document.getElementById('apiDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            const title = document.getElementById('drawerTitle');
+            const body = document.getElementById('drawerBody');
+            const badge = drawer.querySelector('.method-badge');
+
+            drawer.dataset.currentApi = apiKey;
+            title.textContent = api.title;
+            badge.textContent = api.method;
+            badge.className = `method-badge ${api.method.toLowerCase()}`;
+            body.innerHTML = renderDrawerContent(apiKey);
+
+            drawer.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭抽屉
+        function closeDrawer() {
+            document.getElementById('apiDrawer').classList.remove('active');
+            document.getElementById('drawerOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const navItems = document.querySelectorAll('.nav-item');
             const contents = document.querySelectorAll('.source-content');
 
+            // 侧边栏导航
             navItems.forEach(item => {
                 item.addEventListener('click', () => {
                     const sourceId = item.dataset.source;
-
-                    // 更新导航状态
                     navItems.forEach(nav => nav.classList.remove('active'));
                     item.classList.add('active');
-
-                    // 更新内容显示
                     contents.forEach(content => {
                         content.classList.toggle('active', content.id === `${sourceId}-content`);
                     });
                 });
+            });
+
+            // 表格行点击打开抽屉
+            document.querySelectorAll('tr[data-api]').forEach(row => {
+                row.addEventListener('click', () => {
+                    openDrawer(row.dataset.api);
+                });
+            });
+
+            // 关闭抽屉
+            document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+            document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+
+            // ESC 关闭
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeDrawer();
             });
         });
     </script>

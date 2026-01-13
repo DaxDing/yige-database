@@ -463,6 +463,7 @@ class DataWarehouseApp {
                                     </td>
                                 </tr>`;
                             }
+                            const isJson = item.type === 'JSON';
                             return `<tr>
                                 ${hasSeq ? `<td class="seq-col">${item.seq || '-'}</td>` : ''}
                                 <td>
@@ -470,7 +471,10 @@ class DataWarehouseApp {
                                     ${item.key ? `<span class="field-key ${item.key.toLowerCase()}">${item.key}</span>` : ''}
                                 </td>
                                 <td>${item.nameCn}</td>
-                                <td><span class="type-badge ${item.type}">${item.type}</span></td>
+                                <td>${isJson
+                                    ? `<span class="type-badge json clickable" data-schema="${item.name}" title="点击查看详情"><i class="fas fa-external-link-alt"></i> JSON</span>`
+                                    : `<span class="type-badge ${item.type}">${item.type}</span>`
+                                }</td>
                                 <td>${item.desc}</td>
                                 <td><code class="example-value">${item.example || '-'}</code></td>
                             </tr>`;
@@ -544,7 +548,80 @@ class DataWarehouseApp {
                 const tableCard = tableHeader.closest('.table-card');
                 tableCard.classList.toggle('expanded');
             }
+
+            // 处理 JSON 字段点击弹框
+            const jsonBadge = e.target.closest('.type-badge.json.clickable');
+            if (jsonBadge) {
+                const schemaName = jsonBadge.dataset.schema;
+                this.showJsonSchemaModal(schemaName);
+            }
         });
+
+        // 关闭弹框事件
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('json-modal-overlay') || e.target.classList.contains('json-modal-close')) {
+                this.closeJsonSchemaModal();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') this.closeJsonSchemaModal();
+        });
+    }
+
+    /**
+     * 显示 JSON Schema 弹框
+     */
+    showJsonSchemaModal(schemaName) {
+        // 从 TABLE_DEFINITIONS 获取 schema
+        const table = TABLE_DEFINITIONS['dwd_xhs_creative_hourly_di'];
+        if (!table || !table.metricsSchema || !table.metricsSchema[schemaName]) return;
+
+        const schema = table.metricsSchema[schemaName];
+        const modal = document.createElement('div');
+        modal.className = 'json-modal-overlay';
+        modal.innerHTML = `
+            <div class="json-modal">
+                <div class="json-modal-header">
+                    <h3>${schema.nameCn}</h3>
+                    <span class="json-modal-close"><i class="fas fa-times"></i></span>
+                </div>
+                <div class="json-modal-body">
+                    <table class="json-schema-table">
+                        <thead>
+                            <tr>
+                                <th>字段名</th>
+                                <th>中文名</th>
+                                <th>类型</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${schema.fields.map(f => `
+                                <tr>
+                                    <td><code>${f.name}</code></td>
+                                    <td>${f.nameCn}</td>
+                                    <td><span class="type-badge ${f.type}">${f.type}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(() => modal.classList.add('active'));
+    }
+
+    /**
+     * 关闭 JSON Schema 弹框
+     */
+    closeJsonSchemaModal() {
+        const modal = document.querySelector('.json-modal-overlay');
+        if (modal) {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 200);
+            document.body.style.overflow = '';
+        }
     }
 
     /**

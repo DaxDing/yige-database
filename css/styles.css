@@ -756,7 +756,118 @@ body {
 .type-badge.INT { background: #D1FAE5; color: #047857; }
 .type-badge.BIGINT { background: #FEE2E2; color: #B91C1C; }
 .type-badge.DECIMAL { background: #FEF3C7; color: #B45309; }
+.type-badge.JSON { background: #FDF4FF; color: #A21CAF; }
 .type-badge.- { background: var(--bg-tertiary); color: var(--text-muted); font-style: italic; }
+
+.type-badge.json.clickable {
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+.type-badge.json.clickable:hover {
+    background: #F5D0FE;
+    transform: scale(1.05);
+}
+.type-badge.json.clickable i {
+    font-size: 0.625rem;
+    margin-right: 0.25rem;
+}
+
+/* =============================================
+   JSON Schema Modal - JSON 字段弹框
+   ============================================= */
+.json-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.json-modal-overlay.active {
+    opacity: 1;
+}
+
+.json-modal {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.2s ease;
+}
+.json-modal-overlay.active .json-modal {
+    transform: scale(1) translateY(0);
+}
+
+.json-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-secondary);
+}
+.json-modal-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+.json-modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all var(--transition-fast);
+}
+.json-modal-close:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.json-modal-body {
+    padding: 1rem 1.25rem;
+    overflow-y: auto;
+    max-height: calc(80vh - 60px);
+}
+
+.json-schema-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+}
+.json-schema-table th,
+.json-schema-table td {
+    padding: 0.625rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+}
+.json-schema-table th {
+    background: var(--bg-tertiary);
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+.json-schema-table td code {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.125rem 0.375rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+}
 
 /* =============================================
    Empty State - 空状态
