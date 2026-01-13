@@ -35,6 +35,16 @@ const DATA_WAREHOUSE = {
 
     // ODS 层表字段定义（覆盖通用字段）
     odsTableFields: {
+        // ========== 实时效果 ==========
+        'ods_xhs_jg_creativity_realtime_hi': [
+            { seq: 1, cat: '标识字段', name: 'advertiser_id', nameCn: '广告主ID', type: 'STRING', desc: '聚光投放账户标识', example: '6823119876', key: 'PK' },
+            { seq: 2, cat: '标识字段', name: 'creativity_id', nameCn: '创意ID', type: 'STRING', desc: '创意标识', example: '3437479586', key: 'PK' },
+            { seq: 3, cat: '时间字段', name: 'dt', nameCn: '数据时间段', type: 'STRING', desc: '数据统计的时间段范围', example: '2026-01-13 14:00 - 14:59', key: 'PK' },
+            { seq: 4, cat: '原始数据', name: 'raw_data', nameCn: '原始数据', type: 'STRING', desc: 'API返回的原始JSON数据', example: '{"id":123,...}' },
+            { seq: 5, cat: '系统字段', name: 'etl_time', nameCn: 'ETL时间', type: 'DATETIME', desc: '数据同步处理时间戳', example: '2026-01-13 14:05:00' },
+            { seq: 6, cat: '系统字段', name: 'ds', nameCn: '分区日期', type: 'STRING', desc: '存储分区日期，格式 YYYYMMDD', example: '20260113', key: 'PT' }
+        ],
+
         // ========== 种草效果 ==========
         'ods_xhs_post_note_report_di': [
             { seq: 1, cat: '时间字段', name: 'dt', nameCn: '数据日期', type: 'STRING', desc: '统计日期', example: '2026-01-06', key: 'PK' },
@@ -149,26 +159,70 @@ const DATA_WAREHOUSE = {
     // DWD 层表字段定义
     dwdTableFields: {
         'dwd_xhs_creative_hourly_di': [
-            { seq: 1, cat: '标识字段', name: 'advertiser_id', nameCn: '广告主ID', type: 'STRING', desc: '聚光投放账户标识', example: '6823119876', key: 'PK' },
-            { seq: 2, cat: '标识字段', name: 'campaign_id', nameCn: '计划ID', type: 'STRING', desc: '广告计划标识', example: '123456789' },
-            { seq: 3, cat: '标识字段', name: 'unit_id', nameCn: '单元ID', type: 'STRING', desc: '广告单元标识', example: '987654321' },
-            { seq: 4, cat: '标识字段', name: 'creative_id', nameCn: '创意ID', type: 'STRING', desc: '广告创意标识', example: '111222333', key: 'PK' },
-            { seq: 5, cat: '标识字段', name: 'note_id', nameCn: '笔记ID', type: 'STRING', desc: '关联笔记标识', example: '65a1b2c3d4' },
-            { seq: 7, cat: '时间字段', name: 'stat_date', nameCn: '统计日期', type: 'STRING', desc: '数据统计日期', example: '2026-01-06', key: 'PK' },
-            { seq: 8, cat: '时间字段', name: 'stat_hour', nameCn: '统计小时', type: 'STRING', desc: '数据统计小时', example: '14', key: 'PK' },
-            { seq: 9, cat: '效果指标', name: 'impression', nameCn: '曝光数', type: 'BIGINT', desc: '广告曝光次数', example: '10000' },
-            { seq: 10, cat: '效果指标', name: 'click', nameCn: '点击数', type: 'BIGINT', desc: '广告点击次数', example: '500' },
-            { seq: 11, cat: '效果指标', name: 'cost', nameCn: '消耗', type: 'DECIMAL(18,2)', desc: '广告消耗金额（元）', example: '1234.56' },
-            { seq: 12, cat: '互动指标', name: 'note_click', nameCn: '笔记点击', type: 'BIGINT', desc: '笔记点击次数', example: '800' },
-            { seq: 13, cat: '互动指标', name: 'note_like', nameCn: '笔记点赞', type: 'BIGINT', desc: '笔记点赞次数', example: '200' },
-            { seq: 14, cat: '互动指标', name: 'note_collect', nameCn: '笔记收藏', type: 'BIGINT', desc: '笔记收藏次数', example: '100' },
-            { seq: 15, cat: '互动指标', name: 'note_comment', nameCn: '笔记评论', type: 'BIGINT', desc: '笔记评论次数', example: '50' },
-            { seq: 16, cat: '互动指标', name: 'note_share', nameCn: '笔记分享', type: 'BIGINT', desc: '笔记分享次数', example: '30' },
-            { seq: 17, cat: '互动指标', name: 'note_follow', nameCn: '笔记关注', type: 'BIGINT', desc: '通过笔记关注次数', example: '20' },
-            { seq: 18, cat: '转化指标', name: 'form_submit', nameCn: '表单提交', type: 'BIGINT', desc: '表单提交次数', example: '10' },
-            { seq: 19, cat: '转化指标', name: 'consult', nameCn: '私信咨询', type: 'BIGINT', desc: '私信咨询次数', example: '15' },
-            { seq: 20, cat: '系统字段', name: 'etl_time', nameCn: 'ETL时间', type: 'DATETIME', desc: '数据同步处理时间戳', example: '2026-01-07 11:30:00' },
-            { seq: 21, cat: '系统字段', name: 'ds', nameCn: '分区日期', type: 'STRING', desc: '存储分区日期，格式 YYYYMMDD', example: '20260107', key: 'PT' }
+            { seq: 1, cat: '标识字段', name: 'advertiser_id', nameCn: '投放账号ID', type: 'STRING', desc: '聚光投放账户标识', example: '6823119876', key: 'PK' },
+            { seq: 2, cat: '标识字段', name: 'note_id', nameCn: '笔记ID', type: 'STRING', desc: '投放的笔记标识', example: '6789012345' },
+            { seq: 3, cat: '标识字段', name: 'unit_id', nameCn: '单元ID', type: 'STRING', desc: '广告单元标识', example: '1234567890' },
+            { seq: 4, cat: '标识字段', name: 'campaign_id', nameCn: '计划ID', type: 'STRING', desc: '广告计划标识', example: '9876543210' },
+            { seq: 5, cat: '标识字段', name: 'creativity_id', nameCn: '创意ID', type: 'STRING', desc: '创意标识', example: '1122334455', key: 'PK' },
+            { seq: 6, cat: '策略字段', name: 'placement', nameCn: '投放位置', type: 'INT', desc: '广告投放位置类型', example: '1' },
+            { seq: 7, cat: '策略字段', name: 'marketing_target', nameCn: '营销目标', type: 'INT', desc: '营销目标类型编码', example: '2' },
+            { seq: 8, cat: '策略字段', name: 'promotion_target', nameCn: '推广目标', type: 'INT', desc: '推广目标类型编码', example: '1' },
+            { seq: 9, cat: '策略字段', name: 'optimize_target', nameCn: '优化目标', type: 'INT', desc: '出价优化目标类型', example: '3' },
+            { seq: 10, cat: '策略字段', name: 'bidding_strategy', nameCn: '竞价策略', type: 'INT', desc: '竞价策略类型编码', example: '1' },
+            { seq: 11, cat: '时间字段', name: 'dt', nameCn: '数据时间段', type: 'STRING', desc: '数据统计的时间段范围', example: '2026-01-06 14:00 - 14:59', key: 'PK' },
+            { seq: 12, cat: '展现指标', name: 'fee', nameCn: '消费', type: 'DECIMAL', desc: '广告消费金额（元）', example: '1234.56' },
+            { seq: 13, cat: '展现指标', name: 'impression', nameCn: '展现量', type: 'BIGINT', desc: '广告展现次数', example: '10000' },
+            { seq: 14, cat: '展现指标', name: 'click', nameCn: '点击量', type: 'BIGINT', desc: '广告点击次数', example: '500' },
+            { seq: 15, cat: '笔记指标', name: 'like', nameCn: '点赞', type: 'BIGINT', desc: '笔记点赞数', example: '200' },
+            { seq: 16, cat: '笔记指标', name: 'comment', nameCn: '评论', type: 'BIGINT', desc: '笔记评论数', example: '50' },
+            { seq: 17, cat: '笔记指标', name: 'collect', nameCn: '收藏', type: 'BIGINT', desc: '笔记收藏数', example: '100' },
+            { seq: 18, cat: '笔记指标', name: 'follow', nameCn: '关注', type: 'BIGINT', desc: '笔记带来的关注数', example: '30' },
+            { seq: 19, cat: '笔记指标', name: 'share', nameCn: '分享', type: 'BIGINT', desc: '笔记分享数', example: '20' },
+            { seq: 20, cat: '笔记指标', name: 'interaction', nameCn: '互动量', type: 'BIGINT', desc: '笔记总互动量', example: '400' },
+            { seq: 21, cat: '笔记指标', name: 'action_button_click', nameCn: '行动按钮点击量', type: 'BIGINT', desc: '组件点击量', example: '80' },
+            { seq: 22, cat: '笔记指标', name: 'screenshot', nameCn: '截图', type: 'BIGINT', desc: '截图次数', example: '15' },
+            { seq: 23, cat: '笔记指标', name: 'pic_save', nameCn: '保存图片', type: 'BIGINT', desc: '图片保存次数', example: '25' },
+            { seq: 24, cat: '笔记指标', name: 'reserve_pv', nameCn: '预告组件点击', type: 'BIGINT', desc: '预告组件点击量', example: '10' },
+            { seq: 25, cat: '视频指标', name: 'video_play_5s_cnt', nameCn: '5秒播放量', type: 'BIGINT', desc: '视频播放超过5秒的次数', example: '3000' },
+            { seq: 26, cat: '转化指标', name: 'product_seeding_metrics', nameCn: '产品种草指标', type: 'JSON', desc: '产品种草转化指标', example: '{"search_cmt_click":120,...}' },
+            { seq: 27, cat: '转化指标', name: 'lead_collection_metrics', nameCn: '客资收集指标', type: 'JSON', desc: '客资收集转化指标', example: '{"leads":30,...}' },
+            { seq: 28, cat: '转化指标', name: 'app_promotion_metrics', nameCn: '应用推广指标', type: 'JSON', desc: '应用推广转化指标', example: '{"invoke_app_open_cnt":100,...}' },
+            { seq: 29, cat: '转化指标', name: 'direct_seeding_metrics', nameCn: '种草直达指标', type: 'JSON', desc: '种草直达转化指标', example: '{"external_goods_visit_7":300,...}' },
+            { seq: 30, cat: '系统字段', name: 'etl_time', nameCn: 'ETL时间', type: 'DATETIME', desc: '数据同步处理时间戳', example: '2026-01-07 11:30:00' },
+            { seq: 31, cat: '系统字段', name: 'ds', nameCn: '分区日期', type: 'STRING', desc: '存储分区日期，格式 YYYYMMDD', example: '20260107', key: 'PT' }
+        ],
+
+        'dwd_xhs_creativity_realtime_hi': [
+            { seq: 1, cat: '标识字段', name: 'advertiser_id', nameCn: '投放账号ID', type: 'STRING', desc: '聚光投放账户标识', example: '6823119876', key: 'PK' },
+            { seq: 2, cat: '标识字段', name: 'creativity_id', nameCn: '创意ID', type: 'STRING', desc: '创意标识', example: '3437479586', key: 'PK' },
+            { seq: 3, cat: '标识字段', name: 'campaign_id', nameCn: '计划ID', type: 'STRING', desc: '广告计划标识', example: '68230001' },
+            { seq: 4, cat: '标识字段', name: 'unit_id', nameCn: '单元ID', type: 'STRING', desc: '广告单元标识', example: '68230002' },
+            { seq: 5, cat: '标识字段', name: 'note_id', nameCn: '笔记ID', type: 'STRING', desc: '关联笔记标识', example: '67830d6c000000001d031e34' },
+            { seq: 6, cat: '属性字段', name: 'campaign_name', nameCn: '计划名称', type: 'STRING', desc: '广告计划名称', example: '品牌推广计划A' },
+            { seq: 7, cat: '属性字段', name: 'unit_name', nameCn: '单元名称', type: 'STRING', desc: '广告单元名称', example: '单元001' },
+            { seq: 8, cat: '属性字段', name: 'creativity_name', nameCn: '创意名称', type: 'STRING', desc: '创意名称', example: '创意A' },
+            { seq: 9, cat: '策略字段', name: 'marketing_target', nameCn: '营销诉求', type: 'STRING', desc: '营销目标类型', example: '3' },
+            { seq: 10, cat: '策略字段', name: 'promote_target', nameCn: '推广标的', type: 'STRING', desc: '推广目标类型', example: '5' },
+            { seq: 11, cat: '策略字段', name: 'placement', nameCn: '推广类型', type: 'STRING', desc: '广告投放类型', example: '1' },
+            { seq: 12, cat: '策略字段', name: 'build_type', nameCn: '搭建方式', type: 'STRING', desc: '计划搭建方式', example: '1' },
+            { seq: 13, cat: '策略字段', name: 'optimization_target', nameCn: '优化目标', type: 'STRING', desc: '投放优化目标', example: '1' },
+            { seq: 14, cat: '时间字段', name: 'stat_date', nameCn: '统计日期', type: 'STRING', desc: '数据统计日期 YYYY-MM-DD', example: '2026-01-13', key: 'PK' },
+            { seq: 15, cat: '时间字段', name: 'stat_hour', nameCn: '统计小时', type: 'STRING', desc: '数据统计小时 HH', example: '14', key: 'PK' },
+            { seq: 16, cat: '展现指标', name: 'impression', nameCn: '曝光数', type: 'BIGINT', desc: '广告曝光次数', example: '10000' },
+            { seq: 17, cat: '展现指标', name: 'click', nameCn: '点击数', type: 'BIGINT', desc: '广告点击次数', example: '500' },
+            { seq: 18, cat: '展现指标', name: 'cost', nameCn: '消耗', type: 'DECIMAL(18,2)', desc: '广告消耗金额（元）', example: '1234.56' },
+            { seq: 19, cat: '笔记指标', name: 'note_click', nameCn: '笔记点击', type: 'BIGINT', desc: '笔记点击次数', example: '800' },
+            { seq: 20, cat: '笔记指标', name: 'note_like', nameCn: '笔记点赞', type: 'BIGINT', desc: '笔记点赞次数', example: '200' },
+            { seq: 21, cat: '笔记指标', name: 'note_collect', nameCn: '笔记收藏', type: 'BIGINT', desc: '笔记收藏次数', example: '100' },
+            { seq: 22, cat: '笔记指标', name: 'note_comment', nameCn: '笔记评论', type: 'BIGINT', desc: '笔记评论次数', example: '50' },
+            { seq: 23, cat: '笔记指标', name: 'note_share', nameCn: '笔记分享', type: 'BIGINT', desc: '笔记分享次数', example: '30' },
+            { seq: 24, cat: '笔记指标', name: 'note_follow', nameCn: '笔记关注', type: 'BIGINT', desc: '通过笔记关注次数', example: '20' },
+            { seq: 25, cat: '产品种草', name: 'goods_click', nameCn: '商品点击', type: 'BIGINT', desc: '商品点击次数', example: '150' },
+            { seq: 26, cat: '产品种草', name: 'order_cnt', nameCn: '订单数', type: 'BIGINT', desc: '订单数量', example: '10' },
+            { seq: 27, cat: '产品种草', name: 'order_amt', nameCn: '订单金额', type: 'DECIMAL(18,2)', desc: '订单金额（元）', example: '2580.00' },
+            { seq: 28, cat: '系统字段', name: 'dt', nameCn: '数据时间段', type: 'STRING', desc: '数据统计的时间段范围', example: '2026-01-13 14:00 - 14:59' },
+            { seq: 29, cat: '系统字段', name: 'etl_time', nameCn: 'ETL时间', type: 'DATETIME', desc: '数据同步处理时间戳', example: '2026-01-13 15:30:00' },
+            { seq: 30, cat: '系统字段', name: 'ds', nameCn: '分区日期', type: 'STRING', desc: '存储分区日期，格式 YYYYMMDD', example: '20260113', key: 'PT' }
         ]
     },
 
@@ -200,6 +254,12 @@ const DATA_WAREHOUSE = {
             fullName: '原始数据层',
             description: '存储从小红书聚光平台 API 同步的原始数据，保持数据原貌，不做任何业务处理。',
             groups: [
+                {
+                    name: '实时效果',
+                    tables: [
+                        { name: 'ods_xhs_jg_creativity_realtime_hi', desc: '创意层小时实时报表', tags: ['小红书API', '实时数据'] }
+                    ]
+                },
                 {
                     name: '种草效果',
                     tables: [
@@ -246,6 +306,12 @@ const DATA_WAREHOUSE = {
             fullName: '明细数据层',
             description: '对 ODS 层数据进行清洗、标准化、维度关联，形成一致性的明细事实表。',
             groups: [
+                {
+                    name: '实时效果',
+                    tables: [
+                        { name: 'dwd_xhs_creativity_realtime_hi', desc: '创意层小时实时明细表', tags: ['实时数据', '小时增量'] }
+                    ]
+                },
                 {
                     name: '种草效果',
                     tables: [
