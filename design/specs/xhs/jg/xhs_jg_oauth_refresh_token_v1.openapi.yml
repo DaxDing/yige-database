@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  title: 聚光 OAuth 刷新令牌
+  version: 1.0.0
+  x-api-id: xhs.jg.oauth.refresh_token.v1
+  x-category: oauth
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/oauth2/refresh_token:
+    post:
+      summary: 聚光 OAuth 刷新令牌
+      operationId: xhs_jg_oauth_refresh_token_v1
+      tags:
+      - oauth
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: 需提供最新的 refresh_token；响应会返回新的 access_token、refresh_token 及到期时间。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                app_id:
+                  type: string
+                  x-source:
+                    type: env
+                    name: XHS_AD_APP_ID
+                secret:
+                  type: string
+                  x-source:
+                    type: env
+                    name: XHS_AD_APP_SECRET
+                refresh_token:
+                  type: string
+                  x-source:
+                    type: var
+                    name: refresh_token
+              required:
+              - app_id
+              - secret
+              - refresh_token
+            example:
+              app_id: <env:XHS_AD_APP_ID>
+              secret: <env:XHS_AD_APP_SECRET>
+              refresh_token: <var:refresh_token>

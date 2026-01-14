@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: SPU查询接口
+  version: 1.0.0
+  x-api-id: xhs.pgy.spu.query.v1
+  x-category: basic_info
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/pgy/spu/query:
+    post:
+      summary: SPU查询接口
+      operationId: xhs_pgy_spu_query_v1
+      tags:
+      - basic_info
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: 获取的是通过SPU
+      x-pagination:
+        type: page
+        list_path: data.list
+        page_param: page_num
+        size_param: page_size
+        start_page: 1
+        page_size: 20
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  default: 5cf89d080000000018003029
+                  x-source:
+                    type: env
+                    name: USER_ID
+                brand_user_id:
+                  type: string
+                  default: 5df6bb840000000001001a38
+                  x-source:
+                    type: var
+                    name: brand_user_id
+                keyword:
+                  type: string
+                  x-source:
+                    type: var
+                    name: keyword
+                page_num:
+                  type: integer
+                  default: 1
+                  x-source:
+                    type: var
+                    name: page_num
+                page_size:
+                  type: integer
+                  default: 20
+                  example:
+              user_id: 5cf89d080000000018003029
+              brand_user_id: 5df6bb840000000001001a38
+              keyword: Resi9
+              page_num: 1
+              page_size: 20

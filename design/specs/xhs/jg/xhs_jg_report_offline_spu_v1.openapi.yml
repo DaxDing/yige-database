@@ -1,0 +1,85 @@
+openapi: 3.0.3
+info:
+  title: 离线报表_SPU层级离线报表数据
+  version: 1.0.0
+  x-api-id: xhs.jg.report.offline.spu.v1
+  x-category: offline_reports
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/jg/data/report/offline/spu:
+    post:
+      summary: 离线报表_SPU层级离线报表数据
+      operationId: xhs_jg_report_offline_spu_v1
+      tags:
+      - offline_reports
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: 'time_unit: DAY-分天 | HOUR-分时 | SUMMARY-汇总(默认分天)'
+      x-pagination:
+        type: page
+        list_path: data.data_list
+        page_param: page_num
+        size_param: page_size
+        start_page: 1
+        page_size: 20
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                advertiser_id:
+                  type: integer
+                  default: 7152346
+                  x-source:
+                    type: var
+                    name: advertiser_id
+                start_date:
+                  type: string
+                  default: '2025-10-26'
+                  x-source:
+                    type: var
+                    name: start_date
+                end_date:
+                  type: string
+                  default: '2025-10-28'
+                  x-source:
+                    type: var
+                    name: end_date
+                time_unit:
+                  type: string
+                  default: DAY
+                sort_column:
+                  type: string
+                  x-source:
+                    type: var
+                    name: sort_column
+                sort:
+                  type: string
+                  x-source:
+                    type: var
+                    name: sort
+                page_num:
+                  type: integer
+                  default: 1
+                  x-source:
+                    type: var
+                    name: page_num
+                page_size:
+                  type: integer
+                  default: 20
+                  example:
+              advertiser_id: 7152346
+              start_date: '2025-10-26'
+              end_date: '2025-10-28'
+              time_unit: DAY
+              page_num: 1
+              page_size: 20

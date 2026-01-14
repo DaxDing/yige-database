@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  title: 聚光 OAuth 换取 Access Token
+  version: 1.0.0
+  x-api-id: xhs.jg.oauth.access_token.v1
+  x-category: oauth
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/oauth2/access_token:
+    post:
+      summary: 聚光 OAuth 换取 Access Token
+      operationId: xhs_jg_oauth_access_token_v1
+      tags:
+      - oauth
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: 使用短期有效的 auth_code 换取 access_token、refresh_token 和广告主信息；auth_code 仅有效 10 分钟，逾期需重新授权。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                app_id:
+                  type: string
+                  x-source:
+                    type: env
+                    name: XHS_AD_APP_ID
+                secret:
+                  type: string
+                  x-source:
+                    type: env
+                    name: XHS_AD_APP_SECRET
+                auth_code:
+                  type: string
+                  x-source:
+                    type: var
+                    name: auth_code
+              required:
+              - app_id
+              - secret
+              - auth_code
+            example:
+              app_id: <env:XHS_AD_APP_ID>
+              secret: <env:XHS_AD_APP_SECRET>
+              auth_code: <var:auth_code>

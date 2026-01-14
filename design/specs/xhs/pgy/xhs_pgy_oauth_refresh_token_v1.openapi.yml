@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  title: 蒲公英 OAuth 刷新令牌
+  version: 1.0.0
+  x-api-id: xhs.pgy.oauth.refresh_token.v1
+  x-category: oauth
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/oauth2/refresh_token:
+    post:
+      summary: 蒲公英 OAuth 刷新令牌
+      operationId: xhs_pgy_oauth_refresh_token_v1
+      tags:
+      - oauth
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: 需使用当前蒲公英应用的 refresh_token；响应返回新的令牌及有效期信息。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                app_id:
+                  type: string
+                  x-source:
+                    type: env
+                    name: XHS_PGY_APP_ID
+                secret:
+                  type: string
+                  x-source:
+                    type: env
+                    name: XHS_PGY_APP_SECRET
+                refresh_token:
+                  type: string
+                  x-source:
+                    type: var
+                    name: refresh_token
+              required:
+              - app_id
+              - secret
+              - refresh_token
+            example:
+              app_id: <env:XHS_PGY_APP_ID>
+              secret: <env:XHS_PGY_APP_SECRET>
+              refresh_token: <var:refresh_token>

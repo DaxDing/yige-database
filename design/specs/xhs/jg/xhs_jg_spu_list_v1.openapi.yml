@@ -1,0 +1,69 @@
+openapi: 3.0.3
+info:
+  title: 获取SPU列表
+  version: 1.0.0
+  x-api-id: xhs.jg.spu.list.v1
+  x-category: resource_management
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/jg/spu/list:
+    post:
+      summary: 获取SPU列表
+      operationId: xhs_jg_spu_list_v1
+      tags:
+      - resource_management
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      x-notes: can_bind 默认是false 要改成“true”就和蒲公英返回值一致
+      x-pagination:
+        type: page
+        list_path: data.spus
+        page_param: page
+        size_param: page_size
+        start_page: 1
+        page_size: 10
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                advertiser_id:
+                  type: integer
+                  default: 7152346
+                  x-source:
+                    type: var
+                    name: advertiser_id
+                can_bind:
+                  type: string
+                  default: 'true'
+                  x-source:
+                    type: var
+                    name: can_bind
+                keyword:
+                  type: string
+                  x-source:
+                    type: var
+                    name: keyword
+                page:
+                  type: integer
+                  default: 1
+                  x-source:
+                    type: var
+                    name: page
+                page_size:
+                  type: integer
+                  default: 10
+                  example:
+              advertiser_id: 7152346
+              can_bind: 'true'
+              page: 1
+              page_size: 20

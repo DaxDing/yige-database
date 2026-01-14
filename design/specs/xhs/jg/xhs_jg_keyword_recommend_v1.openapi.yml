@@ -1,0 +1,48 @@
+openapi: 3.0.3
+info:
+  title: 获取推荐关键词信息
+  version: 1.0.0
+  x-api-id: xhs.jg.keyword.recommend.v1
+  x-category: targeting_keywords
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/jg/target/keyword/recommend:
+    post:
+      summary: 获取推荐关键词信息
+      operationId: xhs_jg_keyword_recommend_v1
+      tags:
+      - targeting_keywords
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                advertiser_id:
+                  type: integer
+                  default: 7152346
+                  x-source:
+                    type: var
+                    name: advertiser_id
+                keyword:
+                  type: string
+                  x-source:
+                    type: var
+                    name: keyword
+                note_ids:
+                  type: string
+                  x-source:
+                    type: var
+                    name: note_ids
+            example:
+              advertiser_id: 7152346

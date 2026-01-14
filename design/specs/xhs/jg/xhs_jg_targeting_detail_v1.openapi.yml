@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: 获取定向信息
+  version: 1.0.0
+  x-api-id: xhs.jg.targeting.detail.v1
+  x-category: targeting_keywords
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/jg/target/get_available_target_info:
+    post:
+      summary: 获取定向信息
+      operationId: xhs_jg_targeting_detail_v1
+      tags:
+      - targeting_keywords
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                advertiser_id:
+                  type: integer
+                  default: 7152346
+                  x-source:
+                    type: var
+                    name: advertiser_id
+                marketing_target:
+                  type: integer
+                  default: 4
+                  x-source:
+                    type: var
+                    name: marketing_target
+            example:
+              advertiser_id: 7152346
+              marketing_target: 4
