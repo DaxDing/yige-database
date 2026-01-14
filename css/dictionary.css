@@ -1,0 +1,511 @@
+/* =============================================
+   数据字典 - 专用样式
+   Theme: 晨曦 (Morning Dew) - Light Mode
+   ============================================= */
+
+/* 分类导航项 */
+.dict-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    margin: 0.125rem 0.75rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+}
+
+.dict-nav-item:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.dict-nav-item.active {
+    background: linear-gradient(135deg, var(--xhs-red) 0%, var(--xhs-red-light) 100%);
+    color: var(--text-inverse);
+    box-shadow: var(--shadow-red);
+}
+
+.dict-nav-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+    flex-shrink: 0;
+}
+
+.dict-nav-icon.fields { background: #DBEAFE; color: #1D4ED8; }
+.dict-nav-icon.atomic { background: #D1FAE5; color: #047857; }
+.dict-nav-icon.composite { background: #FEF3C7; color: #B45309; }
+.dict-nav-icon.codes { background: #EDE9FE; color: #6D28D9; }
+
+.dict-nav-item.active .dict-nav-icon {
+    background: rgba(255, 255, 255, 0.25);
+    color: var(--text-inverse);
+}
+
+.dict-nav-text {
+    flex: 1;
+}
+
+.dict-nav-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.dict-nav-desc {
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    margin-top: 0.125rem;
+}
+
+.dict-nav-item.active .dict-nav-desc {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.dict-nav-count {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    padding: 0.125rem 0.5rem;
+    border-radius: 10px;
+}
+
+.dict-nav-item:hover .dict-nav-count {
+    background: var(--border-default);
+}
+
+.dict-nav-item.active .dict-nav-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: var(--text-inverse);
+}
+
+/* 内容区域 */
+.dict-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.dict-content.active {
+    display: block;
+}
+
+/* 分类标签页 */
+.category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.category-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.category-tab:hover {
+    color: var(--text-primary);
+    border-color: var(--border-default);
+    background: var(--bg-tertiary);
+}
+
+.category-tab.active {
+    color: var(--text-inverse);
+    background: var(--xhs-red);
+    border-color: var(--xhs-red);
+    box-shadow: var(--shadow-red);
+}
+
+.category-tab .tab-count {
+    font-size: 0.6875rem;
+    padding: 0.125rem 0.5rem;
+    background: var(--bg-tertiary);
+    color: var(--text-tertiary);
+    border-radius: 10px;
+}
+
+.category-tab.active .tab-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: var(--text-inverse);
+}
+
+/* 搜索栏 */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 1.5rem;
+    padding: 0.875rem 1.125rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+}
+
+.search-bar:focus-within {
+    border-color: var(--xhs-red);
+    box-shadow: 0 0 0 3px rgba(255, 36, 66, 0.1);
+}
+
+.search-bar i {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+}
+
+.search-bar:focus-within i {
+    color: var(--xhs-red);
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    background: transparent;
+    font-family: inherit;
+}
+
+.search-bar input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-count {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    padding: 0.25rem 0.625rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+}
+
+/* 数据表格 */
+.dict-table {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.dict-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dict-table th {
+    text-align: left;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dict-table td {
+    padding: 0.875rem 1.125rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+}
+
+.dict-table tr:last-child td {
+    border-bottom: none;
+}
+
+.dict-table tr:hover td {
+    background: var(--bg-tertiary);
+}
+
+/* 字段名样式 */
+.field-name {
+    font-family: 'Fira Code', 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--xhs-red);
+}
+
+.field-cn {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: 0.375rem;
+}
+
+/* 数据类型标签 */
+.type-tag {
+    display: inline-block;
+    padding: 0.1875rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 600;
+}
+
+.type-tag.STRING { background: #DBEAFE; color: #1D4ED8; }
+.type-tag.INT { background: #D1FAE5; color: #047857; }
+.type-tag.BIGINT { background: #FEE2E2; color: #B91C1C; }
+.type-tag.DECIMAL { background: #FEF3C7; color: #B45309; }
+.type-tag.DATETIME { background: #EDE9FE; color: #6D28D9; }
+
+/* 分类标签 */
+.category-tag {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    margin-right: 0.375rem;
+    margin-bottom: 0.375rem;
+}
+
+/* 公式代码 */
+.formula-code {
+    font-family: 'Fira Code', 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.625rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    display: inline-block;
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 下拉加载更多 */
+.load-more-area {
+    margin-top: 1.25rem;
+    min-height: 60px;
+}
+
+.load-more-trigger {
+    display: flex;
+    justify-content: center;
+    padding: 1.25rem;
+}
+
+.load-more-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: 24px;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.load-more-btn:hover {
+    border-color: var(--xhs-red);
+    color: var(--xhs-red);
+}
+
+.load-more-btn i {
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+}
+
+.load-more-count {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-left: 0.25rem;
+}
+
+.load-complete {
+    text-align: center;
+    padding: 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+}
+
+/* 标准代码列表（可展开） */
+.codes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.code-item {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-fast);
+}
+
+.code-item:hover {
+    border-color: var(--border-default);
+    box-shadow: var(--shadow-md);
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.code-header:hover {
+    background: var(--bg-tertiary);
+}
+
+.code-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.code-info .field-name {
+    font-size: 0.8125rem;
+}
+
+.code-cn {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.code-desc {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+}
+
+.code-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    flex-shrink: 0;
+}
+
+.code-count {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    padding: 0.3125rem 0.625rem;
+    border-radius: var(--radius-sm);
+}
+
+.code-toggle {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    transition: transform 0.25s ease;
+}
+
+.code-item.expanded .code-toggle {
+    transform: rotate(180deg);
+}
+
+.code-values {
+    display: none;
+    padding: 0 1.25rem 1.25rem;
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border-light);
+}
+
+.code-item.expanded .code-values {
+    display: block;
+    animation: slideDown 0.25s ease;
+}
+
+.code-values table {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.code-values th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.code-values td {
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.code-values tr:last-child td {
+    border-bottom: none;
+}
+
+.code-values tr:hover td {
+    background: var(--bg-tertiary);
+}
+
+.code-values code {
+    font-family: 'Fira Code', 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 0.75rem;
+    padding: 0.1875rem 0.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--xhs-red);
+}
+
+.no-values {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text-tertiary);
+    font-size: 0.875rem;
+}
+
+/* 空状态 */
+.dict-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-tertiary);
+}
+
+.dict-empty i {
+    font-size: 2.5rem;
+    margin-bottom: 1.25rem;
+    color: var(--text-muted);
+}
+
+.dict-empty p {
+    font-size: 0.9375rem;
+}
