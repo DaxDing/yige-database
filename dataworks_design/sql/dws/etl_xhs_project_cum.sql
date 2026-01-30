@@ -1,27 +1,27 @@
 -- ============================================================
--- ETL: DWS → DWS 项目日汇总（30天滚动累计）
+-- ETL: DWS → DWS 项目累计表
 -- 源表: dws_xhs_note_cum, dwd_xhs_creative_hi, brg_xhs_note_project_df
--- 目标表: dws_xhs_project_1d_agg
--- 说明: 内层日汇总 → 外层窗口函数30天滚动累计
+-- 目标表: dws_xhs_project_cum
+-- 说明: 内层日汇总 → 外层窗口函数历史累计
 --       creative 改读 DWD 取日值，避免与累计 DWS 混用
 -- ============================================================
 
-INSERT OVERWRITE TABLE dws_xhs_project_1d_agg PARTITION (ds)
+INSERT OVERWRITE TABLE dws_xhs_project_cum PARTITION (ds)
 SELECT
     project_id,
     dt,
     -- 笔记数（保持日值，不累计）
     note_cnt,
-    -- 金额指标（30天滚动累计）
+    -- 金额指标（历史累计）
     SUM(kol_price)              OVER w AS kol_price,
     SUM(total_platform_price)   OVER w AS total_platform_price,
     SUM(pgy_actual_amt)         OVER w AS pgy_actual_amt,
     SUM(ad_fee)                 OVER w AS ad_fee,
     SUM(fee)                    OVER w AS fee,
-    -- 展现指标（30天滚动累计）
+    -- 展现指标（历史累计）
     SUM(impression)             OVER w AS impression,
     SUM(click)                  OVER w AS click,
-    -- 互动指标（30天滚动累计）
+    -- 互动指标（历史累计）
     SUM(comment)                OVER w AS comment,
     SUM(collect)                OVER w AS collect,
     SUM(share)                  OVER w AS share,
