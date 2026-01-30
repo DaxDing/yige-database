@@ -45,6 +45,21 @@ python3 scripts/maxcompute_ops.py <command> [options]
 | `-p, --project` | Project name | `df_ch_530486` |
 | `-e, --endpoint` | Endpoint region | `cn-hangzhou` |
 
+## Constraints
+
+| Rule | Description |
+|------|-------------|
+| Single statement only | Execute one SQL per call. Multi-statement fails with `Please add put { "odps.sql.submit.mode" : "script"}` |
+| Chain with `&&` | Use shell `&&` to run multiple statements sequentially |
+
+```bash
+# Wrong - multi-statement in single call
+execute-sql "DROP PARTITION (ds='20260126'); DROP PARTITION (ds='20260127')"
+
+# Correct - chain separate calls
+execute-sql "DROP PARTITION (ds='20260126')" && execute-sql "DROP PARTITION (ds='20260127')"
+```
+
 ## Examples
 
 ### List Tables

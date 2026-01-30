@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  title: 品牌查询接口
+  version: 1.0.0
+  x-api-id: xhs.pgy.brand.search.v1
+  x-category: basic_info
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/pgy/brand/search_brand:
+    get:
+      summary: 品牌查询接口
+      operationId: xhs_pgy_brand_search_v1
+      tags:
+      - basic_info
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      parameters:
+      - name: user_id
+        in: query
+        schema:
+          type: string
+          default: 5cf89d080000000018003029
+          x-source:
+            type: env
+            name: USER_ID
+        example: 5cf89d080000000018003029
+      - name: keyword
+        in: query
+        schema:
+          type: string
+          default: 小米
+          x-source:
+            type: var
+            name: keyword
+        example: 小米
+      - name: scene
+        in: query
+        schema:
+          type: integer
+          default: 1
+          x-source:
+            type: var
+            name: scene
+        example: 1

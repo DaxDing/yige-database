@@ -23,13 +23,13 @@ dataworks/
 │   ├── scripts/     # 工具脚本
 │   ├── sql/         # SQL 脚本 (ods/dwd/dws/ads)
 │   └── sync/        # 同步任务
-├── models/          # 数据模型定义（前端引用）
-│   ├── layers.js    # 分层架构 (ODS/DWD/DIM/DWS/ADS)
-│   ├── tables.js    # 表字段定义
-│   ├── fields.js    # 字段标准
-│   ├── metrics.js   # 原子指标 + 复合指标
-│   └── codes.js     # 标准代码
 └── portal/          # 前端可视化工具
+    └── models/      # 数据模型定义
+        ├── layers.js    # 分层架构 (ODS/DWD/DIM/DWS/ADS)
+        ├── tables.js    # 表字段定义
+        ├── fields.js    # 字段标准
+        ├── metrics.js   # 原子指标 + 复合指标
+        └── codes.js     # 标准代码
 ```
 
 ## Architecture
@@ -58,7 +58,7 @@ dataworks/
 ```
 Excel (platform/import/) → DataWorks 平台 → MaxCompute
                                 ↓
-                    JS (models/) → 前端 (portal/)
+               JS (portal/models/) → 前端 (portal/)
 ```
 
 ## Naming Convention
@@ -88,12 +88,30 @@ Excel (platform/import/) → DataWorks 平台 → MaxCompute
 | `dt` | STRING | 数据时间段 | 业务字段后 |
 | `etl_time` | DATETIME | ETL 处理时间 | 表末尾 |
 
+## Environment
+
+凭证存储在 `.env` 文件，执行脚本前加载：
+
+```bash
+export $(cat .env | xargs) && python3 script.py
+```
+
+| Variable | Description |
+|----------|-------------|
+| `FEISHU_APP_ID` | 飞书应用 ID |
+| `FEISHU_APP_SECRET` | 飞书应用密钥 |
+| `ALIYUN_ACCESS_KEY_ID` | 阿里云 AccessKey ID |
+| `ALIYUN_ACCESS_KEY_SECRET` | 阿里云 AccessKey Secret |
+| `DB_HOST/PORT/NAME/USER/PASSWORD` | PostgreSQL 连接信息 |
+
 ## Constraints
 
+- **CRITICAL**: 查表、查数据量等数据查询操作，默认使用 `/operate_maxcompute` 查询 MaxCompute
 - **CRITICAL**: 执行 DataWorks 操作前，必须先调用 `/invoke_dataworks_cli`
-- 表结构变更需同步更新 `models/tables.js`
+- 表结构变更需同步更新 `portal/models/tables.js`
 - SQL 脚本按分层存放于 `platform/sql/{layer}/`
 - API 规范遵循 `xhs_{platform}_{module}_{action}.openapi.yml`
+- **MaxCompute 建表必须添加 COMMENT**：表和字段都需要中文描述
 
 ## Skills
 
@@ -102,5 +120,6 @@ Excel (platform/import/) → DataWorks 平台 → MaxCompute
 | `/invoke_dataworks_cli` | **必查** DataWorks CLI（任务、调度、数据集成） |
 | `/operate_maxcompute` | MaxCompute 表操作（建表、SQL、分区） |
 | `/operate_database` | PostgreSQL/MySQL 操作（连接、查询、DDL） |
+| `/operate_feishu_bitable` | 飞书多维表格操作（读写记录） |
 | `/name_dw_object` | 生成数仓对象命名（表、字段、指标） |
 | `/deploy_site` | 部署 `portal/` 前端到 GitHub Pages |

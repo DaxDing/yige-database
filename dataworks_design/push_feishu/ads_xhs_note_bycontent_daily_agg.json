@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ads_xhs_note_bycontent_daily_agg",
+  "description": "笔记维度内容种草日聚合表",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "description": "项目ID"
+    },
+    "attribution_period": {
+      "type": "null",
+      "description": "归因口径"
+    },
+    "dt": {
+      "type": "integer",
+      "description": "数据更新日期"
+    },
+    "brand_name": {
+      "type": "string",
+      "description": "归属品牌"
+    },
+    "product_category": {
+      "type": "string",
+      "description": "归属品类"
+    },
+    "delivery_product": {
+      "type": "string",
+      "description": "归属产品"
+    },
+    "kol_name": {
+      "type": "string",
+      "description": "博主昵称"
+    },
+    "note_id": {
+      "type": "string",
+      "description": "笔记id"
+    },
+    "fee": {
+      "type": "integer",
+      "description": "总金额"
+    },
+    "ad_fee": {
+      "type": "integer",
+      "description": "投流金额"
+    },
+    "kols_fee": {
+      "type": "integer",
+      "description": "蒲公英金额"
+    },
+    "note_count": {
+      "type": "integer",
+      "description": "笔记数量"
+    },
+    "impression": {
+      "type": "integer",
+      "description": "曝光量"
+    },
+    "read_uv": {
+      "type": "integer",
+      "description": "阅读量"
+    },
+    "interaction": {
+      "type": "integer",
+      "description": "互动量"
+    },
+    "search_cmt_click": {
+      "type": "integer",
+      "description": "搜索组件点击数"
+    },
+    "search_cmt_impression": {
+      "type": "integer",
+      "description": "搜索组件曝光数"
+    },
+    "cpm": {
+      "type": "number",
+      "description": "CPM"
+    },
+    "cpe": {
+      "type": "number",
+      "description": "CPE"
+    },
+    "cpc": {
+      "type": "number",
+      "description": "CPC"
+    },
+    "ctr": {
+      "type": "number",
+      "description": "CTR"
+    },
+    "search_cmt_click_ctr": {
+      "type": "null",
+      "description": "搜索组件CTR"
+    },
+    "cpuv": {
+      "type": "null",
+      "description": "CPUV"
+    },
+    "enter_shop_rate": {
+      "type": "null",
+      "description": "进店率"
+    },
+    "enter_shop_uv": {
+      "type": "integer",
+      "description": "星河-进店UV"
+    },
+    "new_visitor_rate": {
+      "type": "null",
+      "description": "新访客率"
+    },
+    "shop_new_visitor_uv": {
+      "type": "integer",
+      "description": "星河-店铺新访客"
+    },
+    "conversion_rate": {
+      "type": "null",
+      "description": "成交转化率"
+    },
+    "shop_order_uv": {
+      "type": "integer",
+      "description": "星河-全店成交UV"
+    },
+    "average_order_value": {
+      "type": "null",
+      "description": "客单价"
+    },
+    "rpv": {
+      "type": "null",
+      "description": "UV价值"
+    },
+    "new_customer_rate": {
+      "type": "null",
+      "description": "新客率"
+    },
+    "shop_new_customer_uv": {
+      "type": "integer",
+      "description": "星河-店铺新客UV"
+    },
+    "shop_order_gmv": {
+      "type": "integer",
+      "description": "星河-全店成交GMV"
+    },
+    "task_product_gmv": {
+      "type": "number",
+      "description": "星河-单品成交GMV"
+    },
+    "cac": {
+      "type": "null",
+      "description": "新客成本"
+    },
+    "roi": {
+      "type": "integer",
+      "description": "全店ROI"
+    },
+    "single_product_roi": {
+      "type": "integer",
+      "description": "单品ROI"
+    }
+  },
+  "example": {
+    "project_id": null,
+    "attribution_period": 15,
+    "dt": 20251126,
+    "brand_name": "大厨",
+    "product_category": "小家电",
+    "delivery_product": "大厨空气炸锅",
+    "kol_name": "Kelly梨",
+    "note_id": "68da7b5d0000000013035df7",
+    "fee": 800,
+    "ad_fee": 0,
+    "kols_fee": 800,
+    "note_count": 1,
+    "impression": 283,
+    "read_uv": 58,
+    "interaction": 30,
+    "search_cmt_click": 0,
+    "search_cmt_impression": 0,
+    "cpm": 2826.86,
+    "cpe": 26.67,
+    "cpc": 13.79,
+    "ctr": 0.205,
+    "search_cmt_click_ctr": 0,
+    "cpuv": 13.79,
+    "enter_shop_rate": 0,
+    "enter_shop_uv": 0,
+    "new_visitor_rate": null,
+    "shop_new_visitor_uv": 0,
+    "conversion_rate": null,
+    "shop_order_uv": 0,
+    "average_order_value": null,
+    "rpv": null,
+    "new_customer_rate": null,
+    "shop_new_customer_uv": 0,
+    "shop_order_gmv": 0,
+    "task_product_gmv": 0,
+    "cac": null,
+    "roi": 0,
+    "single_product_roi": 0
+  }
+}

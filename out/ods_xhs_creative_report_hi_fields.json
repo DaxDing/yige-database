@@ -1,0 +1,191 @@
+{
+  "table": "ods_xhs_creative_report_hi",
+  "field": "raw_data",
+  "total_keys": 46,
+  "keys": [
+    {
+      "key": "acp",
+      "sample_value": "0.38"
+    },
+    {
+      "key": "action_button_click",
+      "sample_value": "2"
+    },
+    {
+      "key": "action_button_ctr",
+      "sample_value": "1.12%"
+    },
+    {
+      "key": "bidding_strategy",
+      "sample_value": "7"
+    },
+    {
+      "key": "campaign_id",
+      "sample_value": "164229867"
+    },
+    {
+      "key": "campaign_name",
+      "sample_value": "小白马+搜索+站点+一粒甜辣酱+可替代品类词+12.17"
+    },
+    {
+      "key": "click",
+      "sample_value": "1"
+    },
+    {
+      "key": "collect",
+      "sample_value": "1"
+    },
+    {
+      "key": "comment",
+      "sample_value": "1"
+    },
+    {
+      "key": "cpi",
+      "sample_value": "90.75"
+    },
+    {
+      "key": "cpm",
+      "sample_value": "14.62"
+    },
+    {
+      "key": "creativity_id",
+      "sample_value": "3238484147"
+    },
+    {
+      "key": "creativity_image",
+      "sample_value": "http://ci.xiaohongshu.com/1040g00831q3kojrp0a0040no2unfqhbnbsnapso?imageView2/2/w/1080/format/jpg"
+    },
+    {
+      "key": "creativity_name",
+      "sample_value": "小白马+搜索+站点+一粒甜辣酱+可替代品类词+12.17"
+    },
+    {
+      "key": "ctr",
+      "sample_value": "3.85%"
+    },
+    {
+      "key": "fee",
+      "sample_value": "0.38"
+    },
+    {
+      "key": "follow",
+      "sample_value": "1"
+    },
+    {
+      "key": "goods_visit",
+      "sample_value": "1"
+    },
+    {
+      "key": "goods_visit_price",
+      "sample_value": "47.31"
+    },
+    {
+      "key": "i_user_num",
+      "sample_value": "3"
+    },
+    {
+      "key": "i_user_price",
+      "sample_value": "0.39"
+    },
+    {
+      "key": "impression",
+      "sample_value": "26"
+    },
+    {
+      "key": "interaction",
+      "sample_value": "1"
+    },
+    {
+      "key": "like",
+      "sample_value": "1"
+    },
+    {
+      "key": "marketing_target",
+      "sample_value": "4"
+    },
+    {
+      "key": "note_id",
+      "sample_value": "693f7208000000001f005a06"
+    },
+    {
+      "key": "note_user_id",
+      "sample_value": "556d6efd67bc65251e9c4577"
+    },
+    {
+      "key": "optimize_target",
+      "sample_value": "18"
+    },
+    {
+      "key": "pic_save",
+      "sample_value": "1"
+    },
+    {
+      "key": "placement",
+      "sample_value": "2"
+    },
+    {
+      "key": "promotion_target",
+      "sample_value": "1"
+    },
+    {
+      "key": "screenshot",
+      "sample_value": "1"
+    },
+    {
+      "key": "search_cmt_after_read",
+      "sample_value": "3"
+    },
+    {
+      "key": "search_cmt_after_read_avg",
+      "sample_value": "0.75"
+    },
+    {
+      "key": "search_cmt_click",
+      "sample_value": "4"
+    },
+    {
+      "key": "search_cmt_click_cvr",
+      "sample_value": "2.25%"
+    },
+    {
+      "key": "seller_visit",
+      "sample_value": "1"
+    },
+    {
+      "key": "seller_visit_price",
+      "sample_value": "47.31"
+    },
+    {
+      "key": "share",
+      "sample_value": "1"
+    },
+    {
+      "key": "ti_user_num",
+      "sample_value": "15"
+    },
+    {
+      "key": "ti_user_price",
+      "sample_value": "6.05"
+    },
+    {
+      "key": "time",
+      "sample_value": "2026-01-27 00:00 - 00:59"
+    },
+    {
+      "key": "unit_id",
+      "sample_value": "466547462"
+    },
+    {
+      "key": "unit_name",
+      "sample_value": "小白马+搜索+站点+一粒甜辣酱+可替代品类词+12.17"
+    },
+    {
+      "key": "video_play_5s_cnt",
+      "sample_value": "1"
+    },
+    {
+      "key": "video_play_5s_rate",
+      "sample_value": "100.0%"
+    }
+  ]
+}

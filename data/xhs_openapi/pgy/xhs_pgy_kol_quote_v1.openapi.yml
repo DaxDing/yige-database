@@ -1,0 +1,50 @@
+openapi: 3.0.3
+info:
+  title: 获取博主报价
+  version: 1.0.0
+  x-api-id: xhs.pgy.kol.quote.v1
+  x-category: basic_info
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/pgy/kol/data/detail:
+    post:
+      summary: 获取博主报价
+      operationId: xhs_pgy_kol_quote_v1
+      tags:
+      - basic_info
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  default: 5cf89d080000000018003029
+                  x-source:
+                    type: env
+                    name: USER_ID
+                kol_ids:
+                  type: string
+                  x-source:
+                    type: var
+                    name: kol_ids
+                red_id_list:
+                  type: string
+                  x-source:
+                    type: var
+                    name: red_id_list
+            example:
+              user_id: 5cf89d080000000018003029
+              kol_ids: <var:kol_ids>
+              red_id_list: <var:red_id_list>

@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "msg": "成功",
+  "data": {
+    "response": {
+      "success": false,
+      "msg": "系统错误",
+      "code": 10005
+    }
+  },
+  "code": 0
+}

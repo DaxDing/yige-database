@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ads_xhs_project_bycontent_daily_agg",
+  "description": "项目维度内容种草日聚合表",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "description": "项目ID"
+    },
+    "attribution_period": {
+      "type": "integer",
+      "description": "归因口径"
+    },
+    "dt": {
+      "type": "integer",
+      "description": "数据更新日期"
+    },
+    "fee": {
+      "type": "number",
+      "description": "总金额"
+    },
+    "ad_fee": {
+      "type": "number",
+      "description": "投流金额"
+    },
+    "kols_fee": {
+      "type": "integer",
+      "description": "蒲公英金额"
+    },
+    "note_count": {
+      "type": "integer",
+      "description": "笔记数量"
+    },
+    "impression": {
+      "type": "integer",
+      "description": "曝光量"
+    },
+    "read_uv": {
+      "type": "integer",
+      "description": "阅读量"
+    },
+    "interaction": {
+      "type": "integer",
+      "description": "互动量"
+    },
+    "search_cmt_click": {
+      "type": "integer",
+      "description": "搜索组件点击数"
+    },
+    "search_cmt_impression": {
+      "type": "integer",
+      "description": "搜索组件曝光数"
+    },
+    "cpm": {
+      "type": "number",
+      "description": "CPM"
+    },
+    "cpe": {
+      "type": "number",
+      "description": "CPE"
+    },
+    "cpc": {
+      "type": "number",
+      "description": "CPC"
+    },
+    "ctr": {
+      "type": "number",
+      "description": "CTR"
+    },
+    "search_cmt_click_ctr": {
+      "type": "number",
+      "description": "搜索组件CTR"
+    },
+    "cpuv": {
+      "type": "number",
+      "description": "CPUV"
+    },
+    "enter_shop_rate": {
+      "type": "number",
+      "description": "进店率"
+    },
+    "enter_shop_uv": {
+      "type": "integer",
+      "description": "星河-进店UV"
+    },
+    "new_visitor_rate": {
+      "type": "number",
+      "description": "新访客率"
+    },
+    "shop_new_visitor_uv": {
+      "type": "integer",
+      "description": "星河-店铺新访客"
+    },
+    "conversion_rate": {
+      "type": "number",
+      "description": "成交转化率"
+    },
+    "shop_order_uv": {
+      "type": "integer",
+      "description": "星河-全店成交UV"
+    },
+    "average_order_value": {
+      "type": "number",
+      "description": "客单价"
+    },
+    "rpv": {
+      "type": "number",
+      "description": "UV价值"
+    },
+    "new_customer_rate": {
+      "type": "number",
+      "description": "新客率"
+    },
+    "shop_new_customer_uv": {
+      "type": "integer",
+      "description": "星河-店铺新客UV"
+    },
+    "shop_order_gmv": {
+      "type": "number",
+      "description": "星河-全店成交GMV"
+    },
+    "task_product_gmv": {
+      "type": "number",
+      "description": "星河-单品成交GMV"
+    },
+    "cac": {
+      "type": "number",
+      "description": "新客成本"
+    },
+    "roi": {
+      "type": "number",
+      "description": "全店ROI"
+    },
+    "single_product_roi": {
+      "type": "number",
+      "description": "单品ROI"
+    }
+  },
+  "example": {
+    "project_id": null,
+    "attribution_period": 15,
+    "dt": 20251227,
+    "fee": 1412407.09,
+    "ad_fee": 216607.09,
+    "kols_fee": 1195800,
+    "note_count": 715,
+    "impression": 33527043,
+    "read_uv": 3305497,
+    "interaction": 122424,
+    "search_cmt_click": 23800,
+    "search_cmt_impression": 3305497,
+    "cpm": 42.13,
+    "cpe": 11.54,
+    "cpc": 0.43,
+    "ctr": 0.0986,
+    "search_cmt_click_ctr": 0.0072,
+    "cpuv": 8.28,
+    "enter_shop_rate": 0.0882,
+    "enter_shop_uv": 170664,
+    "new_visitor_rate": 0.30,
+    "shop_new_visitor_uv": 51998,
+    "conversion_rate": 0.0182,
+    "shop_order_uv": 3102,
+    "average_order_value": 1708.01,
+    "rpv": 31.04,
+    "new_customer_rate": 0.77,
+    "shop_new_customer_uv": 2378,
+    "shop_order_gmv": 5298248,
+    "task_product_gmv": 2824814.18,
+    "cac": 593.95,
+    "roi": 3.75,
+    "single_product_roi": 2.0
+  }
+}

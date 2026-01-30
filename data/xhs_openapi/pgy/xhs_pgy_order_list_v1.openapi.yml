@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info:
+  title: 订单查询接口
+  version: 1.0.0
+  x-api-id: xhs.pgy.order.list.v1
+  x-category: basic_info
+servers:
+- url: https://adapi.xiaohongshu.com
+paths:
+  /api/open/pgy/order/list:
+    get:
+      summary: 订单查询接口
+      operationId: xhs_pgy_order_list_v1
+      tags:
+      - basic_info
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      parameters:
+      - name: user_id
+        in: query
+        schema:
+          type: string
+          default: 5cf89d080000000018003029
+          x-source:
+            type: env
+            name: USER_ID
+        example: 5cf89d080000000018003029
+      - name: order_ids
+        in: query
+        schema:
+          type: string
+          x-source:
+            type: var
+            name: order_ids
+        example: <var:order_ids>
+      - name: page_num
+        in: query
+        schema:
+          type: string
+          x-source:
+            type: var
+            name: page_num
+        example: <var:page_num>
+      - name: page_size
+        in: query
+        schema:
+          type: string
+          x-source:
+            type: var
+            name: page_size
+        example: <var:page_size>

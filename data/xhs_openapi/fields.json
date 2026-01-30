@@ -1,0 +1,2290 @@
+[
+  {
+    "name": "kol_url",
+    "label": "达人链接",
+    "type": "STRING",
+    "category": "达人维度",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "industry_category",
+    "label": "行业类目",
+    "type": "INT",
+    "category": "产品维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "product_category",
+    "label": "产品品类",
+    "type": "STRING",
+    "category": "产品维度",
+    "source": "飞书表格",
+    "comment": "品牌商内部的品类区分"
+  },
+  {
+    "name": "ad_product_id",
+    "label": "投放产品ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "系统生成",
+    "comment": null
+  },
+  {
+    "name": "ad_product_name",
+    "label": "投放产品名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "product_selling_points",
+    "label": "属性买点",
+    "type": "STRING",
+    "category": "活动策略",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "optimize_target",
+    "label": "优化目标",
+    "type": "INT",
+    "category": "活动策略",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "bidding_strategy",
+    "label": "竞价策略",
+    "type": "INT",
+    "category": "活动策略",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "marketing_target",
+    "label": "营销目标",
+    "type": "INT",
+    "category": "活动策略",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "placement",
+    "label": "投放位置",
+    "type": "INT",
+    "category": "活动策略",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "target_city",
+    "label": "城市定向",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "delivery_period",
+    "label": "投放节奏",
+    "type": "STRING",
+    "category": "活动策略",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "delivery_strategy",
+    "label": "投放策略",
+    "type": "INT",
+    "category": "活动策略",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "delivery_days",
+    "label": "投放天数",
+    "type": "STRING",
+    "category": "活动策略",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "industry_interest_target",
+    "label": "行业兴趣",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "crowd_target",
+    "label": "人群包",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "keywords",
+    "label": "关键词定向",
+    "type": "STRING",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "interest_keywords",
+    "label": "关键词兴趣定向",
+    "type": "STRING",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "search_target_city_intent",
+    "label": "搜索意图城市定向",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "target_device_price",
+    "label": "手机价格",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "reverse_target_crowd",
+    "label": "排除特定人群",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "target_age",
+    "label": "年龄定向",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "target_gender",
+    "label": "性别定向",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "target_device",
+    "label": "设备定向",
+    "type": "INT",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "budget",
+    "label": "预算",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "reserve_pv",
+    "label": "预告组件点击量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "engage_comp_impression",
+    "label": "互动组件展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "engage_comp_click",
+    "label": "互动组件点击量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "remarks",
+    "label": "备注说明",
+    "type": "STRING",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "app_register_cnt",
+    "label": "注册数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "first_app_pay_cnt",
+    "label": "首次付费数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "current_app_pay_cnt",
+    "label": "当日付费次数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "app_key_action_cnt",
+    "label": "关键行为数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "app_pay_cnt_7d",
+    "label": "7日付费次数",
+    "type": "STRING",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "app_pay_amount",
+    "label": "付费金额",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "app_activate_amount_1d",
+    "label": "当日LTV",
+    "type": "STRING",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "app_activate_amount_3d",
+    "label": "三日LTV",
+    "type": "STRING",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "app_activate_amount_7d",
+    "label": "七日LTV",
+    "type": "STRING",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "retention_1d_cnt",
+    "label": "次留",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "retention_3d_cnt",
+    "label": "3日留存",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "retention_7d_cnt",
+    "label": "7日留存",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "app_activate_cnt",
+    "label": "激活数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "order_amount",
+    "label": "订单流水",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "fee",
+    "label": "消费",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "roi",
+    "label": "投资回报率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "roas",
+    "label": "广告支出回报率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "gmv",
+    "label": "商品交易总额",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "cpe",
+    "label": "平均互动成本",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "cpm",
+    "label": "平均千次展示消费",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "cpi",
+    "label": "互动单价",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "content_comp_click",
+    "label": "内容组件点击量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "content_comp_impression",
+    "label": "内容组件展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "comp_click",
+    "label": "组件点击量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": "蒲公英的4 个组件之和"
+  },
+  {
+    "name": "comp_impression",
+    "label": "组件展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": "蒲公英的4 个组件之和"
+  },
+  {
+    "name": "ad_cpuv",
+    "label": "投流 CPUV",
+    "type": "DECIMAL",
+    "category": "业务指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "cash_amount",
+    "label": "现金消费",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "organic_shop_uv",
+    "label": "自然进店UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "daily_organic_shop_uv",
+    "label": "日均自然进店UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "ad_enter_shop_uv",
+    "label": "投流进店UV",
+    "type": "BIGINT",
+    "category": "业务指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "ad_interaction",
+    "label": "投流互动量",
+    "type": "BIGINT",
+    "category": "业务指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "ad_click",
+    "label": "投流点击量",
+    "type": "BIGINT",
+    "category": "业务指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "ad_impression",
+    "label": "投流展现量",
+    "type": "BIGINT",
+    "category": "业务指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "ad_fee",
+    "label": "投流消费",
+    "type": "DECIMAL",
+    "category": "业务指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "jd_ad_fee",
+    "label": "小红盟投流消费",
+    "type": "DECIMAL",
+    "category": "业务指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "tb_ad_fee",
+    "label": "小红星投流消费",
+    "type": "DECIMAL",
+    "category": "业务指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "jd_fee",
+    "label": "小红盟消费",
+    "type": "DECIMAL",
+    "category": "业务指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "tb_fee",
+    "label": "小红星消费",
+    "type": "DECIMAL",
+    "category": "业务指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "total_budget",
+    "label": "总预算",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "budget_ratio",
+    "label": "预算占比",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "video_count_budget",
+    "label": "视频数量预估",
+    "type": "BIGINT",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "image_text_count_budget",
+    "label": "图文数量预估",
+    "type": "BIGINT",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "kol_budget",
+    "label": "达人预算",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "ad_budget",
+    "label": "投流预算",
+    "type": "DECIMAL",
+    "category": "业务指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "planned_note_count",
+    "label": "笔记数量规划",
+    "type": "BIGINT",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "execution_detail_cost",
+    "label": "执行细项费用",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "phase_budget",
+    "label": "分阶段预算",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "phase_budget_ratio",
+    "label": "分阶段预算占比",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "feed_budget",
+    "label": "信息流预算",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "search_budget",
+    "label": "搜索流预算",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "phase_total_budget",
+    "label": "阶段总预算",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "optimization_goal",
+    "label": "重点优化目标",
+    "type": "STRING",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "effective_budget",
+    "label": "有效预算",
+    "type": "DECIMAL",
+    "category": "规划指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "read_uv",
+    "label": "阅读量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "promotion_impression",
+    "label": "推广展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "heat_read",
+    "label": "加热阅读量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "discovery_impression",
+    "label": "发现页展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "heat_impression",
+    "label": "加热展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "follow_read",
+    "label": "关注阅读",
+    "type": "STRING",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "promotion_read",
+    "label": "推广阅读量",
+    "type": "STRING",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "search_impression",
+    "label": "搜索页展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "search_read",
+    "label": "搜索阅读量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "finish_rate",
+    "label": "视频完播率",
+    "type": "DECIMAL",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "avg_view_time",
+    "label": "平均浏览时长(秒)",
+    "type": "DECIMAL",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "video_play_5s_rate",
+    "label": "5s完播率",
+    "type": "DECIMAL",
+    "category": "流量指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "video_play_5s_cnt",
+    "label": "5秒播放量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "comment",
+    "label": "评论",
+    "type": "BIGINT",
+    "category": "互动指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "collect",
+    "label": "收藏",
+    "type": "BIGINT",
+    "category": "互动指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "follow",
+    "label": "关注",
+    "type": "BIGINT",
+    "category": "互动指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "share",
+    "label": "分享",
+    "type": "BIGINT",
+    "category": "互动指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "action_button_click",
+    "label": "行动按钮点击量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "screenshot",
+    "label": "截图",
+    "type": "BIGINT",
+    "category": "互动指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "pic_save",
+    "label": "保存图片",
+    "type": "BIGINT",
+    "category": "互动指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "like",
+    "label": "点赞",
+    "type": "BIGINT",
+    "category": "互动指标",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "impression",
+    "label": "展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "click",
+    "label": "点击量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "ctr",
+    "label": "点击率",
+    "type": "DECIMAL",
+    "category": "流量指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "pic_read_3s_rate",
+    "label": "3s阅读率",
+    "type": "DECIMAL",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "feed_interest",
+    "label": "推荐场种草数",
+    "type": "STRING",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "cp",
+    "label": "消费意向",
+    "type": "STRING",
+    "category": "转化指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "other_interest",
+    "label": "其他场种草数",
+    "type": "STRING",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "search_interest",
+    "label": "搜索场种草数",
+    "type": "STRING",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "interest",
+    "label": "种草数",
+    "type": "STRING",
+    "category": "流量指标",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "search_cmt_after_read",
+    "label": "搜后阅读量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书聚光",
+    "comment": "产品种草"
+  },
+  {
+    "name": "i_user_num",
+    "label": "新增种草人群",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书聚光",
+    "comment": "产品种草"
+  },
+  {
+    "name": "ti_user_num",
+    "label": "新增深度种草人群",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书聚光",
+    "comment": "产品种草"
+  },
+  {
+    "name": "search_cmt_click",
+    "label": "搜索组件点击量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": "小红书聚光",
+    "comment": "产品种草，蒲公英的content_comp_click+蒲公英的content_comp_click"
+  },
+  {
+    "name": "search_cmt_impression",
+    "label": "搜索组件展现量",
+    "type": "BIGINT",
+    "category": "流量指标",
+    "source": null,
+    "comment": "产品种草，蒲公英的content_comp_impression+蒲公英的content_comp_impression"
+  },
+  {
+    "name": "search_revisit_rate",
+    "label": "回搜率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "interaction",
+    "label": "互动量",
+    "type": "BIGINT",
+    "category": "互动指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "cpc",
+    "label": "点击成本",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "action_button_ctr",
+    "label": "行动按钮点击转化率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "search_cmt_click_ctr",
+    "label": "搜索组件点击转化率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "cpti",
+    "label": "深度种草成本",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "cpax",
+    "label": "行动成本",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "cpuv",
+    "label": "访问成本",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "cost_per_conversion",
+    "label": "成交成本",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "average_order_value",
+    "label": "客单价",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "enter_shop_rate",
+    "label": "进店率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "conversion_rate",
+    "label": "转化率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "new_visitor_cost",
+    "label": "新访客成本",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "cac",
+    "label": "新客成本",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "new_visitor_rate",
+    "label": "新访客率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "customer_acquisition_rate",
+    "label": "拉客率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "shop_order_gmv",
+    "label": "成交GMV",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "shop_order_uv",
+    "label": "成交UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "add_cart_uv",
+    "label": "加购UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "shop_new_visitor_uv",
+    "label": "新访客UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "shop_new_customer_uv",
+    "label": "新客UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "enter_shop_uv",
+    "label": "进店UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "landing_page_visit",
+    "label": "落地页访问量",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "客资收集"
+  },
+  {
+    "name": "leads_button_impression",
+    "label": "表单按钮曝光量",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "客资收集"
+  },
+  {
+    "name": "message_user",
+    "label": "私信进线人数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "客资收集"
+  },
+  {
+    "name": "message",
+    "label": "私信开口条数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "客资收集"
+  },
+  {
+    "name": "message_consult",
+    "label": "私信进线数",
+    "type": "INT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "客资收集"
+  },
+  {
+    "name": "initiative_message",
+    "label": "私信开口数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "客资收集"
+  },
+  {
+    "name": "msg_leads_num",
+    "label": "私信留资数",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "客资收集"
+  },
+  {
+    "name": "leads",
+    "label": "表单提交",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "客资收集"
+  },
+  {
+    "name": "invoke_app_enter_store_cnt",
+    "label": "APP进店量（唤起）",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "invoke_app_engagement_cnt",
+    "label": "APP互动量（唤起）",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "invoke_app_payment_cnt",
+    "label": "APP支付次数（唤起）",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "search_invoke_button_click_cnt",
+    "label": "APP打开按钮点击量（唤起）",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "invoke_app_payment_amount",
+    "label": "APP支付金额（唤起）",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "invoke_app_open_cnt",
+    "label": "APP打开量（唤起）",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "invoke_app_payment_cost",
+    "label": "APP订单支付成本（唤起）",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "invoke_app_open_cost",
+    "label": "APP打开成本（唤起）",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "first_app_pay_cost",
+    "label": "首次付费成本",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "app_activate_cost",
+    "label": "激活成本",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "external_goods_order_7",
+    "label": "行业商品成交订单量（7日）",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "external_rgmv_7",
+    "label": "行业商品GMV（7日）",
+    "type": "STRING",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "external_goods_order_price_7",
+    "label": "行业商品成交订单成本（7日）",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "应用推广"
+  },
+  {
+    "name": "external_goods_order_15",
+    "label": "行业商品成交订单量（15日）",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "external_rgmv_15",
+    "label": "行业商品GMV（15日）",
+    "type": "STRING",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "external_goods_order_price_15",
+    "label": "行业商品成交订单成本（15日）",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "external_goods_order_30",
+    "label": "行业商品成交订单量（30日）",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "external_rgmv_30",
+    "label": "行业商品GMV（30日）",
+    "type": "STRING",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "external_goods_order_price_30",
+    "label": "行业商品成交订单成本（30日）",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "external_goods_visit_7",
+    "label": "行业商品点击量",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "小红书聚光",
+    "comment": "种草直达"
+  },
+  {
+    "name": "kol_type",
+    "label": "达人类型",
+    "type": "INT",
+    "category": "达人维度",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "kol_tier",
+    "label": "达人量级",
+    "type": "STRING",
+    "category": "流量指标",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "window_period",
+    "label": "窗口期",
+    "type": "STRING",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "delivery_date",
+    "label": "投放日期",
+    "type": "DATE",
+    "category": "时间维度",
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "user_name",
+    "label": "用户名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "brand_user_name",
+    "label": "品牌商名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "virtual_seller_name",
+    "label": "子账户名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "advertiser_name",
+    "label": "投放账号名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "brand_qual_name",
+    "label": "品牌资质名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "apply_name",
+    "label": "资质名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "brand_name",
+    "label": "品牌名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "spu_name",
+    "label": "SPU名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "unit_name",
+    "label": "单元名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "target_name",
+    "label": "定向名称",
+    "type": "INT",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "creativity_name",
+    "label": "创意名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "xhs_product_name",
+    "label": "跨域项目名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "task_name",
+    "label": "任务组名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "sub_task_name",
+    "label": "子任务名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "project_name",
+    "label": "项目名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "kol_name",
+    "label": "博主名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "order_name",
+    "label": "订单名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "note_url",
+    "label": "笔记链接",
+    "type": "STRING",
+    "category": "内容维度",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "note_name",
+    "label": "笔记名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "campaign_group_name",
+    "label": "广告组名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "group_name",
+    "label": "人群包名",
+    "type": "STRING",
+    "category": "其他",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "campaign_name",
+    "label": "计划名称",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "advertiser_id",
+    "label": "投放账号ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "apply_id",
+    "label": "资质ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "brand_id",
+    "label": "品牌ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "brand_qual_id",
+    "label": "品牌资质ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "brand_user_id",
+    "label": "品牌商ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "campaign_id",
+    "label": "计划ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "note_id",
+    "label": "笔记ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "creativity_id",
+    "label": "创意ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "group_id",
+    "label": "人群包ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "kol_id",
+    "label": "达人ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "order_id",
+    "label": "订单ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "xhs_product_id",
+    "label": "跨域项目ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "project_id",
+    "label": "项目ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "kol_red_id",
+    "label": "小红书ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "spu_id",
+    "label": "SPU ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "target_id",
+    "label": "定向ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "task_id",
+    "label": "任务组ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "unit_id",
+    "label": "单元ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "user_id",
+    "label": "用户ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "virtual_seller_id",
+    "label": "子账户ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "campaign_group_id",
+    "label": "广告组ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "sub_task_id",
+    "label": "子任务ID",
+    "type": "STRING",
+    "category": "标识属性",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "operate_type",
+    "label": "消费类型",
+    "type": "INT",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "account_type",
+    "label": "资金类型",
+    "type": "INT",
+    "category": "其他",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "statistic_type",
+    "label": "统计类型",
+    "type": "INT",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "evaluation_metrics",
+    "label": "评估指标",
+    "type": "STRING",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "task_auth_status",
+    "label": "授权状态",
+    "type": "INT",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "year",
+    "label": "年",
+    "type": "STRING",
+    "category": "时间维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "month",
+    "label": "月",
+    "type": "STRING",
+    "category": "时间维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "week",
+    "label": "周",
+    "type": "STRING",
+    "category": "时间维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "dt",
+    "label": "日期",
+    "type": "DATE",
+    "category": "时间维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "event_group_end_time",
+    "label": "联盟结束时间",
+    "type": "DATETIME",
+    "category": "时间维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "event_group_start_time",
+    "label": "联盟开始时间",
+    "type": "DATETIME",
+    "category": "时间维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "hh",
+    "label": "小时",
+    "type": "STRING",
+    "category": "时间维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "grass_alliance",
+    "label": "种草联盟",
+    "type": "STRING",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "attribution_period",
+    "label": "归因口径",
+    "type": "STRING",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "intelligent_expansion",
+    "label": "智能扩量",
+    "type": "STRING",
+    "category": "定向维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "target_type",
+    "label": "定向类型",
+    "type": "STRING",
+    "category": "定向维度",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "note_status",
+    "label": "笔记状态",
+    "type": "INT",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "note_type",
+    "label": "笔记类型",
+    "type": "INT",
+    "category": "内容维度",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "note_source",
+    "label": "笔记来源",
+    "type": "STRING",
+    "category": "内容维度",
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "content_category",
+    "label": "内容类目",
+    "type": "INT",
+    "category": "内容维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "promotion_target",
+    "label": "标的类型",
+    "type": "INT",
+    "category": "活动策略",
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "kfs",
+    "label": "投放位置分配",
+    "type": "STRING",
+    "category": "其他",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "content_theme",
+    "label": "内容方向",
+    "type": "STRING",
+    "category": "内容维度",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "single_product_roi",
+    "label": "单品 ROI",
+    "type": "DECIMAL",
+    "category": "成本指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "rpv",
+    "label": "UV 价值",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "new_customer_rate",
+    "label": " 新客率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "note_count",
+    "label": "笔记数量",
+    "type": "BIGINT",
+    "category": "统计指标",
+    "source": null,
+    "comment": null
+  },
+  {
+    "name": "content_interaction_rate",
+    "label": "内容互动率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "taobao_search_impression_uv",
+    "label": "手淘搜索曝光UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "taobao_search_enter_shop_uv",
+    "label": "手淘搜索进店UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "shop_member_uv",
+    "label": "店铺会员UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "presale_deposit_gmv",
+    "label": "预售付定GMV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "presale_estimated_gmv",
+    "label": "预售整单预估GMV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "presale_deposit_uv",
+    "label": "预售付定UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "task_product_gmv",
+    "label": "任务商品成交GMV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "task_product_new_customer_gmv",
+    "label": "任务商品新客成交GMV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "non_task_product_gmv",
+    "label": "非任务商品成交GMV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "collect_cart_rate",
+    "label": "收藏加购率",
+    "type": "DECIMAL",
+    "category": "转化指标",
+    "source": "计算",
+    "comment": "产品种草"
+  },
+  {
+    "name": "shop_collect",
+    "label": "店铺收藏 UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "淘宝星河",
+    "comment": "产品种草"
+  },
+  {
+    "name": "product_collect",
+    "label": "商品收藏UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "search_view_uv",
+    "label": "搜索浏览UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "product_detail_uv",
+    "label": "商详浏览UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "order_uv",
+    "label": "下单UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "main_product_order_uv",
+    "label": "主推商品下单UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "order_gmv",
+    "label": "下单GMV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "main_product_order_gmv",
+    "label": "主推商品下单GMV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "main_product_deal_uv",
+    "label": "主推商品成交UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "search_impression_uv",
+    "label": "搜索曝光UV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "main_product_deal_gmv",
+    "label": "主推商品成交GMV",
+    "type": "BIGINT",
+    "category": "转化指标",
+    "source": "京准通",
+    "comment": "产品种草"
+  },
+  {
+    "name": "imp_num",
+    "label": "曝光量",
+    "type": null,
+    "category": null,
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "read_num",
+    "label": "阅读量",
+    "type": null,
+    "category": null,
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "\nengage_num",
+    "label": "互动量",
+    "type": null,
+    "category": null,
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "third_bcoo_income_amt",
+    "label": "蒲公英金额",
+    "type": null,
+    "category": null,
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "read_uv",
+    "label": "阅读 / 播放 UV",
+    "type": null,
+    "category": null,
+    "source": "淘宝星河",
+    "comment": null
+  },
+  {
+    "name": "jd_offsite_active_uv",
+    "label": "小红盟站外活跃行为UV",
+    "type": null,
+    "category": null,
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "tb_offsite_active_uv",
+    "label": "小红星站外活跃行为UV",
+    "type": null,
+    "category": null,
+    "source": "小红书聚光",
+    "comment": null
+  },
+  {
+    "name": "add_cart_rate",
+    "label": "加购率",
+    "type": null,
+    "category": null,
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": null,
+    "label": "下单率",
+    "type": null,
+    "category": null,
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "offsite_action_cvr",
+    "label": "站外行为转化率",
+    "type": null,
+    "category": null,
+    "source": "计算",
+    "comment": null
+  },
+  {
+    "name": "read_uv",
+    "label": "阅读UV",
+    "type": null,
+    "category": null,
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "jd_active_num",
+    "label": "京东站外活跃行为UV",
+    "type": null,
+    "category": null,
+    "source": "小红书蒲公英",
+    "comment": null
+  },
+  {
+    "name": "exec_dept_name",
+    "label": "执行部门",
+    "type": null,
+    "category": null,
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "exec_dept_id",
+    "label": "执行部门ID",
+    "type": null,
+    "category": null,
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "is_proxy",
+    "label": "是否代投笔记",
+    "type": null,
+    "category": null,
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "plan_video_cnt",
+    "label": "视频规划数量",
+    "type": null,
+    "category": null,
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "plan_image_text_cnt",
+    "label": "图文规划数量",
+    "type": null,
+    "category": null,
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": null,
+    "label": "蒲公英实际金额",
+    "type": null,
+    "category": null,
+    "source": "飞书表格",
+    "comment": null
+  },
+  {
+    "name": "offsite_task_cost",
+    "label": "站外任务期消费",
+    "type": null,
+    "category": null,
+    "source": "小红书聚光",
+    "comment": "分 tb/jd"
+  },
+  {
+    "name": "offsite_task_read_uv",
+    "label": "站外任务期阅读UV",
+    "type": null,
+    "category": null,
+    "source": "小红书聚光",
+    "comment": "分 tb/jd"
+  },
+  {
+    "name": "offsite_active_rate",
+    "label": null,
+    "type": null,
+    "category": null,
+    "source": "小红书聚光",
+    "comment": "分 tb/jd"
+  },
+  {
+    "name": "offsite_active_cost",
+    "label": null,
+    "type": null,
+    "category": null,
+    "source": "小红书聚光",
+    "comment": "分 tb/jd"
+  }
+]
