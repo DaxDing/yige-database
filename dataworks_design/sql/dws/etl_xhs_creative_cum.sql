@@ -15,12 +15,12 @@ SELECT
     campaign_id,
     dt,
 
-    -- ============ 展现指标（30天滚动累计） ============
+    -- ============ 展现指标（历史累计） ============
     SUM(fee)                        OVER (PARTITION BY creativity_id ORDER BY ds) AS fee,
     SUM(impression)                 OVER (PARTITION BY creativity_id ORDER BY ds) AS impression,
     SUM(click)                      OVER (PARTITION BY creativity_id ORDER BY ds) AS click,
 
-    -- ============ 笔记指标（30天滚动累计） ============
+    -- ============ 笔记指标（历史累计） ============
     SUM(`like`)                     OVER (PARTITION BY creativity_id ORDER BY ds) AS `like`,
     SUM(comment)                    OVER (PARTITION BY creativity_id ORDER BY ds) AS comment,
     SUM(collect)                    OVER (PARTITION BY creativity_id ORDER BY ds) AS collect,
@@ -32,16 +32,16 @@ SELECT
     SUM(pic_save)                   OVER (PARTITION BY creativity_id ORDER BY ds) AS pic_save,
     SUM(reserve_pv)                 OVER (PARTITION BY creativity_id ORDER BY ds) AS reserve_pv,
 
-    -- ============ 视频指标（30天滚动累计） ============
+    -- ============ 视频指标（历史累计） ============
     SUM(video_play_5s_cnt)          OVER (PARTITION BY creativity_id ORDER BY ds) AS video_play_5s_cnt,
 
-    -- ============ 产品种草指标（30天滚动累计） ============
+    -- ============ 产品种草指标（历史累计） ============
     SUM(search_cmt_click)           OVER (PARTITION BY creativity_id ORDER BY ds) AS search_cmt_click,
     SUM(search_cmt_after_read)      OVER (PARTITION BY creativity_id ORDER BY ds) AS search_cmt_after_read,
     SUM(i_user_num)                 OVER (PARTITION BY creativity_id ORDER BY ds) AS i_user_num,
     SUM(ti_user_num)                OVER (PARTITION BY creativity_id ORDER BY ds) AS ti_user_num,
 
-    -- ============ 客资收集指标（30天滚动累计） ============
+    -- ============ 客资收集指标（历史累计） ============
     SUM(leads)                      OVER (PARTITION BY creativity_id ORDER BY ds) AS leads,
     SUM(landing_page_visit)         OVER (PARTITION BY creativity_id ORDER BY ds) AS landing_page_visit,
     SUM(leads_button_impression)    OVER (PARTITION BY creativity_id ORDER BY ds) AS leads_button_impression,
@@ -51,7 +51,7 @@ SELECT
     SUM(initiative_message)         OVER (PARTITION BY creativity_id ORDER BY ds) AS initiative_message,
     SUM(msg_leads_num)              OVER (PARTITION BY creativity_id ORDER BY ds) AS msg_leads_num,
 
-    -- ============ 应用推广指标（30天滚动累计） ============
+    -- ============ 应用推广指标（历史累计） ============
     SUM(invoke_app_open_cnt)        OVER (PARTITION BY creativity_id ORDER BY ds) AS invoke_app_open_cnt,
     SUM(invoke_app_enter_store_cnt) OVER (PARTITION BY creativity_id ORDER BY ds) AS invoke_app_enter_store_cnt,
     SUM(invoke_app_engagement_cnt)  OVER (PARTITION BY creativity_id ORDER BY ds) AS invoke_app_engagement_cnt,
@@ -72,7 +72,7 @@ SELECT
     SUM(retention_3d_cnt)           OVER (PARTITION BY creativity_id ORDER BY ds) AS retention_3d_cnt,
     SUM(retention_7d_cnt)           OVER (PARTITION BY creativity_id ORDER BY ds) AS retention_7d_cnt,
 
-    -- ============ 种草直达指标（30天滚动累计） ============
+    -- ============ 种草直达指标（历史累计） ============
     SUM(external_goods_visit_7)     OVER (PARTITION BY creativity_id ORDER BY ds) AS external_goods_visit_7,
     SUM(external_goods_order_7)     OVER (PARTITION BY creativity_id ORDER BY ds) AS external_goods_order_7,
     SUM(external_rgmv_7)            OVER (PARTITION BY creativity_id ORDER BY ds) AS external_rgmv_7,
@@ -81,7 +81,7 @@ SELECT
     SUM(external_goods_order_30)    OVER (PARTITION BY creativity_id ORDER BY ds) AS external_goods_order_30,
     SUM(external_rgmv_30)           OVER (PARTITION BY creativity_id ORDER BY ds) AS external_rgmv_30,
 
-    -- ============ 站外行为指标 15天归因（30天滚动累计） ============
+    -- ============ 站外行为指标 15天归因（历史累计） ============
     SUM(15d_ad_offsite_active_uv)       OVER (PARTITION BY creativity_id ORDER BY ds) AS 15d_ad_offsite_active_uv,
     SUM(15d_ad_offsite_task_cost)       OVER (PARTITION BY creativity_id ORDER BY ds) AS 15d_ad_offsite_task_cost,
     SUM(15d_ad_offsite_task_read_uv)    OVER (PARTITION BY creativity_id ORDER BY ds) AS 15d_ad_offsite_task_read_uv,
@@ -89,7 +89,7 @@ SELECT
     SUM(15d_ad_offsite_task_cost_dedup) OVER (PARTITION BY creativity_id ORDER BY ds) AS 15d_ad_offsite_task_cost_dedup,
     SUM(15d_ad_offsite_task_read_uv_dedup) OVER (PARTITION BY creativity_id ORDER BY ds) AS 15d_ad_offsite_task_read_uv_dedup,
 
-    -- ============ 站外行为指标 30天归因（30天滚动累计） ============
+    -- ============ 站外行为指标 30天归因（历史累计） ============
     SUM(30d_ad_offsite_active_uv)       OVER (PARTITION BY creativity_id ORDER BY ds) AS 30d_ad_offsite_active_uv,
     SUM(30d_ad_offsite_task_cost)       OVER (PARTITION BY creativity_id ORDER BY ds) AS 30d_ad_offsite_task_cost,
     SUM(30d_ad_offsite_task_read_uv)    OVER (PARTITION BY creativity_id ORDER BY ds) AS 30d_ad_offsite_task_read_uv,

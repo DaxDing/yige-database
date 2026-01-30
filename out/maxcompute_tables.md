@@ -44,7 +44,7 @@
 
 | 表名 | 说明 | 更新策略 |
 |------|------|----------|
-| `dws_xhs_content_theme_1d_agg` | 内容主题日汇总表 | 聚合 |
+| `dws_xhs_content_theme_cum` | 内容主题累计表 | 累计值 |
 | `dws_xhs_creative_cum` | 创意累计表 | 累计值 |
 | `dws_xhs_note_cum` | 笔记累计宽表 | 累计值 |
 | `dws_xhs_project_1d_agg` | 项目日汇总表 | 聚合 |

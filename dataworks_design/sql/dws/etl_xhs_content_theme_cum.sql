@@ -1,11 +1,11 @@
 -- ============================================================
--- ETL: DWS → DWS 内容主题日汇总
+-- ETL: DWS → DWS 内容主题累计表
 -- 源表: dws_xhs_note_cum, dws_xhs_creative_cum
--- 目标表: dws_xhs_content_theme_1d_agg
--- 说明: 按 content_theme + 产品维度 + dt 聚合，源表已过滤桥表存在的笔记
+-- 目标表: dws_xhs_content_theme_cum
+-- 说明: 按 content_theme + 产品维度 + dt 聚合，源表累计值聚合后仍为累计值
 -- ============================================================
 
-INSERT OVERWRITE TABLE dws_xhs_content_theme_1d_agg PARTITION (ds)
+INSERT OVERWRITE TABLE dws_xhs_content_theme_cum PARTITION (ds)
 SELECT
     n.content_theme,
     n.ad_product_id,
