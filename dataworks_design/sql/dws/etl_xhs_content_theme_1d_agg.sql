@@ -1,6 +1,6 @@
 -- ============================================================
 -- ETL: DWS → DWS 内容主题日汇总
--- 源表: dws_xhs_note_1d_agg, dws_xhs_creative_1d_agg
+-- 源表: dws_xhs_note_cum, dws_xhs_creative_1d_agg
 -- 目标表: dws_xhs_content_theme_1d_agg
 -- 说明: 按 content_theme + 产品维度 + dt 聚合，源表已过滤桥表存在的笔记
 -- ============================================================
@@ -100,7 +100,7 @@ SELECT
     -- 系统字段
     GETDATE()                                             AS etl_time,
     n.ds                                                  AS ds                     -- 动态分区字段
-FROM dws_xhs_note_1d_agg n
+FROM dws_xhs_note_cum n
 LEFT JOIN (
     -- 按 note_id+dt+ds 预聚合，避免一对多扇出
     SELECT note_id, dt, ds,

@@ -1,11 +1,11 @@
 -- ============================================================
 -- ETL: DWD → DWS 笔记日汇总（种草+转化）
 -- 源表: dwd_xhs_note_cum, brg_xhs_note_project_df, dim_xhs_note_df, dim_xhs_ad_product_df, dim_xhs_task_group_df, dwd_xhs_conversion_bycontent_di
--- 目标表: dws_xhs_note_1d_agg
+-- 目标表: dws_xhs_note_cum
 -- 说明: 仅对桥表存在的笔记进行累计，JOIN 维度和转化（转化数据按归因周期聚合）
 -- ============================================================
 
-INSERT OVERWRITE TABLE dws_xhs_note_1d_agg PARTITION (ds)
+INSERT OVERWRITE TABLE dws_xhs_note_cum PARTITION (ds)
 SELECT
     n.note_id,
     n.kol_name,

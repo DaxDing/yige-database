@@ -1,6 +1,6 @@
 -- ============================================================
 -- ETL: DWS → ADS 内容方向内容种草日汇总
--- 源表: dws_xhs_note_1d_agg, dws_xhs_creative_1d_agg, brg_xhs_note_project_df, dim_xhs_project_df
+-- 源表: dws_xhs_note_cum, dws_xhs_creative_1d_agg, brg_xhs_note_project_df, dim_xhs_project_df
 -- 目标表: ads_xhs_content_theme_bycontent_daily_agg
 -- 说明: 基于项目有效期做累计差值（结束 - 开始），按项目+内容方向维度聚合
 -- ============================================================
@@ -152,12 +152,12 @@ CROSS JOIN (
     SELECT '30' AS attribution_period
 ) attr
 -- 结束时间点数据（取KPI获取时间，未到则取当天）
-LEFT JOIN dws_xhs_note_1d_agg e
+LEFT JOIN dws_xhs_note_cum e
     ON b.note_id = e.note_id
     AND e.dt = LEAST(p.kpi_fetch_time, TO_CHAR(TO_DATE(b.ds, 'yyyymmdd'), 'yyyy-mm-dd'))
     AND e.ds = b.ds
 -- 开始时间点数据（项目开始日期前一天）
-LEFT JOIN dws_xhs_note_1d_agg s
+LEFT JOIN dws_xhs_note_cum s
     ON b.note_id = s.note_id
     AND s.dt = TO_CHAR(DATEADD(TO_DATE(p.valid_from, 'yyyy-mm-dd'), -1, 'dd'), 'yyyy-mm-dd')
     AND s.ds = b.ds

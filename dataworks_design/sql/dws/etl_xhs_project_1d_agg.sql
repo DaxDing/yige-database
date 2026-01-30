@@ -1,6 +1,6 @@
 -- ============================================================
 -- ETL: DWS → DWS 项目日汇总（30天滚动累计）
--- 源表: dws_xhs_note_1d_agg, dwd_xhs_creative_hi, brg_xhs_note_project_df
+-- 源表: dws_xhs_note_cum, dwd_xhs_creative_hi, brg_xhs_note_project_df
 -- 目标表: dws_xhs_project_1d_agg
 -- 说明: 内层日汇总 → 外层窗口函数30天滚动累计
 --       creative 改读 DWD 取日值，避免与累计 DWS 混用
@@ -187,7 +187,7 @@ FROM (
         SUM(n.30d_presale_deposit_uv)                         AS 30d_presale_deposit_uv,
         -- 分区
         n.ds
-    FROM dws_xhs_note_1d_agg n
+    FROM dws_xhs_note_cum n
     INNER JOIN brg_xhs_note_project_df b
         ON n.note_id = b.note_id
         AND b.ds = '${bizdate}'

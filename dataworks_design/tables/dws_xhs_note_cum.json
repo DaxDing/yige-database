@@ -1,6 +1,6 @@
 {
-  "name": "dws_xhs_note_1d_agg",
-  "nameCn": "笔记日汇总表",
+  "name": "dws_xhs_note_cum",
+  "nameCn": "笔记累计宽表",
   "fields": [
     {"name": "note_id", "type": "STRING", "nameCn": "笔记ID"},
     {"name": "kol_name", "type": "STRING", "nameCn": "达人名称"},
