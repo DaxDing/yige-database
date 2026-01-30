@@ -1,6 +1,6 @@
 -- ============================================================
 -- ETL: DWS → DWS 内容主题日汇总
--- 源表: dws_xhs_note_cum, dws_xhs_creative_1d_agg
+-- 源表: dws_xhs_note_cum, dws_xhs_creative_cum
 -- 目标表: dws_xhs_content_theme_1d_agg
 -- 说明: 按 content_theme + 产品维度 + dt 聚合，源表已过滤桥表存在的笔记
 -- ============================================================
@@ -105,7 +105,7 @@ LEFT JOIN (
     -- 按 note_id+dt+ds 预聚合，避免一对多扇出
     SELECT note_id, dt, ds,
            SUM(fee) AS fee
-    FROM dws_xhs_creative_1d_agg
+    FROM dws_xhs_creative_cum
     WHERE ds >= TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -29, 'dd'), 'yyyymmdd')
       AND ds <= '${bizdate}'
     GROUP BY note_id, dt, ds

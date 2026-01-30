@@ -1,6 +1,6 @@
 {
-  "name": "dws_xhs_creative_1d_agg",
-  "nameCn": "创意日汇总表",
+  "name": "dws_xhs_creative_cum",
+  "nameCn": "创意累计表",
   "fields": [
     {"name": "creativity_id", "type": "STRING", "nameCn": "创意ID"},
     {"name": "advertiser_id", "type": "STRING", "nameCn": "投放账号ID"},
@@ -58,10 +58,8 @@
     {"name": "external_rgmv_7", "type": "DECIMAL(38,2)", "nameCn": "7日站外GMV"},
     {"name": "external_goods_order_15", "type": "BIGINT", "nameCn": "15日站外商品下单"},
     {"name": "external_rgmv_15", "type": "DECIMAL(38,2)", "nameCn": "15日站外GMV"},
-    {"name": "external_goods_order_price_15", "type": "DECIMAL(38,2)", "nameCn": "15日站外客单价"},
     {"name": "external_goods_order_30", "type": "BIGINT", "nameCn": "30日站外商品下单"},
     {"name": "external_rgmv_30", "type": "DECIMAL(38,2)", "nameCn": "30日站外GMV"},
-    {"name": "external_goods_order_price_30", "type": "DECIMAL(38,2)", "nameCn": "30日站外客单价"},
     {"name": "15d_ad_offsite_active_uv", "type": "BIGINT", "nameCn": "15天站外活跃UV"},
     {"name": "15d_ad_offsite_task_cost", "type": "DECIMAL(38,2)", "nameCn": "15天站外任务期消费"},
     {"name": "15d_ad_offsite_task_read_uv", "type": "BIGINT", "nameCn": "15天站外任务期阅读UV"},

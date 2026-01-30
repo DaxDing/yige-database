@@ -1,11 +1,11 @@
 -- ============================================================
--- ETL: DWD → DWS 创意日汇总（30天滚动累计）
+-- ETL: DWD → DWS 创意累计表
 -- 源表: dwd_xhs_creative_hi, brg_xhs_note_project_df, dwd_xhs_conversion_bycontent_di
--- 目标表: dws_xhs_creative_1d_agg
--- 说明: 先汇总小时→日，再窗口函数计算30天滚动累计
+-- 目标表: dws_xhs_creative_cum
+-- 说明: 先汇总小时→日，再窗口函数计算历史累计值
 -- ============================================================
 
-INSERT OVERWRITE TABLE dws_xhs_creative_1d_agg PARTITION (ds)
+INSERT OVERWRITE TABLE dws_xhs_creative_cum PARTITION (ds)
 SELECT
     -- ============ 维度字段 ============
     creativity_id,

@@ -1,6 +1,6 @@
 -- ============================================================
 -- ETL: DWS → ADS 内容方向内容种草日汇总
--- 源表: dws_xhs_note_cum, dws_xhs_creative_1d_agg, brg_xhs_note_project_df, dim_xhs_project_df
+-- 源表: dws_xhs_note_cum, dws_xhs_creative_cum, brg_xhs_note_project_df, dim_xhs_project_df
 -- 目标表: ads_xhs_content_theme_bycontent_daily_agg
 -- 说明: 基于项目有效期做累计差值（结束 - 开始），按项目+内容方向维度聚合
 -- ============================================================
@@ -164,7 +164,7 @@ LEFT JOIN dws_xhs_note_cum s
 -- 结束时间点广告费（按笔记+日期预聚合）
 LEFT JOIN (
     SELECT note_id, dt, ds, SUM(fee) AS fee
-    FROM dws_xhs_creative_1d_agg
+    FROM dws_xhs_creative_cum
     WHERE ds >= TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -29, 'dd'), 'yyyymmdd')
       AND ds <= '${bizdate}'
     GROUP BY note_id, dt, ds
@@ -175,7 +175,7 @@ LEFT JOIN (
 -- 开始时间点广告费（项目开始日期前一天）
 LEFT JOIN (
     SELECT note_id, dt, ds, SUM(fee) AS fee
-    FROM dws_xhs_creative_1d_agg
+    FROM dws_xhs_creative_cum
     WHERE ds >= TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -29, 'dd'), 'yyyymmdd')
       AND ds <= '${bizdate}'
     GROUP BY note_id, dt, ds
