@@ -1,0 +1,89 @@
+{
+    "transform": false,
+    "type": "job",
+    "version": "2.0",
+    "steps": [
+        {
+            "stepType": "postgresql",
+            "parameter": {
+                "partitionKey": null,
+                "datasource": "sync_dim_PostgreSQL18",
+                "envType": 1,
+                "column": [
+                    "note_id",
+                    "project_id",
+                    "dt",
+                    "is_proxy",
+                    "now()"
+                ],
+                "where": "dt = TO_DATE('${bizdate}', 'YYYYMMDD') ",
+                "splitPk": "",
+                "table": "public.brg_xhs_note_project_df"
+            },
+            "name": "Reader",
+            "category": "reader"
+        },
+        {
+            "name": "Processor",
+            "stepType": null,
+            "category": "processor",
+            "copies": 1,
+            "parameter": {
+                "nodes": [],
+                "edges": [],
+                "groups": [],
+                "version": "2.0"
+            }
+        },
+        {
+            "stepType": "odps",
+            "parameter": {
+                "slotNum": null,
+                "column": [
+                    "note_id",
+                    "project_id",
+                    "dt",
+                    "is_proxy",
+                    "etl_time"
+                ],
+                "emptyAsNull": true,
+                "tableComment": "笔记与项目桥表",
+                "partition": "ds=${bizdate}",
+                "truncate": true,
+                "partitionKey": null,
+                "datasource": "default_datasource_cn_hangzhou_530486",
+                "envType": 1,
+                "tunnelQuota": "default",
+                "isSupportThreeModel": false,
+                "table": "brg_xhs_note_project_df",
+                "consistencyCommit": false
+            },
+            "name": "Writer",
+            "category": "writer"
+        }
+    ],
+    "setting": {
+        "executeMode": null,
+        "failoverEnable": null,
+        "common": {
+            "column": {
+                "timeZone": "Asia/Shanghai"
+            }
+        },
+        "errorLimit": {
+            "record": ""
+        },
+        "speed": {
+            "concurrent": 2,
+            "throttle": false
+        }
+    },
+    "order": {
+        "hops": [
+            {
+                "from": "Reader",
+                "to": "Writer"
+            }
+        ]
+    }
+}

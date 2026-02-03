@@ -1,0 +1,11 @@
+{
+  "name": "ods_xhs_searchword_report_di",
+  "nameCn": "搜索词日离线报表",
+  "fields": [
+    {"name": "advertiser_id", "type": "STRING", "nameCn": "广告主ID"},
+    {"name": "dt", "type": "STRING", "nameCn": "数据日期"},
+    {"name": "raw_data", "type": "STRING", "nameCn": "原始JSON数据"},
+    {"name": "etl_time", "type": "DATETIME", "nameCn": "ETL时间"},
+    {"name": "ds", "type": "STRING", "nameCn": "分区日期", "key": "PT"}
+  ]
+}

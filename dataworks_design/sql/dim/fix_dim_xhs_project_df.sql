@@ -6,7 +6,7 @@ SELECT
     valid_to,
     marketing_target,
     exec_dept_name,
-    GETDATE() AS etl_time,
+    etl_time,
     dt,
     TO_CHAR(DATEADD(TO_DATE(valid_to, 'yyyy-mm-dd'), 2, 'dd'), 'yyyy-mm-dd') AS kpi_fetch_time
 FROM dim_xhs_project_df

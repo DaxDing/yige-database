@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YICE Pipeline Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@20,400,1" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-base: #0C1017;
+    --bg-surface: #111820;
+    --bg-elevated: #171F2A;
+    --bg-inset: #0E141B;
+    --border: rgba(56, 68, 90, 0.45);
+    --border-light: rgba(56, 68, 90, 0.25);
+    --border-glow: rgba(59, 130, 246, 0.2);
+
+    --accent: #3B82F6;
+    --accent-dim: rgba(59, 130, 246, 0.1);
+    --accent-glow: rgba(59, 130, 246, 0.25);
+
+    --pass: #10B981;
+    --pass-dim: rgba(16, 185, 129, 0.07);
+    --pass-border: rgba(16, 185, 129, 0.2);
+    --pass-glow: rgba(16, 185, 129, 0.12);
+
+    --error: #EF4444;
+    --error-dim: rgba(239, 68, 68, 0.07);
+    --error-border: rgba(239, 68, 68, 0.2);
+    --error-glow: rgba(239, 68, 68, 0.12);
+
+    --amber: #F59E0B;
+    --amber-dim: rgba(245, 158, 11, 0.07);
+    --amber-border: rgba(245, 158, 11, 0.2);
+
+    --orange: #F97316;
+    --orange-dim: rgba(249, 115, 22, 0.07);
+    --orange-border: rgba(249, 115, 22, 0.2);
+
+    --pending-bg: rgba(51, 65, 85, 0.2);
+    --pending-border: rgba(71, 85, 105, 0.25);
+    --pending-text: #475569;
+
+    --text-primary: #E2E8F0;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --text-dim: #475569;
+
+    --font-ui: 'Sora', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    background: var(--bg-base);
+    background-image: radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.04) 1px, transparent 0);
+    background-size: 24px 24px;
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .icon {
+    font-family: 'Material Symbols Rounded';
+    font-size: 18px;
+    line-height: 1;
+    vertical-align: middle;
+    font-variation-settings: 'FILL' 1, 'opsz' 20;
+  }
+
+  /* ─── Header ─── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 48px;
+    background: rgba(17, 24, 32, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-badge {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: #FFF;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  .brand-name {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--text-primary);
+  }
+
+  .page-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-left: 4px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--pass);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
+    50% { opacity: 0.4; box-shadow: 0 0 4px rgba(16, 185, 129, 0.2); }
+  }
+
+  .status-text {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--pass);
+    letter-spacing: 1.5px;
+  }
+
+  .time-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── Content ─── */
+  .content {
+    padding: 36px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ─── Title ─── */
+  .title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .title-left h1 {
+    font-family: var(--font-ui);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+
+  .title-left p {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.2px;
+  }
+
+  .title-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
+  }
+
+  .badge-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── Metrics ─── */
+  .metrics {
+    display: flex;
+    gap: 12px;
+  }
+
+  .metric-card {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--card-accent, var(--accent));
+    opacity: 0.6;
+  }
+
+  .metric-card:hover { border-color: rgba(100, 116, 139, 0.3); }
+
+  .metric-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .metric-icon-wrap.blue {
+    background: var(--accent-dim);
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.08);
+  }
+
+  .metric-icon-wrap.green {
+    background: var(--pass-dim);
+    color: var(--pass);
+    box-shadow: 0 0 12px var(--pass-glow);
+  }
+
+  .metric-icon-wrap.red {
+    background: var(--error-dim);
+    color: var(--error);
+    box-shadow: 0 0 12px var(--error-glow);
+  }
+
+  .metric-icon-wrap .icon { font-size: 20px; }
+
+  .metric-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .metric-value {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  .metric-value.green { color: var(--pass); }
+
+  .metric-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+
+  /* ─── Pipeline ─── */
+  .pipeline {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pipeline::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.015), transparent);
+    animation: scan 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes scan {
+    0% { left: -40%; }
+    100% { left: 100%; }
+  }
+
+  .pipe-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pipe-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+  }
+
+  .pipe-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .legend-dot.pass { background: var(--pass); box-shadow: 0 0 6px var(--pass-glow); }
+  .legend-dot.fail { background: var(--error); box-shadow: 0 0 6px var(--error-glow); }
+  .legend-dot.wait { background: var(--amber); box-shadow: 0 0 6px rgba(245, 158, 11, 0.2); }
+  .legend-dot.disc { background: var(--orange); box-shadow: 0 0 6px rgba(249, 115, 22, 0.2); }
+  .legend-dot.pend { background: var(--pending-text); }
+
+  .legend-text {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  /* ─── Stage Headers ─── */
+  .stage-headers {
+    display: flex;
+    align-items: center;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 12px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sh-source {
+    width: 160px;
+    flex-shrink: 0;
+    padding-left: 16px;
+  }
+
+  .sh-source-text {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+  }
+
+  .sh-gap { width: 16px; flex-shrink: 0; }
+
+  .sh-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .sh-stage-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .sh-stage-text {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+  }
+
+  .sh-arrow {
+    width: 28px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .sh-arrow::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), rgba(59, 130, 246, 0.15), var(--border));
+  }
+
+  .sh-arrow .icon { font-size: 14px; color: var(--text-dim); position: relative; z-index: 1; }
+
+  .sh-status {
+    width: 60px;
+    flex-shrink: 0;
+  }
+
+  /* ─── Lanes ─── */
+  .lane {
+    display: flex;
+    align-items: stretch;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-light);
+    position: relative;
+    z-index: 1;
+  }
+
+  .lane-source {
+    width: 160px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 8px;
+  }
+
+  .lane-source .icon { font-size: 16px; }
+  .lane-source-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.2px;
+  }
+
+  .lane-gap { width: 16px; flex-shrink: 0; }
+
+  /* ─── Lane Cells ─── */
+  .lane-cell {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+    row-gap: 2px;
+    align-items: baseline;
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    padding: 10px 14px;
+    min-height: 52px;
+    border: 1px solid var(--border-light);
+    transition: all 0.2s;
+  }
+
+  .lane-cell:hover { border-color: var(--border); }
+
+  .lane-cell.pass {
+    background: var(--pass-dim);
+    border-color: var(--pass-border);
+    box-shadow: 0 0 16px var(--pass-glow);
+  }
+
+  .lane-cell.pass:hover {
+    box-shadow: 0 0 24px rgba(16, 185, 129, 0.18);
+  }
+
+  .lane-cell.error {
+    background: var(--error-dim);
+    border-color: var(--error-border);
+    box-shadow: 0 0 16px var(--error-glow);
+  }
+
+  .lane-cell.error:hover {
+    box-shadow: 0 0 24px rgba(239, 68, 68, 0.18);
+  }
+
+  .lane-cell.disconnected {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--orange-dim);
+    border-color: var(--orange-border);
+    box-shadow: 0 0 16px rgba(249, 115, 22, 0.08);
+  }
+
+  .lane-cell.waiting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--amber-dim);
+    border-color: var(--amber-border);
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.08);
+  }
+
+  .lane-cell.pending {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--pending-bg);
+    border-color: var(--pending-border);
+  }
+
+  .cell-item {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .cell-label {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  .cell-val {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .cell-val.sub { color: var(--text-secondary); font-weight: 400; }
+  .cell-val.error { color: var(--error); font-weight: 700; }
+
+  .cell-diff-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .cell-diff-row .cell-val { color: var(--error); font-weight: 700; }
+  .cell-diff-row .icon { font-size: 14px; color: var(--error); }
+
+  .cell-status-text {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 600;
+    margin: auto;
+    letter-spacing: 0.3px;
+  }
+
+  .cell-status-text.orange { color: var(--orange); }
+  .cell-status-text.amber { color: var(--amber); }
+  .cell-status-text.gray { color: var(--pending-text); }
+  .cell-status-text.green { color: var(--pass); }
+
+  /* ─── Lane Connectors ─── */
+  .lane-arrow {
+    width: 28px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .lane-arrow::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-light);
+    transform: translateY(-50%);
+  }
+
+  .lane-arrow.pass::before { background: var(--pass-border); }
+  .lane-arrow.red::before { background: var(--error-border); }
+  .lane-arrow.orange::before { background: var(--orange-border); }
+  .lane-arrow.amber::before { background: var(--amber-border); }
+  .lane-arrow.dim::before { background: var(--pending-border); }
+
+  .lane-arrow .icon {
+    font-size: 14px;
+    color: var(--text-dim);
+    position: relative;
+    z-index: 1;
+  }
+
+  .lane-arrow.pass .icon { color: rgba(16, 185, 129, 0.4); }
+  .lane-arrow.red .icon { color: rgba(239, 68, 68, 0.4); }
+  .lane-arrow.orange .icon { color: rgba(249, 115, 22, 0.4); }
+  .lane-arrow.amber .icon { color: rgba(245, 158, 11, 0.4); }
+  .lane-arrow.dim .icon { color: var(--pending-border); }
+
+  /* Flowing dot animation for active connectors */
+  .lane-arrow.pass::after,
+  .lane-arrow.red::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    animation: flow-dot 2.5s ease-in-out infinite;
+  }
+
+  .lane-arrow.pass::after {
+    background: var(--pass);
+    box-shadow: 0 0 4px var(--pass-glow);
+  }
+
+  .lane-arrow.red::after {
+    background: var(--error);
+    box-shadow: 0 0 4px var(--error-glow);
+    animation-duration: 3s;
+  }
+
+  @keyframes flow-dot {
+    0% { left: 2px; opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { left: calc(100% - 5px); opacity: 0; }
+  }
+
+  /* ─── Lane Status ─── */
+  .lane-status {
+    width: 60px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lane-status .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .lane-status .tag.pass {
+    background: var(--pass-dim);
+    color: var(--pass);
+    box-shadow: 0 0 8px var(--pass-glow);
+  }
+
+  .lane-status .tag.fail {
+    background: var(--error-dim);
+    color: var(--error);
+    box-shadow: 0 0 8px var(--error-glow);
+  }
+
+  .lane-status .tag.warn {
+    background: var(--amber-dim);
+    color: var(--amber);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.1);
+  }
+
+  .lane-status .tag.pend {
+    background: var(--pending-bg);
+    color: var(--pending-text);
+  }
+
+  .lane-status .tag .icon { font-size: 13px; }
+
+  /* ─── Detail Table ─── */
+  .detail-table {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .table-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+  }
+
+  .table-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+  }
+
+  .col-headers {
+    display: flex;
+    align-items: center;
+    padding: 10px 24px;
+    background: var(--bg-inset);
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .col-headers span {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+
+  .t-col-name { width: 200px; flex-shrink: 0; }
+  .t-col-data { flex: 1; text-align: center; }
+  .t-col-status { width: 100px; flex-shrink: 0; text-align: center; }
+
+  .table-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.15s;
+  }
+
+  .table-row:hover { background: rgba(23, 31, 42, 0.5); }
+  .table-row:last-child { border-bottom: none; }
+
+  .table-row.anomaly {
+    background: var(--error-dim);
+    border-bottom-color: var(--error-border);
+  }
+
+  .table-row.anomaly:hover { background: rgba(239, 68, 68, 0.1); }
+
+  .row-name {
+    width: 200px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+
+  .row-name.error { color: var(--error); }
+
+  .row-data {
+    flex: 1;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+
+  .row-data.error {
+    color: var(--error);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .row-data.error .icon { font-size: 14px; }
+
+  .row-status {
+    width: 100px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .row-status .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .row-status .tag.pass {
+    background: var(--pass-dim);
+    color: var(--pass);
+  }
+
+  .row-status .tag.fail {
+    background: var(--error-dim);
+    color: var(--error);
+  }
+
+  .row-status .tag .icon { font-size: 12px; }
+
+  /* ─── Footer ─── */
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .footer-left .icon { font-size: 14px; color: var(--text-dim); }
+
+  .footer-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.2px;
+  }
+
+  .footer-version {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* ─── Animations ─── */
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .content > * {
+    animation: fade-in 0.4s ease-out both;
+  }
+
+  .content > *:nth-child(1) { animation-delay: 0.05s; }
+  .content > *:nth-child(2) { animation-delay: 0.1s; }
+  .content > *:nth-child(3) { animation-delay: 0.18s; }
+  .content > *:nth-child(4) { animation-delay: 0.26s; }
+  .content > *:nth-child(5) { animation-delay: 0.34s; }
+
+  /* Subtle glow on pipeline hover */
+  .lane:hover .lane-cell.pass {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.16);
+  }
+
+  .lane:hover .lane-cell.error {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.16);
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-badge">YC</div>
+    <span class="brand-name">YICE</span>
+    <span class="page-name">Pipeline Monitor</span>
+  </div>
+  <div class="header-right">
+    <div class="status-indicator">
+      <div class="status-dot"></div>
+      <span class="status-text">ONLINE</span>
+    </div>
+    <span class="time-text" id="clock"></span>
+  </div>
+</header>
+
+<!-- Content -->
+<main class="content">
+
+  <!-- Title -->
+  <div class="title-row">
+    <div class="title-left">
+      <h1>数据管道一致性总览</h1>
+      <p>监控数据管道各节点的项目数与笔记数一致性</p>
+    </div>
+    <div class="title-badge">
+      <div class="badge-dot"></div>
+      <span class="badge-text">数据时间&emsp;2026-01-31</span>
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics">
+    <div class="metric-card" style="--card-accent: var(--accent)">
+      <div class="metric-icon-wrap blue"><span class="icon">folder</span></div>
+      <div class="metric-info">
+        <span class="metric-value">128</span>
+        <span class="metric-meta">业务源项目</span>
+      </div>
+    </div>
+    <div class="metric-card" style="--card-accent: var(--accent)">
+      <div class="metric-icon-wrap blue"><span class="icon">article</span></div>
+      <div class="metric-info">
+        <span class="metric-value">3,542</span>
+        <span class="metric-meta">业务源笔记</span>
+      </div>
+    </div>
+    <div class="metric-card" style="--card-accent: var(--pass)">
+      <div class="metric-icon-wrap green"><span class="icon">verified</span></div>
+      <div class="metric-info">
+        <span class="metric-value green">100%</span>
+        <span class="metric-meta">全链路一致性率</span>
+      </div>
+    </div>
+    <div class="metric-card" style="--card-accent: var(--error)">
+      <div class="metric-icon-wrap red"><span class="icon">error</span></div>
+      <div class="metric-info">
+        <span class="metric-value">0</span>
+        <span class="metric-meta">异常节点数</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline -->
+  <section class="pipeline">
+    <div class="pipe-head">
+      <span class="pipe-title">数据管道</span>
+      <div class="pipe-legend">
+        <div class="legend-item"><div class="legend-dot pass"></div><span class="legend-text">通过</span></div>
+        <div class="legend-item"><div class="legend-dot fail"></div><span class="legend-text">异常</span></div>
+        <div class="legend-item"><div class="legend-dot wait"></div><span class="legend-text">等待</span></div>
+        <div class="legend-item"><div class="legend-dot disc"></div><span class="legend-text">断连</span></div>
+        <div class="legend-item"><div class="legend-dot pend"></div><span class="legend-text">未触发</span></div>
+      </div>
+    </div>
+
+    <!-- Stage Headers -->
+    <div class="stage-headers">
+      <div class="sh-source"><span class="sh-source-text">SOURCE</span></div>
+      <div class="sh-gap"></div>
+      <div class="sh-stage"><span class="sh-stage-num">01</span><span class="sh-stage-text">数据收集</span></div>
+      <div class="sh-arrow"><span class="icon">chevron_right</span></div>
+      <div class="sh-stage"><span class="sh-stage-num">02</span><span class="sh-stage-text">数仓同步</span></div>
+      <div class="sh-arrow"><span class="icon">chevron_right</span></div>
+      <div class="sh-stage"><span class="sh-stage-num">03</span><span class="sh-stage-text">数据清洗</span></div>
+      <div class="sh-arrow"><span class="icon">chevron_right</span></div>
+      <div class="sh-stage"><span class="sh-stage-num">04</span><span class="sh-stage-text">飞书推送</span></div>
+      <div class="sh-status"></div>
+    </div>
+
+    <!-- Lane 1: 内容执行表 — 全部通过 -->
+    <div class="lane">
+      <div class="lane-source">
+        <span class="icon" style="color: var(--pass)">description</span>
+        <span class="lane-source-name">内容执行表</span>
+      </div>
+      <div class="lane-gap"></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">45</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">1,200</span></div>
+        <div class="cell-item"><span class="cell-label">产品</span><span class="cell-val sub">89</span></div>
+      </div>
+      <div class="lane-arrow pass"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">45</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">1,200</span></div>
+        <div class="cell-item"><span class="cell-label">产品</span><span class="cell-val sub">89</span></div>
+      </div>
+      <div class="lane-arrow pass"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">45</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">1,200</span></div>
+        <div class="cell-item"><span class="cell-label">产品</span><span class="cell-val sub">89</span></div>
+      </div>
+      <div class="lane-arrow pass"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">45</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">1,200</span></div>
+        <div class="cell-item"><span class="cell-label">产品</span><span class="cell-val sub">89</span></div>
+      </div>
+      <div class="lane-status"><span class="tag pass"><span class="icon">check</span></span></div>
+    </div>
+
+    <!-- Lane 2: 蒲公英笔记数据 — 通过→断连→等待→未触发 -->
+    <div class="lane">
+      <div class="lane-source">
+        <span class="icon" style="color: var(--pass)">eco</span>
+        <span class="lane-source-name">蒲公英笔记数据</span>
+      </div>
+      <div class="lane-gap"></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">35</span></div>
+        <div class="cell-item"><span class="cell-label">任务组</span><span class="cell-val sub">98</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">800</span></div>
+      </div>
+      <div class="lane-arrow orange"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell disconnected">
+        <span class="cell-status-text orange">接口异常</span>
+      </div>
+      <div class="lane-arrow amber"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell waiting">
+        <span class="cell-status-text amber">2026-01-31 08:30</span>
+      </div>
+      <div class="lane-arrow dim"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell pending">
+        <span class="cell-status-text gray">未触发</span>
+      </div>
+      <div class="lane-status"><span class="tag warn"><span class="icon">warning</span></span></div>
+    </div>
+
+    <!-- Lane 3: 聚光投流数据 — 通过→通过→异常→异常 -->
+    <div class="lane">
+      <div class="lane-source">
+        <span class="icon" style="color: var(--error)">campaign</span>
+        <span class="lane-source-name" style="color: var(--error)">聚光投流数据</span>
+      </div>
+      <div class="lane-gap"></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">48</span></div>
+        <div class="cell-item"><span class="cell-label">计划</span><span class="cell-val sub">580</span></div>
+        <div class="cell-item"><span class="cell-label">创意</span><span class="cell-val sub">1,542</span></div>
+      </div>
+      <div class="lane-arrow pass"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">48</span></div>
+        <div class="cell-item"><span class="cell-label">计划</span><span class="cell-val sub">580</span></div>
+        <div class="cell-item"><span class="cell-label">创意</span><span class="cell-val sub">1,542</span></div>
+      </div>
+      <div class="lane-arrow red"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell error">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">48</span></div>
+        <div class="cell-item"><span class="cell-label">计划</span><span class="cell-val sub">580</span></div>
+        <div class="cell-item"><span class="cell-label">创意</span><span class="cell-diff-row"><span class="cell-val error">1,539</span><span class="icon">arrow_downward</span></span></div>
+      </div>
+      <div class="lane-arrow red"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell error">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">48</span></div>
+        <div class="cell-item"><span class="cell-label">计划</span><span class="cell-val sub">580</span></div>
+        <div class="cell-item"><span class="cell-label">创意</span><span class="cell-val error">1,539</span></div>
+      </div>
+      <div class="lane-status"><span class="tag fail"><span class="icon">close</span></span></div>
+    </div>
+
+    <!-- Lane 4: 星河后链数据 — 通过→通过→通过→等待 -->
+    <div class="lane">
+      <div class="lane-source">
+        <span class="icon" style="color: var(--pass)">auto_awesome</span>
+        <span class="lane-source-name">星河后链数据</span>
+      </div>
+      <div class="lane-gap"></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">32</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">650</span></div>
+        <div class="cell-item"><span class="cell-label">内容组</span><span class="cell-val sub">210</span></div>
+        <div class="cell-item"><span class="cell-label">任务组</span><span class="cell-val sub">86</span></div>
+      </div>
+      <div class="lane-arrow pass"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">32</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">650</span></div>
+        <div class="cell-item"><span class="cell-label">内容组</span><span class="cell-val sub">210</span></div>
+        <div class="cell-item"><span class="cell-label">任务组</span><span class="cell-val sub">86</span></div>
+      </div>
+      <div class="lane-arrow pass"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">32</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">650</span></div>
+        <div class="cell-item"><span class="cell-label">内容组</span><span class="cell-val sub">210</span></div>
+        <div class="cell-item"><span class="cell-label">任务组</span><span class="cell-val sub">86</span></div>
+      </div>
+      <div class="lane-arrow amber"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell waiting">
+        <span class="cell-status-text amber">2026-01-31 09:15</span>
+      </div>
+      <div class="lane-status"><span class="tag warn"><span class="icon">warning</span></span></div>
+    </div>
+
+    <!-- Lane 5: 聚光后链数据 — 数据→未触发→未触发→未触发 -->
+    <div class="lane">
+      <div class="lane-source">
+        <span class="icon" style="color: var(--text-dim)">link</span>
+        <span class="lane-source-name" style="color: var(--text-muted)">聚光后链数据</span>
+      </div>
+      <div class="lane-gap"></div>
+      <div class="lane-cell">
+        <div class="cell-item"><span class="cell-label">项目</span><span class="cell-val">28</span></div>
+        <div class="cell-item"><span class="cell-label">创意</span><span class="cell-val sub">890</span></div>
+        <div class="cell-item"><span class="cell-label">笔记</span><span class="cell-val sub">420</span></div>
+      </div>
+      <div class="lane-arrow dim"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell pending">
+        <span class="cell-status-text gray">未触发</span>
+      </div>
+      <div class="lane-arrow dim"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell pending">
+        <span class="cell-status-text gray">未触发</span>
+      </div>
+      <div class="lane-arrow dim"><span class="icon">chevron_right</span></div>
+      <div class="lane-cell pending">
+        <span class="cell-status-text gray">未触发</span>
+      </div>
+      <div class="lane-status"><span class="tag pend"><span class="icon">remove</span></span></div>
+    </div>
+  </section>
+
+  <!-- Detail Table -->
+  <section class="detail-table">
+    <div class="table-head">
+      <span class="table-title">项目笔记数明细检查</span>
+    </div>
+    <div class="col-headers">
+      <span class="t-col-name">Project</span>
+      <span class="t-col-data">数据收集</span>
+      <span class="t-col-data">数仓同步</span>
+      <span class="t-col-data">数据清洗</span>
+      <span class="t-col-data">飞书推送</span>
+      <span class="t-col-status">Status</span>
+    </div>
+    <div class="table-row">
+      <span class="row-name">护肤新品春季推广</span>
+      <span class="row-data">320</span>
+      <span class="row-data">320</span>
+      <span class="row-data">320</span>
+      <span class="row-data">320</span>
+      <span class="row-status"><span class="tag pass"><span class="icon">check</span></span></span>
+    </div>
+    <div class="table-row">
+      <span class="row-name">彩妆联名合作</span>
+      <span class="row-data">185</span>
+      <span class="row-data">185</span>
+      <span class="row-data">185</span>
+      <span class="row-data">185</span>
+      <span class="row-status"><span class="tag pass"><span class="icon">check</span></span></span>
+    </div>
+    <div class="table-row">
+      <span class="row-name">防晒系列夏日营销</span>
+      <span class="row-data">542</span>
+      <span class="row-data">542</span>
+      <span class="row-data">542</span>
+      <span class="row-data">542</span>
+      <span class="row-status"><span class="tag pass"><span class="icon">check</span></span></span>
+    </div>
+    <div class="table-row">
+      <span class="row-name">精华液口碑种草</span>
+      <span class="row-data">276</span>
+      <span class="row-data">276</span>
+      <span class="row-data">276</span>
+      <span class="row-data">276</span>
+      <span class="row-status"><span class="tag pass"><span class="icon">check</span></span></span>
+    </div>
+    <div class="table-row anomaly">
+      <span class="row-name error">洁面仪新品测评</span>
+      <span class="row-data">98</span>
+      <span class="row-data">98</span>
+      <span class="row-data error">95 <span class="icon">arrow_downward</span></span>
+      <span class="row-data" style="color: var(--error)">95</span>
+      <span class="row-status"><span class="tag fail"><span class="icon">close</span></span></span>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">
+      <span class="icon">info</span>
+      <span class="footer-text">规则：「业务源」为基准，各节点项目数与笔记数须与源一致</span>
+    </div>
+    <span class="footer-version">YICE Pipeline Monitor v3.0</span>
+  </div>
+
+</main>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    document.getElementById('clock').textContent =
+      `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Auto-add pass class to normal data cells
+  document.querySelectorAll('.lane-cell').forEach(cell => {
+    if (!cell.classList.contains('error') && !cell.classList.contains('waiting') &&
+        !cell.classList.contains('disconnected') && !cell.classList.contains('pending') &&
+        cell.querySelector('.cell-item')) {
+      cell.classList.add('pass');
+    }
+  });
+</script>
+</body>
+</html>

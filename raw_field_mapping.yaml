@@ -1,0 +1,328 @@
+version: 1
+name: XHS_RAW_FIELD_MAPPING
+updated_at: "2026-01-31"
+description: 小红书原始字段与规则引擎字段对齐表（单一真相）
+
+fields:
+  plan_id:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.campaign_id
+    transform: stringify
+    notes: plan_id 与 campaign_id 保持一致
+  campaign_id:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.campaign_id
+    transform: stringify
+  campaign_name:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.campaign_name
+    transform: passthrough
+  campaign_group_id:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.campaign_group_id
+    transform: stringify
+  created_at:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.campaign_create_time
+    transform: passthrough
+  status:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.campaign_enable
+    transform: "1->ENABLED, 0->PAUSED"
+  bid:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.constraint_value
+    transform: cents_to_yuan_if_gt_100
+  budget_today:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.origin_campaign_day_budget
+    transform: cents_to_yuan_if_gt_1000
+  spend_today:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.fee
+    transform: parse_number
+  spend_total:
+    source:
+      derived_from:
+        - spend_today
+    transform: passthrough
+    notes: 当前实现为 spend_today 兜底
+  spend_recent:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.hourly_data[].fee
+    transform: sum_recent_hours(XHS_RECENT_WINDOW_MIN)
+    notes: 需开启 XHS_NEED_HOURLY_DATA
+  spend_recent_window_min:
+    source:
+      env: XHS_RECENT_WINDOW_MIN
+    transform: int
+    notes: 默认 120 分钟
+  impr_recent_count:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.impression
+    transform: int
+    notes: 当前实现为今日曝光兜底
+  impr_today:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.impression
+    transform: int
+  last_bid_change_ts:
+    source:
+      endpoint: /api/open/jg/history/list
+      raw_field: opt_type_name (出价)
+    transform: latest_ts
+  last_budget_change_ts:
+    source:
+      endpoint: /api/open/jg/history/list
+      raw_field: opt_type_name (预算)
+    transform: latest_ts
+  last_schedule_change_ts:
+    source:
+      endpoint: /api/open/jg/history/list
+      raw_field: opt_type_name (时段)
+    transform: latest_ts
+  last_resume_ts:
+    source:
+      endpoint: /api/open/jg/history/list
+      raw_field: opt_type_name (启停/恢复)
+    transform: latest_ts
+  plan_start_ts:
+    status: not_implemented
+    notes: 当前 xhs_api 未输出该字段
+
+  campaign.placement:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.placement
+    transform: enum_map(rules/xhs_field_mapping.yaml)
+  campaign.marketing_target:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.marketing_target
+    transform: enum_map(rules/xhs_field_mapping.yaml)
+  campaign.optimize_objective:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.optimize_target
+    transform: enum_map(rules/xhs_field_mapping.yaml)
+  campaign.deep_optimize_objective:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.deep_optimize_objective
+    transform: passthrough
+  campaign.bidding_strategy:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.bidding_strategy
+    transform: enum_map(rules/xhs_field_mapping.yaml)
+  campaign.constraint_type:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: base_campaign_dto.constraint_type
+    transform: enum_map(rules/xhs_field_mapping.yaml)
+
+  cpc:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.acp
+    transform: number
+  cpe:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.cpi
+    transform: number
+  cpm:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.cpm
+    transform: number
+  ctr:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.ctr
+    transform: percent_to_ratio
+  cpuv:
+    source:
+      derived_from:
+        - jd_task_fee
+        - jd_active_user_num
+        - spend_today
+        - data.seller_visit
+    transform: jd_task_fee / jd_active_user_num (优先), 否则 spend_today / seller_visit
+    notes: 当前实时计划报表仅明确提供小红盟字段，缺失时回退到 seller_visit 口径
+  jd_active_user_num:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.jd_active_user_num
+    transform: number
+  jd_task_fee:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.jd_task_fee
+    transform: number
+  tb_active_user_uv:
+    status: not_implemented
+    source:
+      endpoint: /api/open/jg/data/report/offline/idea_group_report_v2
+      raw_field: outsideSellerPv
+    transform: number
+    notes: 小红星站外活跃行为UV（离线报表）
+  tb_task_fee:
+    status: not_implemented
+    source:
+      endpoint: /api/open/jg/data/report/offline/idea_group_report_v2
+      raw_field: tbTaskFee
+    transform: number
+    notes: 小红星任务期消费（离线报表）
+  uv_platform:
+    status: not_implemented
+    source:
+      derived_from:
+        - creative.product_platform
+        - note_id
+    transform: "TB/JD/MIXED"
+    notes: 取决于创意笔记挂载的商品平台（小红星=淘宝，小红盟=京东）
+
+  creative.product_platform:
+    status: not_implemented
+    source:
+      endpoint: /api/open/jg/creativity/search
+      raw_field: product_platform
+    transform: "TB/JD"
+    notes: 需从创意/笔记商品绑定信息获取，当前未接入
+
+  creative.jd_active_user_num:
+    status: not_implemented
+    source:
+      endpoint: /api/open/jg/data/report/offline/creative
+      raw_field: jd_active_user_num
+    transform: number
+    notes: 创意层级离线报表（小红盟）
+  creative.jd_task_fee:
+    status: not_implemented
+    source:
+      endpoint: /api/open/jg/data/report/offline/creative
+      raw_field: jd_task_fee
+    transform: number
+  creative.tb_active_user_uv:
+    status: not_implemented
+    source:
+      endpoint: /api/idea/group_report_v2
+      report_type: CREATIVITY
+      raw_field: outsideSellerPv
+    transform: number
+  creative.tb_task_fee:
+    status: not_implemented
+    source:
+      endpoint: /api/idea/group_report_v2
+      report_type: CREATIVITY
+      raw_field: tbTaskFee
+    transform: number
+
+  plan.jd_active_user_num_offline:
+    status: not_implemented
+    source:
+      endpoint: /api/open/jg/data/report/offline/campaign
+      raw_field: jd_active_user_num
+    transform: number
+  plan.jd_task_fee_offline:
+    status: not_implemented
+    source:
+      endpoint: /api/open/jg/data/report/offline/campaign
+      raw_field: jd_task_fee
+    transform: number
+  plan.tb_active_user_uv_offline:
+    status: not_implemented
+    source:
+      endpoint: /api/idea/group_report_v2
+      report_type: CAMPAIGN
+      raw_field: outsideSellerPv
+    transform: number
+  plan.tb_task_fee_offline:
+    status: not_implemented
+    source:
+      endpoint: /api/idea/group_report_v2
+      report_type: CAMPAIGN
+      raw_field: tbTaskFee
+    transform: number
+
+  clicks:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.click
+    transform: int
+  interactions:
+    source:
+      endpoint: /api/open/jg/data/report/realtime/campaign
+      raw_field: data.interaction
+    transform: int
+
+  plan_phase:
+    source:
+      derived_from:
+        - created_at
+        - spend_today
+    transform: infer_plan_phase_v2
+  phase_goal_mode:
+    source:
+      system: constant
+    transform: SPREAD
+  goal_mode:
+    source:
+      system: constant
+    transform: SPEND_FIRST
+
+  now:
+    source:
+      system: clock
+    transform: iso_datetime
+  day_type:
+    source:
+      derived_from:
+        - now
+    transform: weekday_to_WD_WE
+  is_promo:
+    source:
+      derived_from:
+        - upstream_flag
+    transform: default_N
+
+  project_name:
+    source:
+      upstream: external_context
+    transform: passthrough
+  project_id:
+    source:
+      upstream: external_context
+    transform: passthrough
+
+  unit_ids:
+    source:
+      upstream: adgroup_list
+    transform: list
+    notes: 当前未接入
+  data_invalid:
+    source:
+      derived_from:
+        - data_quality_checks
+    transform: boolean
+  daily_action_count:
+    source:
+      execution_log: EXECUTION_LOG
+    transform: int
+  daily_action_counts:
+    source:
+      execution_log: EXECUTION_LOG
+    transform: map_action_to_count

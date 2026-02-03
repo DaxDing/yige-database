@@ -1,0 +1,237 @@
+{
+  "name": "ods_xhs_audience_report_di",
+  "nameCn": "人群包日离线报表",
+  "api": {
+    "path": "/api/idea/group_report_v2",
+    "method": "POST",
+    "dataPath": "data.dataList",
+    "reportType": "USER_GROUP"
+  },
+  "fields": [
+    {"name": "advertiser_id", "type": "STRING", "nameCn": "广告主ID"},
+    {"name": "dt", "type": "STRING", "nameCn": "数据日期"},
+    {"name": "raw_data", "type": "STRING", "nameCn": "原始JSON数据"},
+    {"name": "etl_time", "type": "DATETIME", "nameCn": "ETL时间"},
+    {"name": "ds", "type": "STRING", "nameCn": "分区日期", "key": "PT"}
+  ],
+  "dimensions": [
+    {"ename": "groupId", "nameCn": "人群包ID"},
+    {"ename": "groupName", "nameCn": "人群包名称"},
+    {"ename": "campaignId", "nameCn": "广告计划ID"},
+    {"ename": "campaignName", "nameCn": "广告计划名称"},
+    {"ename": "unitId", "nameCn": "广告单元ID"},
+    {"ename": "unitName", "nameCn": "广告单元名称"},
+    {"ename": "creativityId", "nameCn": "广告创意ID"},
+    {"ename": "creativityName", "nameCn": "广告创意名称"},
+    {"ename": "creativityImage", "nameCn": "广告创意封面"},
+    {"ename": "noteId", "nameCn": "笔记ID"},
+    {"ename": "noteTitle", "nameCn": "笔记标题"},
+    {"ename": "noteImage", "nameCn": "笔记封面"},
+    {"ename": "noteJumpUrl", "nameCn": "笔记URL"}
+  ],
+  "metrics": {
+    "基础指标_展现数据": [
+      {"ename": "fee", "nameCn": "消费"},
+      {"ename": "impNum", "nameCn": "展现量"},
+      {"ename": "clickNum", "nameCn": "点击量"}
+    ],
+    "基础指标_笔记互动": [
+      {"ename": "engageNum", "nameCn": "互动量"},
+      {"ename": "favNum", "nameCn": "点赞"},
+      {"ename": "collectNum", "nameCn": "收藏"},
+      {"ename": "cmtNum", "nameCn": "评论"},
+      {"ename": "followNum", "nameCn": "关注"},
+      {"ename": "shareNum", "nameCn": "分享"},
+      {"ename": "actionButtonClickNum", "nameCn": "行动按钮点击量"},
+      {"ename": "screenshotNum", "nameCn": "截图"},
+      {"ename": "saveNum", "nameCn": "保存图片"}
+    ],
+    "基础指标_视频播放": [
+      {"ename": "videoPlayCnt", "nameCn": "视频播放量"},
+      {"ename": "videoPlay5sCnt", "nameCn": "5s播放量"}
+    ],
+    "产品种草_种草效果": [
+      {"ename": "searchComponentClickNum", "nameCn": "搜索组件点击量"},
+      {"ename": "searchAfterReadNum", "nameCn": "搜后阅读量"},
+      {"ename": "iPeopleNum", "nameCn": "新增种草人群"},
+      {"ename": "tiPeopleNum", "nameCn": "新增深度种草人群"}
+    ],
+    "产品种草_小红星": [
+      {"ename": "outsideSellerPv", "nameCn": "小红星站外活跃行为UV(30日归因)"},
+      {"ename": "tbTaskFee", "nameCn": "小红星任务期消费"},
+      {"ename": "tbTaskClickNum", "nameCn": "小红星任务期点击量"},
+      {"ename": "tbTaskReadUserCnt", "nameCn": "小红星任务期阅读UV"}
+    ],
+    "产品种草_小红盟": [
+      {"ename": "jdActiveUserNum", "nameCn": "小红盟站外活跃行为UV"},
+      {"ename": "jdTaskFee", "nameCn": "小红盟任务期消费"},
+      {"ename": "jdTaskClickNum", "nameCn": "小红盟任务期点击量"},
+      {"ename": "jdTaskReadUserCnt", "nameCn": "小红盟任务期阅读UV"}
+    ],
+    "客资收集_销售线索": [
+      {"ename": "leadsSuccess", "nameCn": "表单提交量"},
+      {"ename": "validLeadsNum", "nameCn": "有效表单量"},
+      {"ename": "msgLeadsFormSubmitNum", "nameCn": "线索留资量"},
+      {"ename": "landingFormImpNum", "nameCn": "表单按钮曝光量"},
+      {"ename": "landingPagePv", "nameCn": "落地页访问量"},
+      {"ename": "phoneCallCnt", "nameCn": "电话拨打量"},
+      {"ename": "phoneCallSuccCnt", "nameCn": "电话接通量"},
+      {"ename": "wechatCopyCnt", "nameCn": "微信复制量"},
+      {"ename": "wechatCopySuccCnt", "nameCn": "微信加为好友量"},
+      {"ename": "identityCertiCnt", "nameCn": "身份认证量"},
+      {"ename": "commodityBuyCnt", "nameCn": "付费量"}
+    ],
+    "客资收集_私信营销": [
+      {"ename": "messageOpenCnt", "nameCn": "私信进线数"},
+      {"ename": "messageDrivingOpenCnt", "nameCn": "私信开口数"},
+      {"ename": "msgLeadsNum", "nameCn": "私信留资数"},
+      {"ename": "messageUserCnt", "nameCn": "私信进线人数"},
+      {"ename": "msgChatUserCnt", "nameCn": "私信开口人数"},
+      {"ename": "msgChatMsgCnt", "nameCn": "私信开口条数"},
+      {"ename": "msgLeadsUserCnt", "nameCn": "私信留资人数"}
+    ],
+    "企微营销": [
+      {"ename": "friendAddCnt", "nameCn": "添加企微量"},
+      {"ename": "friendAddSuccessCnt", "nameCn": "成功添加企微量"},
+      {"ename": "chatOpenCnt", "nameCn": "企微开口量"}
+    ],
+    "多转化营销": [
+      {"ename": "wechatAddConsultCnt", "nameCn": "多转化人数(企微+私信咨询)"},
+      {"ename": "wechatAddConsultLeadsSuccessCnt", "nameCn": "多转化人数(私信留资+企微成功)"}
+    ],
+    "外链专属": [
+      {"ename": "extLeadsSuccNum", "nameCn": "外链转化量"}
+    ],
+    "应用推广_APP内转化": [
+      {"ename": "eventAppOpenCnt", "nameCn": "APP打开量"},
+      {"ename": "eventAppEnterStoreCnt", "nameCn": "APP进店量"},
+      {"ename": "eventAppEngagementCnt", "nameCn": "APP互动量"},
+      {"ename": "eventAppPaymentCnt", "nameCn": "APP支付次数"},
+      {"ename": "eventAppPaymentAmount", "nameCn": "APP支付金额"},
+      {"ename": "searchInvokeButtonClickCnt", "nameCn": "笔记唤端组件点击量"}
+    ],
+    "应用推广_微信小程序": [
+      {"ename": "wechatAppletsOpenCnt", "nameCn": "微信打开按钮点击次数"},
+      {"ename": "wechatAppletsActivateCnt", "nameCn": "微信小程序激活次数"},
+      {"ename": "wechatAppletsPayCnt", "nameCn": "微信小程序付费次数"},
+      {"ename": "wechatAppletsPayAmount", "nameCn": "微信小程序付费总金额"},
+      {"ename": "currentWechatAppletsActivateCnt", "nameCn": "当日激活次数"},
+      {"ename": "currentWechatAppletsPayCnt", "nameCn": "当日付费次数"},
+      {"ename": "currentWechatAppletsPayAmount", "nameCn": "当日付费总金额"},
+      {"ename": "currentWechatAppletsFirstPayCnt", "nameCn": "当日首次付费次数"},
+      {"ename": "currentWechatAppletsFirstPayAmount", "nameCn": "当日首次付费金额"},
+      {"ename": "wechatAppletsPayCnt3d", "nameCn": "三日付费次数"},
+      {"ename": "wechatAppletsPayAmount3d", "nameCn": "三日付费总金额"},
+      {"ename": "wechatAppletsPayCnt7d", "nameCn": "七日付费次数"},
+      {"ename": "wechatAppletsPayAmount7d", "nameCn": "七日付费金额"},
+      {"ename": "wechatRetention1dCnt", "nameCn": "小游戏关键行为数"},
+      {"ename": "wechatRetention3dCnt", "nameCn": "小游戏3日留存数"},
+      {"ename": "wechatRetention7dCnt", "nameCn": "小游戏7日留存数"}
+    ],
+    "应用推广_小程序": [
+      {"ename": "appletsOpenCnt", "nameCn": "跳转按钮点击量"},
+      {"ename": "appletsPayCnt", "nameCn": "小程序支付订单次数"},
+      {"ename": "appletsPayAmount", "nameCn": "小程序GMV"}
+    ],
+    "应用推广_应用下载": [
+      {"ename": "appDownloadButtonClickCnt", "nameCn": "APP下载按钮点击量"},
+      {"ename": "appRegisterCnt", "nameCn": "注册数"},
+      {"ename": "appActivateCnt", "nameCn": "激活数"},
+      {"ename": "currentAppActivateCnt", "nameCn": "当日激活数"},
+      {"ename": "appKeyActionCnt", "nameCn": "关键行为数"},
+      {"ename": "firstAppPayCnt", "nameCn": "首次付费次数"},
+      {"ename": "currentAppPayCnt", "nameCn": "当日付费次数"},
+      {"ename": "currentAppPayAmount", "nameCn": "当日付费金额"},
+      {"ename": "appPayCnt7d", "nameCn": "7日付费次数"},
+      {"ename": "appPayAmount", "nameCn": "付费金额"},
+      {"ename": "appActivateAmount1d", "nameCn": "当日LTV"},
+      {"ename": "appActivateAmount3d", "nameCn": "三日LTV"},
+      {"ename": "appActivateAmount7d", "nameCn": "七日LTV"},
+      {"ename": "retention1dCnt", "nameCn": "次留"},
+      {"ename": "retention3dCnt", "nameCn": "3日留存"},
+      {"ename": "retention7dCnt", "nameCn": "7日留存"},
+      {"ename": "appBookDownloadClickCnt", "nameCn": "APP预约下载按钮点击"},
+      {"ename": "appBookFormSubmitCnt", "nameCn": "预约表单提交"}
+    ],
+    "应用推广_安卓下载": [
+      {"ename": "androidDownloadStarts", "nameCn": "安卓下载开始数"},
+      {"ename": "androidDownloadCompletions", "nameCn": "安卓下载完成数"},
+      {"ename": "androidInstallCompletions", "nameCn": "安卓安装完成数"}
+    ],
+    "种草直达_行业商品": [
+      {"ename": "poiComponentClickNum", "nameCn": "组件点击量"},
+      {"ename": "outClickSellerDealOrder30d", "nameCn": "店铺成交订单量(30日)"},
+      {"ename": "outClickSellerDealOrder15d", "nameCn": "店铺成交订单量(15日)"},
+      {"ename": "outClickSellerDealOrder7d", "nameCn": "店铺成交订单量(7日)"},
+      {"ename": "outClickSellerDealRgmv30d", "nameCn": "店铺成交GMV(30日)"},
+      {"ename": "outClickSellerDealRgmv15d", "nameCn": "店铺成交GMV(15日)"},
+      {"ename": "outClickSellerDealRgmv7d", "nameCn": "店铺成交GMV(7日)"},
+      {"ename": "outClickSellerAddCnt30d", "nameCn": "店铺加购量(30日)"},
+      {"ename": "outClickSellerAddCnt15d", "nameCn": "店铺加购量(15日)"},
+      {"ename": "outClickSellerAddCnt7d", "nameCn": "店铺加购量(7日)"},
+      {"ename": "outClickEnterStoreCnt30d", "nameCn": "店铺访问量(30日)"},
+      {"ename": "outClickEnterStoreCnt15d", "nameCn": "店铺访问量(15日)"},
+      {"ename": "outClickEnterStoreCnt7d", "nameCn": "店铺访问量(7日)"},
+      {"ename": "outClickWechatAddFriendCnt30d", "nameCn": "微信加好友"},
+      {"ename": "outClickWechatRegisterCnt30d", "nameCn": "微信小程序访问"},
+      {"ename": "outClickWechatAccessCnt30d", "nameCn": "注册"}
+    ]
+  },
+  "columns": [
+    "groupName", "groupId",
+    "campaignId", "campaignName",
+    "unitId", "unitName",
+    "creativityId", "creativityName", "creativityImage",
+    "noteId", "noteTitle", "noteImage", "noteJumpUrl",
+    "fee", "impNum", "clickNum",
+    "engageNum", "favNum", "collectNum", "cmtNum", "followNum", "shareNum",
+    "actionButtonClickNum", "screenshotNum", "saveNum",
+    "videoPlayCnt", "videoPlay5sCnt",
+    "searchComponentClickNum", "searchAfterReadNum",
+    "iPeopleNum", "tiPeopleNum",
+    "outsideSellerPv",
+    "tbTaskFee", "tbTaskClickNum", "tbTaskReadUserCnt",
+    "jdActiveUserNum",
+    "jdTaskFee", "jdTaskClickNum", "jdTaskReadUserCnt",
+    "leadsSuccess", "validLeadsNum", "msgLeadsFormSubmitNum",
+    "landingFormImpNum", "landingPagePv",
+    "phoneCallCnt", "phoneCallSuccCnt", "wechatCopyCnt", "wechatCopySuccCnt",
+    "identityCertiCnt", "commodityBuyCnt",
+    "messageOpenCnt", "messageDrivingOpenCnt", "msgLeadsNum",
+    "messageUserCnt", "msgChatUserCnt", "msgChatMsgCnt", "msgLeadsUserCnt",
+    "friendAddCnt", "friendAddSuccessCnt", "chatOpenCnt",
+    "wechatAddConsultCnt", "wechatAddConsultLeadsSuccessCnt",
+    "extLeadsSuccNum",
+    "eventAppOpenCnt", "eventAppEnterStoreCnt",
+    "eventAppEngagementCnt", "eventAppPaymentCnt", "eventAppPaymentAmount",
+    "searchInvokeButtonClickCnt",
+    "wechatAppletsOpenCnt", "wechatAppletsActivateCnt",
+    "wechatAppletsPayCnt", "wechatAppletsPayAmount",
+    "currentWechatAppletsActivateCnt",
+    "currentWechatAppletsPayCnt", "currentWechatAppletsPayAmount",
+    "currentWechatAppletsFirstPayCnt", "currentWechatAppletsFirstPayAmount",
+    "wechatAppletsPayCnt3d", "wechatAppletsPayAmount3d",
+    "wechatAppletsPayCnt7d", "wechatAppletsPayAmount7d",
+    "wechatRetention1dCnt", "wechatRetention3dCnt", "wechatRetention7dCnt",
+    "appletsOpenCnt", "appletsPayCnt", "appletsPayAmount",
+    "appDownloadButtonClickCnt", "appRegisterCnt",
+    "appActivateCnt", "currentAppActivateCnt",
+    "appKeyActionCnt", "firstAppPayCnt",
+    "currentAppPayCnt", "currentAppPayAmount",
+    "appPayCnt7d", "appPayAmount",
+    "appActivateAmount1d", "appActivateAmount3d", "appActivateAmount7d",
+    "retention1dCnt", "retention3dCnt", "retention7dCnt",
+    "appBookDownloadClickCnt", "appBookFormSubmitCnt",
+    "androidDownloadStarts", "androidDownloadCompletions", "androidInstallCompletions",
+    "poiComponentClickNum",
+    "outClickSellerDealOrder30d", "outClickSellerDealOrder15d", "outClickSellerDealOrder7d",
+    "outClickSellerDealRgmv30d", "outClickSellerDealRgmv15d", "outClickSellerDealRgmv7d",
+    "outClickSellerAddCnt30d", "outClickSellerAddCnt15d", "outClickSellerAddCnt7d",
+    "outClickEnterStoreCnt30d", "outClickEnterStoreCnt15d", "outClickEnterStoreCnt7d",
+    "outClickWechatAddFriendCnt30d", "outClickWechatRegisterCnt30d", "outClickWechatAccessCnt30d"
+  ],
+  "excludedDimensions": {
+    "_comment": "未纳入的维度",
+    "SPU": ["spuId", "spuName"]
+  }
+}

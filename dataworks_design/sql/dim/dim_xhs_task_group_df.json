@@ -1,0 +1,99 @@
+{
+    "transform": false,
+    "type": "job",
+    "version": "2.0",
+    "steps": [
+        {
+            "stepType": "postgresql",
+            "parameter": {
+                "partitionKey": null,
+                "datasource": "sync_dim_PostgreSQL18",
+                "envType": 1,
+                "column": [
+                    "task_group_id",
+                    "task_id",
+                    "task_group_name",
+                    "brand_user_id",
+                    "grass_alliance",
+                    "pgy_project_id",
+                    "confirm_time",
+                    "task_auth_status",
+                    "now()",
+                    "dt"
+                ],
+                "where": "dt = TO_DATE('${bizdate}', 'YYYYMMDD') ",
+                "splitPk": "",
+                "table": "public.dim_xhs_task_group_df"
+            },
+            "name": "Reader",
+            "category": "reader"
+        },
+        {
+            "name": "Processor",
+            "stepType": null,
+            "category": "processor",
+            "copies": 1,
+            "parameter": {
+                "nodes": [],
+                "edges": [],
+                "groups": [],
+                "version": "2.0"
+            }
+        },
+        {
+            "stepType": "odps",
+            "parameter": {
+                "slotNum": null,
+                "column": [
+                    "task_group_id",
+                    "task_id",
+                    "task_group_name",
+                    "brand_user_id",
+                    "grass_alliance",
+                    "pgy_project_id",
+                    "confirm_time",
+                    "task_auth_status",
+                    "etl_time",
+                    "dt"
+                ],
+                "emptyAsNull": true,
+                "tableComment": "小红书任务组维度表",
+                "partition": "ds=${bizdate}",
+                "truncate": true,
+                "partitionKey": null,
+                "datasource": "default_datasource_cn_hangzhou_530486",
+                "envType": 1,
+                "tunnelQuota": "default",
+                "isSupportThreeModel": false,
+                "table": "dim_xhs_task_group_df",
+                "consistencyCommit": false
+            },
+            "name": "Writer",
+            "category": "writer"
+        }
+    ],
+    "setting": {
+        "executeMode": null,
+        "failoverEnable": null,
+        "common": {
+            "column": {
+                "timeZone": "Asia/Shanghai"
+            }
+        },
+        "errorLimit": {
+            "record": ""
+        },
+        "speed": {
+            "concurrent": 2,
+            "throttle": false
+        }
+    },
+    "order": {
+        "hops": [
+            {
+                "from": "Reader",
+                "to": "Writer"
+            }
+        ]
+    }
+}

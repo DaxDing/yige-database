@@ -1,12 +1,12 @@
 -- ============================================================
 -- 补充 ODS 层 advertiser_id、etl_time，清理 raw_data 零值键
--- 源表/目标表: ods_xhs_creative_report_hi
--- 上游依赖: sync_xhs_creative_report_hi
--- 下游依赖: etl_xhs_creative_daily
+-- 源表/目标表: ods_xhs_audience_report_di
+-- 上游依赖: sync_xhs_audience_report_di
+-- 下游依赖: (待定)
 -- 调度参数: bizdate, advertiser_id
 -- ============================================================
 
-INSERT OVERWRITE TABLE ods_xhs_creative_report_hi PARTITION (ds='${bizdate}')
+INSERT OVERWRITE TABLE ods_xhs_audience_report_di PARTITION (ds='${bizdate}')
 SELECT
     COALESCE(advertiser_id, '${advertiser_id}')   AS advertiser_id,
     dt,
@@ -25,7 +25,6 @@ SELECT
         '{'
     )                                             AS raw_data,
     COALESCE(etl_time, GETDATE())                 AS etl_time
-FROM ods_xhs_creative_report_hi
+FROM ods_xhs_audience_report_di
 WHERE ds = '${bizdate}'
 ;
-

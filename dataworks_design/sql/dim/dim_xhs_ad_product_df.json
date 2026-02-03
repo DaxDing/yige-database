@@ -1,0 +1,93 @@
+{
+    "transform": false,
+    "type": "job",
+    "version": "2.0",
+    "steps": [
+        {
+            "stepType": "postgresql",
+            "parameter": {
+                "partitionKey": null,
+                "datasource": "sync_dim_PostgreSQL18",
+                "envType": 1,
+                "column": [
+                    "ad_product_id",
+                    "ad_product_name",
+                    "project_id",
+                    "brand_name",
+                    "product_category",
+                    "now()",
+                    "dt"
+                ],
+                "where": "dt = TO_DATE('${bizdate}', 'YYYYMMDD') ",
+                "splitPk": "",
+                "table": "public.dim_xhs_ad_product_df"
+            },
+            "name": "Reader",
+            "category": "reader"
+        },
+        {
+            "name": "Processor",
+            "stepType": null,
+            "category": "processor",
+            "copies": 1,
+            "parameter": {
+                "nodes": [],
+                "edges": [],
+                "groups": [],
+                "version": "2.0"
+            }
+        },
+        {
+            "stepType": "odps",
+            "parameter": {
+                "slotNum": null,
+                "column": [
+                    "ad_product_id",
+                    "ad_product_name",
+                    "project_id",
+                    "brand_name",
+                    "product_category",
+                    "etl_time",
+                    "dt"
+                ],
+                "emptyAsNull": true,
+                "tableComment": "小红书投流产品维度表",
+                "partition": "ds=${bizdate}",
+                "truncate": true,
+                "partitionKey": null,
+                "datasource": "default_datasource_cn_hangzhou_530486",
+                "envType": 1,
+                "tunnelQuota": "default",
+                "isSupportThreeModel": false,
+                "table": "dim_xhs_ad_product_df",
+                "consistencyCommit": false
+            },
+            "name": "Writer",
+            "category": "writer"
+        }
+    ],
+    "setting": {
+        "executeMode": null,
+        "failoverEnable": null,
+        "common": {
+            "column": {
+                "timeZone": "Asia/Shanghai"
+            }
+        },
+        "errorLimit": {
+            "record": ""
+        },
+        "speed": {
+            "concurrent": 2,
+            "throttle": false
+        }
+    },
+    "order": {
+        "hops": [
+            {
+                "from": "Reader",
+                "to": "Writer"
+            }
+        ]
+    }
+}
