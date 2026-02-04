@@ -88,18 +88,46 @@ def drop_table(odps: ODPS, name: str) -> None:
     print(f"Dropped table: {name}")
 
 
-def execute_sql(odps: ODPS, sql: str) -> None:
-    """Execute SQL statement."""
+def execute_sql(odps: ODPS, sql: str, hints: dict = None) -> None:
+    """Execute SQL statement with optional hints."""
     print(f"Executing: {sql}\n")
 
     sql_lower = sql.strip().lower()
     if sql_lower.startswith("select"):
-        with odps.execute_sql(sql).open_reader() as reader:
+        with odps.execute_sql(sql, hints=hints).open_reader() as reader:
             for record in reader:
                 print(dict(record))
     else:
-        odps.execute_sql(sql)
+        odps.execute_sql(sql, hints=hints)
         print("Executed successfully.")
+
+
+def count_rows(odps: ODPS, name: str) -> None:
+    """Count rows for a table or all tables. Enables fullscan hint."""
+    hints = {"odps.sql.allow.fullscan": "true"}
+
+    if name == "--all":
+        tables = sorted(odps.list_tables(), key=lambda x: x.name)
+        print(f"{'Table':<55} {'Partitions':>10} {'Rows':>10}")
+        print("-" * 77)
+        for t in tables:
+            part_count = len(list(t.partitions))
+            sql = f"SELECT COUNT(*) AS cnt FROM {t.name}"
+            try:
+                with odps.execute_sql(sql, hints=hints).open_reader() as reader:
+                    row_count = next(iter(reader))[0]
+            except Exception as e:
+                row_count = f"ERROR"
+            print(f"  {t.name:<53} {part_count:>10} {row_count:>10}")
+    else:
+        t = odps.get_table(name)
+        part_count = len(list(t.partitions))
+        sql = f"SELECT COUNT(*) AS cnt FROM {name}"
+        with odps.execute_sql(sql, hints=hints).open_reader() as reader:
+            row_count = next(iter(reader))[0]
+        print(f"Table: {name}")
+        print(f"Partitions: {part_count}")
+        print(f"Rows: {row_count}")
 
 
 def list_partitions(odps: ODPS, name: str) -> None:
@@ -138,6 +166,11 @@ def main():
 
     p = subparsers.add_parser("execute-sql", help="Execute SQL")
     p.add_argument("sql", help="SQL statement")
+    p.add_argument("--fullscan", action="store_true", help="Allow full table scan")
+
+    p = subparsers.add_parser("count-rows", help="Count table rows")
+    p.add_argument("name", nargs="?", default=None, help="Table name")
+    p.add_argument("--all", dest="all_tables", action="store_true", help="Count all tables")
 
     p = subparsers.add_parser("list-partitions", help="List partitions")
     p.add_argument("name", help="Table name")
@@ -158,7 +191,13 @@ def main():
     elif args.command == "drop-table":
         drop_table(odps, args.name)
     elif args.command == "execute-sql":
-        execute_sql(odps, args.sql)
+        hints = {"odps.sql.allow.fullscan": "true"} if args.fullscan else None
+        execute_sql(odps, args.sql, hints=hints)
+    elif args.command == "count-rows":
+        name = "--all" if args.all_tables else args.name
+        if not name:
+            parser.error("count-rows requires a table name or --all")
+        count_rows(odps, name)
     elif args.command == "list-partitions":
         list_partitions(odps, args.name)
     elif args.command == "add-partition":

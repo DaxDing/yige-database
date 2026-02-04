@@ -29,6 +29,9 @@ ALIYUN_ACCESS_KEY_SECRET=your_secret
 | Create table | `create-table <json>` |
 | Drop table | `drop-table <name>` |
 | Execute SQL | `execute-sql "<sql>"` |
+| Execute SQL (fullscan) | `execute-sql "<sql>" --fullscan` |
+| Count rows | `count-rows <name>` |
+| Count all rows | `count-rows --all` |
 | List partitions | `list-partitions <name>` |
 | Add partition | `add-partition <name> ds=YYYYMMDD` |
 
@@ -51,6 +54,7 @@ python3 scripts/maxcompute_ops.py <command> [options]
 |------|-------------|
 | Single statement only | Execute one SQL per call. Multi-statement fails with `Please add put { "odps.sql.submit.mode" : "script"}` |
 | Chain with `&&` | Use shell `&&` to run multiple statements sequentially |
+| Fullscan blocked | SELECT without partition filter fails. Use `--fullscan` flag or `count-rows` command |
 
 ```bash
 # Wrong - multi-statement in single call
@@ -84,6 +88,21 @@ python3 scripts/maxcompute_ops.py execute-sql "ALTER TABLE t ADD COLUMN col STRI
 
 # Query
 python3 scripts/maxcompute_ops.py execute-sql "SELECT * FROM t LIMIT 10"
+```
+
+### Count Rows
+```bash
+# Single table
+python3 scripts/maxcompute_ops.py count-rows ods_xhs_creative_report_hi
+
+# All tables (with partition count)
+python3 scripts/maxcompute_ops.py count-rows --all
+```
+
+### Fullscan Query
+```bash
+# SELECT on partitioned table without partition filter
+python3 scripts/maxcompute_ops.py execute-sql "SELECT COUNT(*) FROM t" --fullscan
 ```
 
 ### Partition Management

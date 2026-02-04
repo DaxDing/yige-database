@@ -31,5 +31,4 @@ SELECT
     COALESCE(etl_time, GETDATE())                 AS etl_time
 FROM ods_xhs_creative_realtime_hi
 WHERE ds = '${bizdate}'
-  AND GET_JSON_OBJECT(raw_data, '$.hourly_data') IS NOT NULL
 ;
