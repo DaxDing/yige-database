@@ -783,7 +783,7 @@ function renderAllContent(el) {
           let ta = 0, te = 0, worst = 'pass', latestTs = null;
           const isBase = item.id.endsWith('_base');
           PROJECTS.forEach(pr => { const c = pr.checks[item.id]; ta += c.actual; te += c.expect; if (c.status === 'fail') worst = 'fail'; else if (c.status === 'pending' && worst !== 'fail') worst = 'pending'; if (c.ts && (!latestTs || c.ts > latestTs)) latestTs = c.ts; });
-          const tsShort = latestTs ? latestTs.slice(5) : '-';
+          const tsShort = latestTs ? latestTs : '-';
           let prefix = '';
           if (item.group && item.group !== lastG) { prefix = `<div class="cat-subgroup"><span>${item.group}</span>${item.groupTotal ? `<span class="cat-subgroup-total">共 ${item.groupTotal}</span>` : ''}</div>`; lastG = item.group; }
           const hasGroup = !!item.group;
@@ -854,7 +854,7 @@ function renderProjectContent(el, project) {
       <div class="cat-body">
         ${(() => { let lastG = null; return items.map(c => {
           const isBase = c.id.endsWith('_base');
-          const tsDisplay = c.ts ? c.ts.slice(5) : '-';
+          const tsDisplay = c.ts ? c.ts : '-';
           let prefix = '';
           if (c.group && c.group !== lastG) { prefix = `<div class="cat-subgroup"><span>${c.group}</span>${c.groupTotal ? `<span class="cat-subgroup-total">共 ${c.groupTotal}</span>` : ''}</div>`; lastG = c.group; }
           const hasGroup = !!c.group;
