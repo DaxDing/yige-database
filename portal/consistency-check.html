@@ -702,7 +702,7 @@ let selected = '__all__';
 
 // 默认业务日期 = 今天
 function fmtDate(d) { const p = v => String(v).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; }
-let bizDateSelected = fmtDate(new Date());
+let bizDateSelected = '2026-02-08';
 
 // 根据业务日期和 lag 计算实际数据日期
 function dataDate(bizDt, lag) {
