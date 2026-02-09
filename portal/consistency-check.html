@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YICE Consistency Check</title>
+<title>YICE 数据一致性检查</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@20,400,1" rel="stylesheet">
@@ -419,7 +419,7 @@ body {
       <div class="logo">YC</div>
       <span class="header-brand">YICE</span>
       <span class="header-sep">/</span>
-      <span class="header-page">数据集成一致性检查</span>
+      <span class="header-page">数据一致性检查</span>
     </div>
     <div class="header-right" id="clock"></div>
   </header>
@@ -439,13 +439,15 @@ body {
 const CHECKS = {
   note: {
     label: '笔记', icon: 'description', baseSource: '内容执行表/复用笔记',
-    baseValues: { total: 110, active: 30 },
-    baseLabels: { first: '星河', second: '京东' },
+    baseValues: { total: 120, active: 20 },
+    baseLabels: { first: '执行笔记', second: '复用笔记标记' },
     items: [
       { id: 'note_base', name: '基准', desc: '基准数据一致性', source: 'DWD', lag: 0 },
       { id: 'note_pgy', name: '蒲公英投后数据', desc: '蒲公英平台投后数据', source: 'ODS → DWD', lag: 1, tag: '执行笔记' },
-      { id: 'note_xh', name: '星河内容组数据', desc: '星河内容组数据', source: 'ODS → DWD', lag: 1, tag: '小红星执行笔记 + 复用笔记标记' },
-      { id: 'note_jd', name: '京东内容组数据', desc: '京东内容组数据', source: 'ODS → DWD', lag: 2, tag: '小红盟执行笔记 + 复用笔记标记' },
+      { id: 'note_xh_15', name: '星河内容组数据（15）', desc: '星河内容组数据', source: 'ODS → DWD', lag: 1, tag: '小红星执行笔记 + 复用笔记标记' },
+      { id: 'note_xh_30', name: '星河内容组数据（30）', desc: '星河内容组数据', source: 'ODS → DWD', lag: 1, tag: '小红星执行笔记 + 复用笔记标记' },
+      { id: 'note_jd_15', name: '京东内容组数据（15）', desc: '京东内容组数据', source: 'ODS → DWD', lag: 2, tag: '小红盟执行笔记 + 复用笔记标记' },
+      { id: 'note_jd_30', name: '京东内容组数据（30）', desc: '京东内容组数据', source: 'ODS → DWD', lag: 2, tag: '小红盟执行笔记 + 复用笔记标记' },
     ]
   },
   task_group: {
@@ -454,8 +456,10 @@ const CHECKS = {
     baseLabels: { first: '小红星任务', second: '小红盟任务' },
     items: [
       { id: 'tg_base', name: '基准', desc: '基准数据一致性', source: 'DWD', lag: 0 },
-      { id: 'tg_xh', name: '星河任务组数据', desc: '星河任务组数据', source: 'ODS → DWD', lag: 1, tag: '小红星任务' },
-      { id: 'tg_jd', name: '京东任务组数据', desc: '京东任务组数据', source: 'ODS → DWD', lag: 2, tag: '小红盟任务' },
+      { id: 'tg_xh_15', name: '星河任务组数据（15）', desc: '星河任务组数据', source: 'ODS → DWD', lag: 1, tag: '小红星任务' },
+      { id: 'tg_xh_30', name: '星河任务组数据（30）', desc: '星河任务组数据', source: 'ODS → DWD', lag: 1, tag: '小红星任务' },
+      { id: 'tg_jd_15', name: '京东任务组数据（15）', desc: '京东任务组数据', source: 'ODS → DWD', lag: 2, tag: '小红盟任务' },
+      { id: 'tg_jd_30', name: '京东任务组数据（30）', desc: '京东任务组数据', source: 'ODS → DWD', lag: 2, tag: '小红盟任务' },
     ]
   },
   creative: {
@@ -516,8 +520,10 @@ const PROJECTS = [
     checks: {
       note_base: { status: 'pass', actual: 1240, expect: 1240, ts: '2026-02-05 22:00' },
       note_pgy:  { status: 'pass', actual: 120, expect: 120, ts: '2026-02-05 22:00' },
-      note_xh:   { status: 'pass', actual: 220, expect: 220, ts: '2026-02-06 13:00' },
-      note_jd:   { status: 'pass', actual: 300, expect: 300, ts: '2026-02-06 13:00' },
+      note_xh_15:   { status: 'pass', actual: 110, expect: 110, ts: '2026-02-06 13:00' },
+      note_xh_30:   { status: 'pass', actual: 110, expect: 110, ts: '2026-02-06 13:00' },
+      note_jd_15:   { status: 'pass', actual: 30, expect: 30, ts: '2026-02-06 13:00' },
+      note_jd_30:   { status: 'pass', actual: 30, expect: 30, ts: '2026-02-06 13:00' },
       cr_base:     { status: 'pass', actual: 65, expect: 65, ts: '2026-02-05 22:00' },
       cr_offline:  { status: 'fail', actual: 10, expect: 11, ts: '2026-02-05 22:00' },
       cr_realtime: { status: 'fail', actual: 193, expect: 200, ts: '2026-02-06 10:10' },
@@ -536,8 +542,10 @@ const PROJECTS = [
       ac_base:     { status: 'pass', actual: 1, expect: 1, ts: '2026-02-05 22:00' },
       ac_daily:    { status: 'pass', actual: 1, expect: 1, ts: '2026-02-05 22:00' },
       tg_base:     { status: 'pass', actual: 1, expect: 1, ts: '2026-02-05 22:00' },
-      tg_xh:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
-      tg_jd:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      tg_xh_15:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
+      tg_xh_30:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
+      tg_jd_15:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      tg_jd_30:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
     }
   },
   {
@@ -545,8 +553,10 @@ const PROJECTS = [
     checks: {
       note_base: { status: 'pass', actual: 2105, expect: 2105, ts: '2026-02-05 22:00' },
       note_pgy:  { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
-      note_xh:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
-      note_jd:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_xh_15:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_xh_30:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_jd_15:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_jd_30:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
       cr_base:     { status: 'pass', actual: 75, expect: 75, ts: '2026-02-05 22:25' },
       cr_offline:  { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
       cr_realtime: { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 10:10' },
@@ -565,8 +575,10 @@ const PROJECTS = [
       ac_base:     { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
       ac_daily:    { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
       tg_base:     { status: 'pass', actual: 1, expect: 1, ts: '2026-02-05 22:00' },
-      tg_xh:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
-      tg_jd:       { status: 'pending', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      tg_xh_15:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
+      tg_xh_30:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
+      tg_jd_15:       { status: 'pending', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      tg_jd_30:       { status: 'pending', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
     }
   },
   {
@@ -574,8 +586,10 @@ const PROJECTS = [
     checks: {
       note_base: { status: 'pass', actual: 680, expect: 680, ts: '2026-02-05 22:00' },
       note_pgy:  { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
-      note_xh:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
-      note_jd:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_xh_15:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_xh_30:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_jd_15:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_jd_30:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
       cr_base:     { status: 'pass', actual: 35, expect: 35, ts: '2026-02-05 22:10' },
       cr_offline:  { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:30' },
       cr_realtime: { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 10:10' },
@@ -594,8 +608,10 @@ const PROJECTS = [
       ac_base:     { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
       ac_daily:    { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
       tg_base:     { status: 'pass', actual: 1, expect: 1, ts: '2026-02-05 22:00' },
-      tg_xh:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
-      tg_jd:       { status: 'fail', actual: 0, expect: 1, ts: '2026-02-06 13:00' },
+      tg_xh_15:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
+      tg_xh_30:       { status: 'pass', actual: 1, expect: 1, ts: '2026-02-06 13:00' },
+      tg_jd_15:       { status: 'fail', actual: 0, expect: 1, ts: '2026-02-06 13:00' },
+      tg_jd_30:       { status: 'fail', actual: 0, expect: 1, ts: '2026-02-06 13:00' },
     }
   },
   {
@@ -603,8 +619,10 @@ const PROJECTS = [
     checks: {
       note_base: { status: 'pass', actual: 390, expect: 390, ts: '2026-02-05 22:00' },
       note_pgy:  { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
-      note_xh:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
-      note_jd:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_xh_15:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_xh_30:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_jd_15:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      note_jd_30:   { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
       cr_base:     { status: 'pass', actual: 25, expect: 25, ts: '2026-02-05 22:00' },
       cr_offline:  { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:15' },
       cr_realtime: { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 10:10' },
@@ -623,8 +641,10 @@ const PROJECTS = [
       ac_base:     { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
       ac_daily:    { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
       tg_base:     { status: 'pass', actual: 0, expect: 0, ts: '2026-02-05 22:00' },
-      tg_xh:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
-      tg_jd:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      tg_xh_15:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      tg_xh_30:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      tg_jd_15:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
+      tg_jd_30:       { status: 'pass', actual: 0, expect: 0, ts: '2026-02-06 13:00' },
     }
   }
 ];
