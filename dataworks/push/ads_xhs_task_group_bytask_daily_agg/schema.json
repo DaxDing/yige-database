@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ads_xhs_task_group_bytask_daily_agg",
+  "description": "任务组维度日累计分析表-任务维度",
+  "type": "object",
+  "properties": {
+    "attribution_period": {
+      "type": "integer",
+      "description": "归因口径"
+    },
+    "dt": {
+      "type": "integer",
+      "description": "数据更新日期"
+    },
+    "ad_product_name": {
+      "type": "string",
+      "description": "归属产品"
+    },
+    "task_group_name": {
+      "type": "string",
+      "description": "任务组"
+    },
+    "read_uv": {
+      "type": "integer",
+      "description": "阅读/播放UV"
+    },
+    "enter_shop_rate": {
+      "type": "null",
+      "description": "进店率"
+    },
+    "enter_shop_uv": {
+      "type": "integer",
+      "description": "进店UV"
+    },
+    "conversion_rate": {
+      "type": "null",
+      "description": "成交转化率"
+    },
+    "shop_order_uv": {
+      "type": "integer",
+      "description": "成交UV"
+    },
+    "average_order_value": {
+      "type": "null",
+      "description": "客单价"
+    },
+    "shop_order_gmv": {
+      "type": "number",
+      "description": "成交GMV"
+    },
+    "task_product_gmv": {
+      "type": "number",
+      "description": "任务商品成交GMV"
+    },
+    "collect_rate": {
+      "type": "null",
+      "description": "收加率"
+    },
+    "rpv": {
+      "type": "null",
+      "description": "UV价值"
+    },
+    "kols_fee": {
+      "type": "number",
+      "description": "蒲公英金额"
+    },
+    "ad_fee": {
+      "type": "number",
+      "description": "投流金额"
+    },
+    "fee": {
+      "type": "number",
+      "description": "总金额"
+    },
+    "cpuv": {
+      "type": "null",
+      "description": "CPUV【综合】"
+    },
+    "roi": {
+      "type": "null",
+      "description": "ROI"
+    }
+  },
+  "example": {
+    "attribution_period": 15,
+    "dt": 20260226,
+    "ad_product_name": "信息流",
+    "task_group_name": "大厨空气炸锅-好物推荐",
+    "read_uv": 148084,
+    "enter_shop_rate": 0.0882,
+    "enter_shop_uv": 13061,
+    "conversion_rate": 0.0182,
+    "shop_order_uv": 238,
+    "average_order_value": 1708.01,
+    "shop_order_gmv": 406506.38,
+    "task_product_gmv": 224814.18,
+    "collect_rate": 0.0350,
+    "rpv": 31.12,
+    "kols_fee": 44700,
+    "ad_fee": 12500,
+    "fee": 57200,
+    "cpuv": 4.38,
+    "roi": 7.11
+  }
+}

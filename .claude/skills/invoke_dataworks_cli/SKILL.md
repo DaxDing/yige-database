@@ -1,5 +1,6 @@
 ---
 name: invoke_dataworks_cli
+type: tool
 description: Invokes Alibaba Cloud DataWorks CLI with authentication, error handling, and retry logic. Use when working with DataWorks nodes, data integration, scheduling, or MaxCompute operations.
 allowed-tools: ["*"]
 ---
@@ -48,9 +49,9 @@ Downstream (Input Param): select outputs  →  use ${param_name} in code
 
 | Error | Document |
 |-------|----------|
-| `command not found` | [shell_node.md](./references/shell_node.md#runtime) |
-| `${outputs.xxx}` not replaced | [context_parameters.md](./references/context_parameters.md#common-issues) |
-| Invalid token | [troubleshooting.md](./references/troubleshooting.md#api-auth-errors) |
+| `command not found` | [shell_node.md](./references/shell_node.md) |
+| `${outputs.xxx}` not replaced | [context_parameters.md](./references/context_parameters.md) |
+| Invalid token | [troubleshooting.md](./references/troubleshooting.md) |
 
 ## CLI Usage
 
@@ -89,6 +90,85 @@ python3 scripts/invoke_dataworks.py dataworks-public ListProjects --region cn-ha
 | List nodes | `ListNodes --ProjectId 123` |
 
 Full commands: [dataworks_cli_commands.md](./references/dataworks_cli_commands.md)
+
+## Node Management
+
+Manage DataWorks workflow node scripts via `scripts/deploy_dw_node.py`.
+
+### Commands
+
+| Operation | Command |
+|-----------|---------|
+| List nodes | `python3 scripts/deploy_dw_node.py list <workflow>` |
+| Get script | `python3 scripts/deploy_dw_node.py get <workflow> <node>` |
+| Deploy script | `python3 scripts/deploy_dw_node.py deploy <workflow> <node> <file>` |
+
+### Examples
+
+```bash
+# List workflow nodes
+python3 scripts/deploy_dw_node.py list test_copy
+
+# View node script content
+python3 scripts/deploy_dw_node.py get test_copy 22
+
+# Deploy local script to node
+python3 scripts/deploy_dw_node.py deploy test_copy 22 dataworks_design/api/fetch_xhs_account_flow.sh
+```
+
+---
+
+## Operations Management
+
+Manage DataWorks task instances (run, stop, rerun, status, logs) via `scripts/ops_dw_node.py`.
+
+### Commands
+
+| Operation | Command |
+|-----------|---------|
+| Run node | `python3 scripts/ops_dw_node.py run <workflow> <node> [--biz-date YYYY-MM-DD]` |
+| Smoke test | `python3 scripts/ops_dw_node.py smoke <workflow> <node> [--biz-date YYYY-MM-DD]` |
+| View status | `python3 scripts/ops_dw_node.py status <workflow> <node> [--limit N]` |
+| View log | `python3 scripts/ops_dw_node.py log <instance_id>` |
+| View detail | `python3 scripts/ops_dw_node.py detail <instance_id>` |
+| Rerun instance | `python3 scripts/ops_dw_node.py rerun <instance_id>` |
+| Stop instance | `python3 scripts/ops_dw_node.py stop <instance_id>` |
+
+### Examples
+
+```bash
+# Run node (defaults to T-1 biz date)
+python3 scripts/ops_dw_node.py run xhs_pipeline etl_dwd_xhs_creative_hi
+
+# Run with specific biz date
+python3 scripts/ops_dw_node.py run xhs_pipeline etl_dwd_xhs_creative_hi --biz-date 2026-02-10
+
+# Smoke test (run node + direct upstream)
+python3 scripts/ops_dw_node.py smoke xhs_pipeline etl_dwd_xhs_creative_hi
+
+# View recent instance status
+python3 scripts/ops_dw_node.py status xhs_pipeline etl_dwd_xhs_creative_hi --limit 5
+
+# View instance log
+python3 scripts/ops_dw_node.py log 123456789
+
+# Rerun failed instance
+python3 scripts/ops_dw_node.py rerun 123456789
+
+# Stop running instance
+python3 scripts/ops_dw_node.py stop 123456789
+```
+
+### Typical Workflow
+
+```
+1. status  →  Check instance status, find failures
+2. log     →  Read failure logs, identify root cause
+3. rerun   →  Rerun after fix
+   or run  →  Trigger new execution
+```
+
+---
 
 ## MaxCompute Table Management
 

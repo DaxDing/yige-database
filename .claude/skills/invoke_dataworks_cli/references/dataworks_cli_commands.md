@@ -40,22 +40,27 @@ aliyun dataworks-public ListNodes \
 ### 获取任务详情
 
 ```bash
-aliyun dataworks-public GetNode --NodeId <node_id> --region cn-hangzhou
+aliyun dataworks-public GetNode --Id <node_id> --region cn-hangzhou
 ```
 
-### 运行任务
+### 运行周期任务
 
 ```bash
-aliyun dataworks-public RunNode \
+aliyun dataworks-public RunCycleDagNodes \
+  --ProjectEnv PROD \
   --NodeId <node_id> \
-  --BizDate "2025-12-31" \
+  --BizDate "2026-01-07" \
   --region cn-hangzhou
 ```
 
-### 停止任务
+### 冒烟测试
 
 ```bash
-aliyun dataworks-public StopNode --NodeId <node_id> --region cn-hangzhou
+aliyun dataworks-public RunSmokeTest \
+  --ProjectEnv PROD \
+  --NodeId <node_id> \
+  --Bizdate "2026-01-07" \
+  --region cn-hangzhou
 ```
 
 ## 任务实例管理 (Instance Management)
@@ -63,8 +68,9 @@ aliyun dataworks-public StopNode --NodeId <node_id> --region cn-hangzhou
 ### 查询任务实例
 
 ```bash
-aliyun dataworks-public ListNodeInstances \
+aliyun dataworks-public ListInstances \
   --ProjectId <project_id> \
+  --ProjectEnv PROD \
   --NodeId <node_id> \
   --PageNumber 1 \
   --PageSize 20 \
@@ -74,16 +80,36 @@ aliyun dataworks-public ListNodeInstances \
 ### 获取任务实例详情
 
 ```bash
-aliyun dataworks-public GetNodeInstance \
-  --NodeInstanceId <instance_id> \
+aliyun dataworks-public GetInstance \
+  --ProjectEnv PROD \
+  --InstanceId <instance_id> \
   --region cn-hangzhou
 ```
 
-### 重跑任务实例
+### 获取实例日志
 
 ```bash
-aliyun dataworks-public RerunNodeInstance \
-  --NodeInstanceId <instance_id> \
+aliyun dataworks-public GetInstanceLog \
+  --ProjectEnv PROD \
+  --InstanceId <instance_id> \
+  --region cn-hangzhou
+```
+
+### 重跑实例
+
+```bash
+aliyun dataworks-public RerunInstance \
+  --ProjectEnv PROD \
+  --InstanceId <instance_id> \
+  --region cn-hangzhou
+```
+
+### 停止实例
+
+```bash
+aliyun dataworks-public StopInstance \
+  --ProjectEnv PROD \
+  --InstanceId <instance_id> \
   --region cn-hangzhou
 ```
 
