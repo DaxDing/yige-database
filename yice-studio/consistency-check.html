@@ -878,17 +878,30 @@ function transformCherkData(rows, targetDt) {
 }
 
 async function fetchDimStats(dt, refresh = false) {
+  const cacheKey = 'yice_dim_stats';
+  // 非刷新时优先用本地缓存
+  if (!refresh) {
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) { DIM_STATS = JSON.parse(cached); return; }
+    } catch (_) {}
+  }
+  // 刷新或无缓存时请求 API
   try {
     const ps = new URLSearchParams();
     if (dt) ps.set('dt', dt);
-    if (refresh) ps.set('refresh', '1');
+    ps.set('refresh', '1');
     const resp = await fetch('/api/dim-stats?' + ps.toString());
     if (resp.ok) {
       const data = await resp.json();
       DIM_STATS = data.stats || {};
+      localStorage.setItem(cacheKey, JSON.stringify(DIM_STATS));
     }
   } catch (e) {
-    DIM_STATS = {};
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) DIM_STATS = JSON.parse(cached);
+    } catch (_) {}
   }
 }
 
@@ -910,14 +923,16 @@ async function loadData(refresh = false) {
 
   try {
     const qs = refresh ? '?refresh=1' : '';
-    const cherkResp = await fetch('/api/cherk' + qs);
+    // 并发请求 cherk 和 dim-stats
+    const [cherkResp, _] = await Promise.all([
+      fetch('/api/cherk' + qs),
+      fetchDimStats(bizDateSelected, refresh),
+    ]);
     if (!cherkResp.ok) throw new Error(cherkResp.status);
     const data = await cherkResp.json();
     _allRows = data.rows || [];
     PROJECTS = transformCherkData(_allRows, bizDateSelected);
     dataMode = 'live';
-    // 加载维度基准（按选定日期）
-    await fetchDimStats(bizDateSelected, refresh);
   } catch (e) {
     console.warn('API 不可用，使用离线模式:', e.message);
     dataMode = 'offline';

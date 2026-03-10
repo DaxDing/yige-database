@@ -58,6 +58,16 @@ CHERK_DB = {
     'password': os.environ.get('DB_PASSWORD', ''),
 }
 
+# ── PostgreSQL 维度基准 ──
+
+DIM_DB = {
+    'host': os.environ.get('DB_HOST', ''),
+    'port': int(os.environ.get('DB_PORT', 5432)),
+    'dbname': 'sync_dim',
+    'user': os.environ.get('DB_USER', ''),
+    'password': os.environ.get('DB_PASSWORD', ''),
+}
+
 # ── 缓存 ──
 
 CACHE_TTL = 3600  # 1 小时
@@ -272,6 +282,117 @@ def query_cherk(refresh=False):
     return data
 
 
+# ── 维度基准查询 ──
+
+def query_dim_stats(refresh=False):
+    cache_key = 'dim_stats'
+    if not refresh:
+        cached = _get_cache(cache_key)
+        if cached is not None:
+            return cached
+
+    print('  查询 PostgreSQL(sync_dim): 维度基准统计 ...', flush=True)
+    t0 = time.time()
+
+    stats = {}  # project_id → { note: {total, active}, ... }
+
+    with psycopg2.connect(**DIM_DB) as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            # 笔记: total=执行笔记(is_proxy='f'), active=复用笔记标记(is_backlink='t')
+            cur.execute('''
+                SELECT b.project_id,
+                       COUNT(DISTINCT CASE WHEN b.is_proxy = 'f' THEN b.note_id END) AS total,
+                       COUNT(DISTINCT CASE WHEN b.is_backlink = 't' THEN b.note_id END) AS active
+                FROM brg_xhs_note_project_df b
+                WHERE b.project_id IS NOT NULL
+                GROUP BY b.project_id
+            ''')
+            for r in cur.fetchall():
+                pid = r['project_id']
+                stats.setdefault(pid, {})
+                stats[pid]['note'] = {'total': r['total'], 'active': r['active']}
+
+            # 任务组: total=全部, active=有 task_auth_status
+            cur.execute('''
+                SELECT project_id,
+                       COUNT(DISTINCT task_group_id) AS total,
+                       COUNT(DISTINCT CASE WHEN task_auth_status IS NOT NULL THEN task_group_id END) AS active
+                FROM dim_xhs_task_group_df
+                WHERE project_id IS NOT NULL
+                GROUP BY project_id
+            ''')
+            for r in cur.fetchall():
+                pid = r['project_id']
+                stats.setdefault(pid, {})
+                stats[pid]['task_group'] = {'total': r['total'], 'active': r['active']}
+
+            # 创意: total=全部, active=有效(creativity_status有值)
+            cur.execute('''
+                SELECT project_id,
+                       COUNT(DISTINCT creativity_id) AS total,
+                       COUNT(DISTINCT CASE WHEN creativity_status IS NOT NULL THEN creativity_id END) AS active
+                FROM dim_xhs_creativity_df
+                WHERE project_id IS NOT NULL
+                GROUP BY project_id
+            ''')
+            for r in cur.fetchall():
+                pid = r['project_id']
+                stats.setdefault(pid, {})
+                stats[pid]['creative'] = {'total': r['total'], 'active': r['active']}
+
+            # 关键词: total=关键词数, active=0(无搜索词维度)
+            cur.execute('''
+                SELECT project_id,
+                       COUNT(DISTINCT keyword_id) AS total
+                FROM dim_xhs_keyword_df
+                WHERE project_id IS NOT NULL
+                GROUP BY project_id
+            ''')
+            for r in cur.fetchall():
+                pid = r['project_id']
+                stats.setdefault(pid, {})
+                stats[pid]['keyword'] = {'total': r['total'], 'active': 0}
+
+            # 定向: total=定向包数, active=0
+            cur.execute('''
+                SELECT project_id,
+                       COUNT(DISTINCT target_id) AS total
+                FROM dim_xhs_target_df
+                WHERE project_id IS NOT NULL
+                GROUP BY project_id
+            ''')
+            for r in cur.fetchall():
+                pid = r['project_id']
+                stats.setdefault(pid, {})
+                stats[pid]['target'] = {'total': r['total'], 'active': 0}
+
+            # 投流账户: total=账户数
+            cur.execute('''
+                SELECT project_id,
+                       COUNT(DISTINCT advertiser_id) AS total
+                FROM dim_xhs_advertiser_df
+                WHERE project_id IS NOT NULL
+                GROUP BY project_id
+            ''')
+            for r in cur.fetchall():
+                pid = r['project_id']
+                stats.setdefault(pid, {})
+                stats[pid]['account'] = {'total': r['total']}
+
+    elapsed = time.time() - t0
+    data = {
+        'meta': {
+            'queried_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'query_seconds': round(elapsed, 2),
+        },
+        'stats': stats,
+    }
+
+    _set_cache(cache_key, data)
+    print(f'  完成: {len(stats)} projects, {elapsed:.2f}s', flush=True)
+    return data
+
+
 # ── Config 读写 ──
 
 def _read_config(name):
@@ -427,6 +548,13 @@ class APIHandler(SimpleHTTPRequestHandler):
                 self.send_json(500, {'error': str(e)})
         elif path == '/api/cherk':
             self.handle_cherk(parsed)
+        elif path == '/api/dim-stats':
+            params = parse_qs(parsed.query)
+            refresh = 'refresh' in params
+            try:
+                self.send_json(200, query_dim_stats(refresh))
+            except Exception as e:
+                self.send_json(500, {'error': str(e)})
         elif path == '/':
             self.send_response(302)
             self.send_header('Location', '/ads-report.html')

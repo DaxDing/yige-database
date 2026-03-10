@@ -183,6 +183,133 @@ body { background: var(--bg); color: var(--text-1); font-family: var(--ui); -web
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.07); border-radius: 3px; }
+
+/* ═══ Project Detail ═══ */
+.proj-header { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.proj-meta { font-size: 13px; color: var(--text-3); margin-left: 40px; margin-bottom: 20px; }
+.tab-bar {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+}
+.tab {
+  display: flex; align-items: center; gap: 6px; padding: 10px 20px;
+  font-family: var(--ui); font-size: 13px; font-weight: 500; color: var(--text-3);
+  background: none; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s; margin-bottom: -1px;
+}
+.tab:hover { color: var(--text-2); }
+.tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+.tab .icon { font-size: 16px; }
+
+/* KPI Cards */
+.kpi-grid { display: grid; gap: 12px; margin-bottom: 20px; }
+.kpi-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px; display: flex; flex-direction: column; gap: 4px;
+}
+.kpi-label { font-size: 12px; color: var(--text-3); }
+.kpi-value { font-size: 20px; font-weight: 700; font-family: var(--mono); }
+.kpi-sub { font-size: 12px; color: var(--text-3); font-family: var(--mono); }
+.kpi-trend { font-size: 12px; display: flex; align-items: center; gap: 2px; }
+.kpi-trend.up { color: var(--green); }
+.kpi-trend.down { color: var(--red); }
+.kpi-trend.warn { color: var(--amber); }
+
+/* Sub-tabs */
+.sub-tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--border); padding-bottom: 1px; margin-bottom: 16px; }
+.sub-tab {
+  font-size: 13px; font-weight: 500; color: var(--text-3); cursor: pointer;
+  padding-bottom: 10px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s;
+  background: none; border-top: none; border-left: none; border-right: none; font-family: var(--ui);
+}
+.sub-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+/* Data Table */
+.dtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dtable th { text-align: left; padding: 10px 8px; font-weight: 400; color: var(--text-3); font-size: 12px; border-bottom: 1px solid var(--border); }
+.dtable td { padding: 14px 8px; border-bottom: 1px solid var(--border-light); }
+.dtable tr:hover td { background: var(--surface-alt); }
+
+/* Status badges */
+.risk-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500;
+}
+
+/* Panels */
+.panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px;
+}
+.panel-title {
+  font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.panel-title .icon { font-size: 18px; color: var(--blue); }
+
+/* Rank item */
+.rank-item {
+  display: flex; align-items: flex-start; gap: 10px; padding: 10px;
+  background: var(--surface); border: 1px solid var(--border-light); border-radius: 8px;
+}
+.rank-num {
+  width: 20px; font-size: 14px; font-weight: 700; font-style: italic; text-align: center; margin-top: 2px;
+}
+
+/* AI feed */
+.ai-header {
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ai-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), #6366f1);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+.ai-avatar .icon { font-size: 14px; color: #fff; }
+.feed-item { display: flex; gap: 10px; padding: 10px 0; }
+.feed-dot {
+  min-width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; margin-top: 1px;
+}
+.feed-dot .icon { font-size: 12px; }
+
+/* Plan card */
+.plan-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px; cursor: pointer; transition: all 0.15s;
+}
+.plan-card:hover { box-shadow: var(--shadow-md); border-color: var(--blue-border); }
+
+/* Asset card */
+.asset-item {
+  padding: 10px 12px; background: var(--surface-alt); border-radius: 8px;
+  border: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;
+}
+
+/* Insight card */
+.insight {
+  font-size: 12px; padding: 10px; border-radius: 6px; margin-bottom: 6px; line-height: 1.5;
+  border-left: 3px solid;
+}
+.insight.positive { background: var(--green-light); border-color: var(--green); }
+.insight.info { background: var(--blue-light); border-color: var(--blue); }
+.insight.warning { background: var(--amber-light); border-color: var(--amber); }
+
+/* Action buttons */
+.act-btn {
+  padding: 4px 12px; font-size: 12px; border-radius: 6px; cursor: pointer;
+  font-weight: 500; transition: all 0.15s; font-family: var(--ui); border: 1px solid;
+}
+.act-btn.danger { border-color: rgba(220,38,38,0.3); background: var(--red-light); color: var(--red); }
+.act-btn.danger:hover { background: rgba(220,38,38,0.15); }
+.act-btn.primary { border-color: var(--blue-border); background: var(--blue-light); color: var(--blue); }
+.act-btn.primary:hover { background: rgba(37,99,235,0.15); }
+.act-btn.warn { border-color: rgba(217,119,6,0.3); background: var(--amber-light); color: var(--amber); }
+
+/* Stage badge */
+.stage-badge {
+  font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 99px;
+}
 </style>
 </head>
 <body>
@@ -359,7 +486,7 @@ function renderDashboard() {
       <div class="notif-panel">
         <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
           <h3 style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px">
-            <span class="icon" style="font-size:18px;color:var(--blue)">smart_toy</span>Flooding AI
+            <span class="icon" style="font-size:18px;color:var(--blue)">smart_toy</span>YICE 助手
           </h3>
           <span style="font-size:11px;background:var(--red-light);color:var(--red);padding:2px 6px;border-radius:10px;font-weight:600">${NOTIFICATIONS.length}</span>
         </div>
@@ -368,50 +495,719 @@ function renderDashboard() {
     </div>`;
 }
 
-/* ═══ Render: Project Detail (placeholder) ═══ */
+/* ═══ Mock Data for Detail Views ═══ */
+const MOCK_ALERTS = [
+  { id: 101, title: '预算撞线预警', desc: '「搜索_核心词」计划预算使用率达 95%，预计 15分钟后停投。', action: '追加预算' },
+  { id: 102, title: '低效素材', desc: '3 个素材连续 2 小时 ROI < 0.8。', action: '一键关停' }
+];
+
+const MOCK_LOGS = [
+  { time: '10:42:15', type: 'info', icon: 'monitoring', msg: '扫描全站计划，流量波动正常。' },
+  { time: '10:40:33', type: 'success', icon: 'trending_up', msg: '自动提升「优质人群包A」出价 (+5%)，因转化率优于预期。' },
+  { time: '10:38:12', type: 'warning', icon: 'warning', msg: '检测到「创意素材_04」点击率下滑至 1.2%，建议暂停。' },
+  { time: '10:35:00', type: 'info', icon: 'refresh', msg: '同步最新消耗数据...' },
+];
+
+const MOCK_EXCEPTION_PLANS = [
+  { name: '搜索 + 精准竞品人群包 + 善弈核心关键词包', risk: 'high-value', spend: '¥1,580 / ¥2,000', reason: 'ROI 4.2 (远超预期)', time: '10/26 10:00 - 10/29 23:59', suggestion: '建议追投' },
+  { name: '搜索 + 竞品词 + 强引流', risk: 'high-risk', spend: '¥2,300 / ¥2,000', reason: 'ROI 0.4 (低于阈值)', time: '10/27 08:00 - 10/27 20:00', suggestion: '立即关停' },
+  { name: '信息流 + 高净值人群包 + 海尔净水关键词包', risk: 'medium-risk', spend: '¥980 / ¥1,500', reason: 'CTR 0.8% (低于平均)', time: '10/27 09:00 - 10/29 22:00', suggestion: '优化创意' },
+  { name: '笔记 + 智能扩量人群包 + 致铂加购关键词包', risk: 'low-risk', spend: '¥1,200 / ¥2,000', reason: 'ROI 2.4 (优于预期)', time: '10/27 10:00 - 10/29 23:59', suggestion: '保持观察' },
+];
+
+const MOCK_PLANS = [
+  { name: '笔记 + 智能扩量人群包 + 致铂加购关键词包', status: 'running', time: '10/27 - 10/29', spend: '¥1,200', budget: '¥2,000', impressions: '45,231', ctr: '3.5%', cpc: '¥0.8', conversions: 28, cvr: '1.8%', cpa: '¥42.8', roi: 2.4, gmv: '¥2,880' },
+  { name: '搜索 + 竞品词 + 强引流', status: 'high-risk', time: '10/27', spend: '¥2,300', budget: '¥2,000', impressions: '89,102', ctr: '1.1%', cpc: '¥1.2', conversions: 15, cvr: '0.5%', cpa: '¥153.3', roi: 0.4, gmv: '¥920' },
+  { name: '信息流 + 核心人群 + 优选', status: 'running', time: '10/26 - 11/01', spend: '¥3,400', budget: '¥5,000', impressions: '120,500', ctr: '4.2%', cpc: '¥0.6', conversions: 98, cvr: '2.1%', cpa: '¥34.7', roi: 3.1, gmv: '¥10,540' },
+  { name: '搜索 + 品牌词 + 防守', status: 'running', time: '10/25 - 长期', spend: '¥800', budget: '¥1,000', impressions: '5,600', ctr: '8.5%', cpc: '¥2.1', conversions: 45, cvr: '12.5%', cpa: '¥17.8', roi: 5.6, gmv: '¥4,480' },
+];
+
+const MOCK_RANKINGS = {
+  audiences: [
+    { name: '20-30岁女性_护肤', cpc: '¥1.2', ctr: '3.5%', roi: 2.5, cvr: '1.8%' },
+    { name: '竞品粉丝人群', cpc: '¥1.5', ctr: '2.8%', roi: 2.1, cvr: '1.5%' },
+    { name: '高消费力人群', cpc: '¥2.1', ctr: '4.2%', roi: 1.8, cvr: '2.2%' },
+    { name: '美妆兴趣人群', cpc: '¥0.8', ctr: '1.5%', roi: 1.5, cvr: '0.8%' },
+  ],
+  keywords: [
+    { name: '海尔热水器', cpc: '¥3.5', ctr: '4.2%', cpa: '¥45', conversions: 120 },
+    { name: '电热水器推荐', cpc: '¥4.2', ctr: '3.8%', cpa: '¥52', conversions: 85 },
+    { name: '智能热水器', cpc: '¥3.8', ctr: '3.5%', cpa: '¥48', conversions: 60 },
+    { name: '省电热水器', cpc: '¥2.2', ctr: '1.8%', cpa: '¥70', conversions: 8 },
+  ],
+  creatives: [
+    { name: '视频_口播种草_B', type: 'video', ctr: '5.1%', cvr: '3.2%', spend: '¥2,100', gmv: '¥10,500' },
+    { name: '封面_产品特写_01', type: 'image', ctr: '4.5%', cvr: '2.8%', spend: '¥1,200', gmv: '¥4,800' },
+    { name: '视频_使用场景_A', type: 'video', ctr: '3.2%', cvr: '1.5%', spend: '¥3,500', gmv: '¥8,750' },
+    { name: '封面_痛点直击_03', type: 'image', ctr: '1.1%', cvr: '0.4%', spend: '¥800', gmv: '¥320' },
+  ],
+};
+
+const MOCK_GENERATED_PLANS = [
+  { type: 'ai', spu: '海尔净水器', channel: '信息流', stage: '蓄水期', unit: '笔记 + 智能扩量人群包 + 致铂加购关键词包', budget: '¥500/天', coverage: '120万', time: '2024-11-18 14:30', holiday: '双十一余温' },
+  { type: 'manual', spu: '海尔净水器', channel: '搜索流', stage: '预热期', unit: '视频 + 精准竞品人群包 + 善弈核心关键词包', budget: '¥300/天', coverage: '85万', time: '2024-11-17 09:15', holiday: '' },
+  { type: 'ai', spu: '海尔净水器', channel: '全站', stage: '爆发期', unit: '笔记 + 高潜兴趣人群包 + 致铂站内热词包', budget: '¥450/天', coverage: '98万', time: '2024-11-19 10:00', holiday: '感恩季' },
+  { type: 'manual', spu: '雅萌美容仪', channel: '视频流', stage: '延续期', unit: '视频 + 精细达人人群包 + 雅萌直播关键词包', budget: '¥380/天', coverage: '76万', time: '2024-11-20 16:45', holiday: '' },
+  { type: 'ai', spu: '海尔净水器', channel: '信息流', stage: '蓄水期', unit: '笔记 + 高净值人群包 + 海尔净水关键词包', budget: '¥520/天', coverage: '140万', time: '2024-11-21 08:30', holiday: '黑五预热' },
+  { type: 'manual', spu: '可复美面膜', channel: '搜索流', stage: '预热期', unit: '视频 + 新品种草人群包 + 可复美首发关键词包', budget: '¥260/天', coverage: '62万', time: '2024-11-22 11:20', holiday: '' },
+];
+
+const MOCK_STAGE_TIMELINE = [
+  { stage: '蓄水期', range: '11.01-11.05', focus: '铺设高质量内容与互动，稳定模型学习。', tactic: '达人笔记 + 种草直播 → 积累收藏与加购', status: 'done' },
+  { stage: '预热期', range: '11.06-11.08', focus: '拉高搜索热度，提前圈定重点人群。', tactic: '视频预告 + 搜索联动 → 提升点击率', status: 'done' },
+  { stage: '爆发期', range: '11.09-11.11', focus: '集中预算冲刺转化与客单。', tactic: '短视频+直播混投 → 锁定高意向人群', status: 'active' },
+  { stage: '延续期', range: '11.12-11.15', focus: '承接长尾转化，保持品牌热度。', tactic: '笔记复盘 + 站外扩展 → 回收复购', status: 'upcoming' },
+];
+
+const MOCK_REVIEW = {
+  overview: { totalSpend: '¥45,200', budget: '¥50,000', completionRate: 90.4, roi: 3.2, roiChange: '+12%', gmv: '¥144,640', gmvTarget: '¥150,000', gmvCompletion: 96.4, impressions: '1,245,680', conversions: 1523 },
+  stages: [
+    { stage: '蓄水期', range: '11.01-11.05', spend: '¥8,500', roi: 2.8, perf: 'good', events: ['新增竞品人群包', '调整出价系数至1.2'] },
+    { stage: '预热期', range: '11.06-11.08', spend: '¥12,300', roi: 3.1, perf: 'good', events: ['提升搜索流预算', '新增关键词包'] },
+    { stage: '爆发期', range: '11.09-11.11', spend: '¥18,900', roi: 4.2, perf: 'excellent', events: ['集中预算投放', '启用智能托管'] },
+    { stage: '延续期', range: '11.12-11.15', spend: '¥5,500', roi: 2.1, perf: 'warning', events: ['减少预算', '关停低效计划'] },
+  ],
+  channels: [
+    { channel: '信息流', spend: '¥18,200', roi: 3.5, ctr: '3.2%', cvr: '2.1%', cpa: '¥32', gmv: '¥63,700' },
+    { channel: '搜索流', spend: '¥15,800', roi: 3.8, ctr: '4.1%', cvr: '2.8%', cpa: '¥28', gmv: '¥60,040' },
+    { channel: '全站', spend: '¥7,200', roi: 2.2, ctr: '1.9%', cvr: '1.2%', cpa: '¥48', gmv: '¥15,840' },
+    { channel: '视频流', spend: '¥4,000', roi: 2.8, ctr: '2.5%', cvr: '1.5%', cpa: '¥38', gmv: '¥11,200' },
+  ],
+  topPlans: [
+    { name: '搜索 + 精准竞品人群包 + 善弈核心关键词包', spend: '¥6,200', roi: 4.8, gmv: '¥29,760', ctr: '4.8%', cvr: '3.2%' },
+    { name: '信息流 + 高潜兴趣人群包 + 致铂站内热词包', spend: '¥5,800', roi: 4.2, gmv: '¥24,360', ctr: '3.9%', cvr: '2.6%' },
+    { name: '笔记 + 智能扩量人群包 + 海尔净水关键词包', spend: '¥4,500', roi: 3.9, gmv: '¥17,550', ctr: '3.5%', cvr: '2.4%' },
+  ],
+  bottomPlans: [
+    { name: '全站 + 智能托管 + 自动出价', spend: '¥3,200', roi: 1.2, gmv: '¥3,840', ctr: '1.1%', cvr: '0.8%' },
+    { name: '视频流 + 新品种草人群包 + 可复美首发关键词包', spend: '¥2,800', roi: 1.5, gmv: '¥4,200', ctr: '1.6%', cvr: '1.0%' },
+  ],
+  insights: {
+    findings: ['人群包"20-30岁女性"在爆发期 ROI 达 4.2，建议未来重点投放', '搜索流整体表现优异，CVR 2.8% 高于全站平均 40%', '关键词"海尔净水器"转化成本 ¥28，低于行业平均'],
+    highlights: ['11月10日达到峰值 ROI 5.2，当日 GMV ¥18,500', '爆发期消耗占比 42%，贡献了 58% 的总 GMV'],
+    improvements: ['延续期 ROI 2.1，较爆发期下降 50%，建议缩短延续期时长', '素材"护肤日常分享" CTR 仅 0.9%，建议更新创意', '全站渠道 ROI 2.2，低于预期，建议减少投放占比'],
+  },
+  resources: {
+    audiences: [
+      { name: '20-30岁女性_护肤', roi: 4.5, gmv: '¥52,000', usage: 18, change: 'up' },
+      { name: '竞品粉丝人群', roi: 3.8, gmv: '¥38,500', usage: 15, change: 'up' },
+      { name: '高消费力人群', roi: 3.2, gmv: '¥28,200', usage: 12, change: 'same' },
+      { name: '新品种草人群', roi: 1.8, gmv: '¥8,100', usage: 5, change: 'down' },
+    ],
+    keywords: [
+      { name: '海尔净水器', roi: 4.2, gmv: '¥42,000', usage: 16, change: 'up' },
+      { name: '智能热水器', roi: 3.6, gmv: '¥32,800', usage: 14, change: 'up' },
+      { name: '电热水器推荐', roi: 2.9, gmv: '¥24,500', usage: 10, change: 'same' },
+      { name: '净水器品牌', roi: 2.1, gmv: '¥12,600', usage: 6, change: 'down' },
+    ],
+    creatives: [
+      { name: '夏季防晒测评', roi: 4.0, gmv: '¥36,000', usage: 12, change: 'up' },
+      { name: '美白精华种草', roi: 3.4, gmv: '¥28,900', usage: 10, change: 'up' },
+      { name: '新品开箱体验', roi: 2.8, gmv: '¥19,600', usage: 8, change: 'same' },
+      { name: '护肤日常分享', roi: 1.1, gmv: '¥4,400', usage: 3, change: 'down' },
+    ],
+  }
+};
+
+const MOCK_ASSETS = {
+  audiences: [
+    { name: '20-30岁女性_护肤', size: '120万', bid: 1.2, status: 'active' },
+    { name: '竞品粉丝人群', size: '85万', bid: 1.5, status: 'active' },
+    { name: '高消费力人群', size: '50万', bid: 1.8, status: 'paused' },
+  ],
+  keywords: [
+    { keyword: '海尔热水器', volume: '6800', bid: '¥3.5', status: 'active' },
+    { keyword: '电热水器推荐', volume: '4200', bid: '¥4.2', status: 'active' },
+    { keyword: '智能热水器', volume: '3100', bid: '¥3.8', status: 'paused' },
+  ],
+  creatives: [
+    { title: '夏季防晒测评', type: '视频', status: 'active', ctr: '2.8%' },
+    { title: '美白精华种草', type: '图文', status: 'active', ctr: '2.1%' },
+    { title: '护肤日常分享', type: '视频', status: 'draft', ctr: '-' },
+  ],
+};
+
+/* ═══ State ═══ */
+let projectTab = 'monitor';
+let monitorSubTab = 'exception';
+let reviewSubTab = 'channel';
+let resourceSubTab = 'audiences';
+
+/* ═══ Render: Project Detail ═══ */
 function renderProject(id) {
   const p = PROJECTS.find(x => x.id === id);
   if (!p) return;
   const s = STATUS[p.status] || {};
+
+  const tabs = [
+    { key: 'monitor', icon: 'monitoring', label: '盯盘' },
+    { key: 'plan', icon: 'layers', label: '计划' },
+    { key: 'assets', icon: 'database', label: '资产' },
+    { key: 'review', icon: 'bar_chart', label: '复盘' },
+  ];
+
+  // Default tab based on project status
+  if (p.status === 'pre-delivery' && projectTab === 'monitor') projectTab = 'plan';
+  if (p.status === 'post-delivery' && projectTab === 'monitor') projectTab = 'review';
+
+  let tabBar = tabs.map(t =>
+    `<button class="tab${projectTab === t.key ? ' active' : ''}" onclick="switchTab('${t.key}')">
+      <span class="icon">${t.icon}</span>${t.label}
+    </button>`
+  ).join('');
+
+  let content = '';
+  if (projectTab === 'monitor') content = renderMonitor(p);
+  else if (projectTab === 'plan') content = renderPlan(p);
+  else if (projectTab === 'assets') content = renderAssetsView(p);
+  else if (projectTab === 'review') content = renderReview(p);
+
   document.getElementById('main').innerHTML = `
-    <div style="margin-bottom:24px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-        <button onclick="selectProject(null)" style="display:flex;align-items:center;color:var(--text-3);cursor:pointer;background:none;border:none;padding:4px">
-          <span class="icon">arrow_back</span>
-        </button>
-        <h2 style="font-size:18px;font-weight:700">${p.name}</h2>
-        <span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span>
-      </div>
-      <p style="font-size:13px;color:var(--text-3);margin-left:40px">${p.brand} · ${p.account} · 截止 ${p.deadline}</p>
+    <div class="proj-header">
+      <button onclick="selectProject(null)" style="display:flex;align-items:center;color:var(--text-3);cursor:pointer;background:none;border:none;padding:4px">
+        <span class="icon">arrow_back</span>
+      </button>
+      <h2 style="font-size:18px;font-weight:700">${p.name}</h2>
+      <span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px">
-      <div class="card" style="cursor:default">
-        <p style="font-size:11px;color:var(--text-3);margin-bottom:4px">总预算</p>
-        <p style="font-size:18px;font-weight:700;font-family:var(--mono)">${p.budget}</p>
+    <p class="proj-meta">${p.brand} · ${p.account} · 截止 ${p.deadline}</p>
+    <div class="tab-bar">${tabBar}</div>
+    <div id="tab-content">${content}</div>`;
+}
+
+function switchTab(tab) {
+  projectTab = tab;
+  renderProject(activeProject);
+}
+
+/* ═══ Tab: 盯盘 (Monitor) ═══ */
+function renderMonitor(p) {
+  // AI Feed (left)
+  const alertsHtml = MOCK_ALERTS.map(a => `
+    <div style="background:var(--amber-light);border:1px solid rgba(217,119,6,0.2);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px">
+      <div style="font-size:13px;font-weight:600;color:var(--amber)">${a.title}</div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.4">${a.desc}</div>
+      <button class="act-btn warn" style="align-self:flex-end">${a.action}</button>
+    </div>`).join('');
+
+  const feedColors = { info: { bg: 'var(--surface-alt)', color: 'var(--text-3)' }, success: { bg: 'var(--green-light)', color: 'var(--green)' }, warning: { bg: 'var(--amber-light)', color: 'var(--amber)' } };
+  const logsHtml = MOCK_LOGS.map(l => {
+    const c = feedColors[l.type] || feedColors.info;
+    return `
+    <div class="feed-item">
+      <div class="feed-dot" style="background:${c.bg}"><span class="icon" style="color:${c.color}">${l.icon}</span></div>
+      <div style="flex:1">
+        <div style="font-size:13px;line-height:1.4">${l.msg}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px">${l.time}</div>
       </div>
-      <div class="card" style="cursor:default">
-        <p style="font-size:11px;color:var(--text-3);margin-bottom:4px">已消耗</p>
-        <p style="font-size:18px;font-weight:700;font-family:var(--mono)">${p.spend}</p>
+    </div>`;
+  }).join('');
+
+  // KPI cards
+  const metrics = [
+    { label: '在投 / 待投', value: `${MOCK_PLANS.filter(x=>x.status==='running').length}`, sub: `/ 3`, isCount: true },
+    { label: '实时消耗', value: '¥8,432', sub: '/ ¥12,000', trend: '+12%', cls: 'up', progress: 74 },
+    { label: '综合 ROI', value: '2.14', sub: '/ 2.0', trend: '+0.3', cls: 'up' },
+    { label: '点击率 (CTR)', value: '3.2%', sub: '/ 3.5%', trend: '-0.1%', cls: 'warn' },
+    { label: '转化成本 (CPA)', value: '¥45.2', sub: '/ ¥40.0', trend: '-2%', cls: 'up' },
+  ];
+
+  const kpiHtml = metrics.map(m => {
+    let extra = '';
+    if (m.progress) {
+      extra = `<div style="margin-top:4px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-bottom:4px"><span>消耗进度</span><span>${m.progress}%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${m.progress}%;background:var(--blue)"></div></div>
+      </div>`;
+    } else if (m.trend) {
+      const icon = m.cls === 'up' ? 'trending_up' : m.cls === 'down' ? 'trending_down' : 'trending_flat';
+      extra = `<div class="kpi-trend ${m.cls}"><span class="icon" style="font-size:14px">${icon}</span>${m.trend}</div>`;
+    }
+    return `<div class="kpi-card">
+      <div class="kpi-label">${m.label}</div>
+      <div style="display:flex;align-items:baseline;gap:4px">
+        <span class="kpi-value">${m.value}</span>
+        <span class="kpi-sub">${m.sub || ''}</span>
       </div>
-      <div class="card" style="cursor:default">
-        <p style="font-size:11px;color:var(--text-3);margin-bottom:4px">日预算</p>
-        <p style="font-size:18px;font-weight:700;font-family:var(--mono)">${p.dailyBudget}</p>
+      ${extra}
+    </div>`;
+  }).join('');
+
+  // Sub-tab content
+  let tableHtml = '';
+  if (monitorSubTab === 'exception') {
+    tableHtml = renderExceptionTable();
+  } else if (monitorSubTab === 'plans') {
+    tableHtml = renderPlanListTable();
+  } else {
+    tableHtml = renderResourceRanking();
+  }
+
+  return `
+    <div style="display:grid;grid-template-columns:300px 1fr;gap:20px;height:calc(100vh - 220px);overflow:hidden">
+      <div class="panel" style="padding:0;display:flex;flex-direction:column;overflow:hidden;border-color:var(--blue-border)">
+        <div class="ai-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="ai-avatar"><span class="icon">smart_toy</span></div>
+            <div>
+              <div style="font-weight:600;font-size:13px">YICE 助手</div>
+              <div style="font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>实时盯盘中
+              </div>
+            </div>
+          </div>
+        </div>
+        ${alertsHtml ? `<div style="padding:12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:600;color:var(--amber);display:flex;align-items:center;gap:4px">
+            <span class="icon" style="font-size:14px">warning</span>需要人工确认 (${MOCK_ALERTS.length})
+          </div>
+          ${alertsHtml}
+        </div>` : ''}
+        <div style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:4px">
+          ${logsHtml}
+        </div>
       </div>
-      <div class="card" style="cursor:default">
-        <p style="font-size:11px;color:var(--text-3);margin-bottom:4px">ROI</p>
-        <p style="font-size:18px;font-weight:700;font-family:var(--mono);color:${p.roi !== '-' ? 'var(--green)' : 'var(--text-3)'}">${p.roi}</p>
+      <div style="display:flex;flex-direction:column;gap:16px;overflow-y:auto">
+        <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">${kpiHtml}</div>
+        <div class="panel" style="flex:1;display:flex;flex-direction:column">
+          <div class="sub-tabs">
+            <button class="sub-tab${monitorSubTab==='exception'?' active':''}" onclick="monitorSubTab='exception';renderProject(activeProject)">异常计划</button>
+            <button class="sub-tab${monitorSubTab==='plans'?' active':''}" onclick="monitorSubTab='plans';renderProject(activeProject)">计划列表</button>
+            <button class="sub-tab${monitorSubTab==='ranking'?' active':''}" onclick="monitorSubTab='ranking';renderProject(activeProject)">资源排行</button>
+          </div>
+          ${tableHtml}
+        </div>
       </div>
+    </div>`;
+}
+
+function renderExceptionTable() {
+  const riskCfg = {
+    'high-value': { label: '高价值', bg: 'var(--blue-light)', color: 'var(--blue)', icon: 'trending_up', btn: 'primary', action: '追投' },
+    'high-risk': { label: '高风险', bg: 'var(--red-light)', color: 'var(--red)', icon: 'warning', btn: 'danger', action: '下架' },
+    'medium-risk': { label: '中风险', bg: 'var(--amber-light)', color: 'var(--amber)', icon: 'warning', btn: 'danger', action: '下架' },
+    'low-risk': { label: '低风险', bg: 'var(--green-light)', color: 'var(--green)', icon: 'check_circle', btn: 'primary', action: '追投' },
+  };
+  const rows = MOCK_EXCEPTION_PLANS.map(r => {
+    const c = riskCfg[r.risk] || riskCfg['low-risk'];
+    return `<tr>
+      <td><div style="font-weight:500;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${r.name}">${r.name}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:3px;font-family:var(--mono)">${r.time}</div></td>
+      <td><span class="risk-badge" style="background:${c.bg};color:${c.color}"><span class="icon" style="font-size:11px">${c.icon}</span>${c.label}</span></td>
+      <td style="font-family:var(--mono)">${r.spend}</td>
+      <td style="color:${r.risk==='low-risk'||r.risk==='high-value' ? 'var(--green)' : 'var(--amber)'}">${r.reason}</td>
+      <td style="color:var(--text-2)">${r.suggestion}</td>
+      <td style="text-align:right"><button class="act-btn ${c.btn}">${c.action}</button></td>
+    </tr>`;
+  }).join('');
+  return `<table class="dtable">
+    <thead><tr><th>监控对象</th><th>风险等级</th><th>消耗/预算</th><th>异常原因</th><th>AI 建议</th><th style="text-align:right">操作</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderPlanListTable() {
+  const statusCfg = { running: { label: '投放中', bg: 'var(--green-light)', color: 'var(--green)' }, 'high-risk': { label: '高风险', bg: 'var(--red-light)', color: 'var(--red)' } };
+  const rows = MOCK_PLANS.map(pl => {
+    const sc = statusCfg[pl.status] || statusCfg.running;
+    return `<tr>
+      <td><div style="font-weight:500;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${pl.name}">${pl.name}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:3px;font-family:var(--mono)">${pl.time}</div></td>
+      <td><span class="risk-badge" style="background:${sc.bg};color:${sc.color}">${sc.label}</span></td>
+      <td><div style="font-family:var(--mono)">${pl.spend}</div><div style="font-size:11px;color:var(--text-3)">/ ${pl.budget}</div></td>
+      <td style="font-family:var(--mono)">${pl.impressions}</td>
+      <td><div style="font-weight:600">${pl.ctr}</div><div style="font-size:11px;color:var(--text-3)">${pl.cpc}</div></td>
+      <td><div style="font-weight:600">${pl.conversions}</div><div style="font-size:11px;color:var(--text-3)">${pl.cvr}</div></td>
+      <td><div style="font-weight:600">${pl.cpa}</div><div style="font-size:11px;color:${pl.roi > 2 ? 'var(--green)' : 'var(--text-3)'}">ROI ${pl.roi}</div></td>
+      <td style="font-weight:700">${pl.gmv}</td>
+      <td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end"><button class="act-btn danger">下架</button><button class="act-btn primary">追投</button></div></td>
+    </tr>`;
+  }).join('');
+  return `<table class="dtable">
+    <thead><tr><th>计划名称</th><th>状态</th><th>消耗/预算</th><th>曝光量</th><th>CTR/CPC</th><th>转化/CVR</th><th>CPA/ROI</th><th>GMV</th><th style="text-align:right">操作</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderResourceRanking() {
+  function rankCol(title, icon, items, metricA, metricB) {
+    const cards = items.map((it, i) => {
+      const color = i < 3 ? 'var(--blue)' : 'var(--text-3)';
+      return `<div class="rank-item">
+        <div class="rank-num" style="color:${color}">${i+1}</div>
+        <div style="flex:1;overflow:hidden">
+          <div style="font-weight:500;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">${it.name}</div>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 6px;font-size:11px">
+            <span style="color:var(--text-3)">投:</span><span style="color:var(--text-2)">${metricA(it)}</span>
+            <span style="color:var(--text-3)">回:</span><span style="color:${(it.roi||0) > 2 ? 'var(--green)' : 'var(--text-2)'}">${metricB(it)}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div style="display:flex;flex-direction:column;gap:8px">
+      <h4 style="font-size:13px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:6px">
+        <span class="icon" style="font-size:16px;color:var(--blue)">${icon}</span>${title}
+      </h4>
+      ${cards}
+    </div>`;
+  }
+  return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+    ${rankCol('人群包排行', 'group', MOCK_RANKINGS.audiences, a=>`CPC ${a.cpc} · CTR ${a.ctr}`, a=>`ROI ${a.roi} · CVR ${a.cvr}`)}
+    ${rankCol('关键词排行', 'label', MOCK_RANKINGS.keywords, a=>`CPC ${a.cpc} · CTR ${a.ctr}`, a=>`CPA ${a.cpa} · 转化 ${a.conversions}`)}
+    ${rankCol('素材排行', 'image', MOCK_RANKINGS.creatives, a=>`CTR ${a.ctr} · 消耗 ${a.spend}`, a=>`CVR ${a.cvr} · GMV ${a.gmv}`)}
+  </div>`;
+}
+
+/* ═══ Tab: 计划 (Plan) ═══ */
+function renderPlan(p) {
+  const activeStage = MOCK_STAGE_TIMELINE.find(s => s.status === 'active') || MOCK_STAGE_TIMELINE[0];
+
+  // Plan cards
+  const planCards = MOCK_GENERATED_PLANS.map(pl => {
+    const typeLabel = pl.type === 'ai' ? '智能计划' : '人工计划';
+    const typeBg = pl.type === 'ai' ? 'var(--blue-light)' : 'rgba(139,92,246,0.1)';
+    const typeColor = pl.type === 'ai' ? 'var(--blue)' : '#7c3aed';
+    return `<div class="plan-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:11px;font-weight:600;color:${typeColor};padding:2px 8px;border-radius:99px;background:${typeBg}">${typeLabel}</span>
+            <span style="font-size:11px;color:var(--text-3)">SPU: ${pl.spu}</span>
+          </div>
+          <div style="font-size:15px;font-weight:600">${pl.channel}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--text-3)">预算</div>
+          <div style="font-size:16px;font-weight:700;color:var(--blue);font-family:var(--mono)">${pl.budget}</div>
+          <div style="font-size:11px;color:var(--green)">覆盖 ${pl.coverage}</div>
+        </div>
+      </div>
+      <div style="background:var(--surface-alt);border-radius:6px;padding:8px 10px;margin-bottom:10px">
+        <div style="font-size:12px;color:var(--text-2);line-height:1.4">${pl.unit}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span class="stage-badge" style="background:var(--blue-light);color:var(--blue)">${pl.stage}</span>
+          <span style="font-size:11px;color:var(--text-3)">${pl.time}</span>
+          ${pl.holiday ? `<span class="stage-badge" style="background:var(--amber-light);color:var(--amber)">${pl.holiday}</span>` : ''}
+        </div>
+        <button class="act-btn primary">手动发布</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Stage timeline
+  const timelineDots = MOCK_STAGE_TIMELINE.map((st, i) => {
+    const color = st.status === 'active' ? 'var(--red)' : st.status === 'done' ? 'var(--green)' : 'var(--border)';
+    const connColor = st.status === 'done' ? 'var(--green)' : st.status === 'active' ? 'rgba(220,38,38,0.4)' : 'var(--border)';
+    return `<div style="display:flex;align-items:center;justify-content:center;margin-bottom:6px;position:relative">
+      <div style="width:14px;height:14px;border-radius:50%;background:${color};${st.status === 'active' ? 'box-shadow:0 0 8px rgba(220,38,38,0.4)' : ''};${st.status === 'upcoming' ? 'opacity:0.4;border:1px solid var(--text-3)' : ''};z-index:2;position:relative"></div>
+      ${i < MOCK_STAGE_TIMELINE.length - 1 ? `<div style="position:absolute;left:50%;right:calc(-100% - 8px + 50%);height:2px;background:${connColor};top:50%;transform:translateY(-50%);z-index:1"></div>` : ''}
+    </div>`;
+  }).join('');
+
+  const timelineLabels = MOCK_STAGE_TIMELINE.map(st => {
+    const color = st.status === 'active' ? 'var(--red)' : st.status === 'done' ? 'var(--green)' : 'var(--text-3)';
+    return `<div style="text-align:center">
+      <div style="font-size:12px;font-weight:600;color:${color}">${st.stage}</div>
+      <div style="font-size:11px;color:${st.status === 'upcoming' ? 'var(--text-3)' : 'var(--text-2)'}">${st.range}</div>
+    </div>`;
+  }).join('');
+
+  // Time intensity bars
+  const intensities = [20,15,10,8,12,25,40,60,80,90,95,85,70,75,80,85,90,95,100,85,70,50,35,25];
+  const barsHtml = intensities.map((v, h) => {
+    const color = v > 70 ? 'var(--blue)' : v > 40 ? 'rgba(37,99,235,0.4)' : 'var(--border)';
+    return `<div style="flex:1;height:${v}%;background:${color};border-radius:2px" title="${h}:00 - ${v}%"></div>`;
+  }).join('');
+
+  return `
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div class="panel-title" style="margin-bottom:0"><span class="icon" style="color:var(--amber)">bolt</span>待发布计划
+            <span class="badge" style="background:var(--blue-light);color:var(--blue);font-weight:700">${MOCK_GENERATED_PLANS.length}</span>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="act-btn primary" style="padding:4px 8px"><span class="icon" style="font-size:14px">add</span></button>
+            <button class="act-btn primary" style="font-weight:700">AI</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${planCards}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel">
+          <div class="panel-title"><span class="icon">bolt</span>目标策略</div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="background:var(--surface-alt);padding:14px;border-radius:8px">
+              <div style="font-size:12px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px">预算策略 <span class="icon" style="font-size:12px;color:var(--text-3)">settings</span></div>
+              <div style="display:flex;gap:16px;margin-bottom:10px">
+                <div style="flex:1">
+                  <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">今日预算</div>
+                  <div style="font-size:18px;font-weight:700;font-family:var(--mono)">${p.dailyBudget}</div>
+                  <div style="font-size:11px;color:var(--text-3)">自动分配 · 智能出价</div>
+                </div>
+                <div style="flex:1;text-align:right">
+                  <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">总预算</div>
+                  <div style="font-size:18px;font-weight:700;color:var(--blue);font-family:var(--mono)">${p.budget}</div>
+                  <div style="font-size:11px;color:var(--text-3)">剩余 ¥42,000</div>
+                </div>
+              </div>
+              <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font-size:11px;color:var(--text-3)">下一节点</div><div style="font-size:13px;font-weight:600;color:var(--amber)">双十一大促</div><div style="font-size:11px;color:var(--text-3)">11月11日</div></div>
+                <div style="text-align:right"><div style="font-size:11px;color:var(--text-3)">预算加倍</div><div style="font-size:15px;font-weight:700;color:var(--green);font-family:var(--mono)">¥4,000</div></div>
+              </div>
+            </div>
+            <div style="background:var(--surface-alt);padding:14px;border-radius:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                <span style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:4px">阶段目标 <span class="icon" style="font-size:12px">settings</span></span>
+                <span class="stage-badge" style="background:var(--red-light);color:var(--red)">${activeStage.stage} · ${activeStage.range}</span>
+              </div>
+              <div style="background:var(--surface);border:1px solid var(--border-light);border-radius:8px;padding:10px;margin-bottom:12px">
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px">当前阶段重点：${activeStage.focus}</div>
+                <div style="font-size:12px;color:var(--text-2)">核心打法：${activeStage.tactic}</div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(${MOCK_STAGE_TIMELINE.length},1fr);gap:6px">${timelineDots}</div>
+              <div style="display:grid;grid-template-columns:repeat(${MOCK_STAGE_TIMELINE.length},1fr);gap:6px">${timelineLabels}</div>
+            </div>
+            <div style="background:var(--surface-alt);padding:14px;border-radius:8px">
+              <div style="font-size:12px;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:4px">投放时段 <span class="icon" style="font-size:12px">settings</span></div>
+              <div style="display:flex;gap:16px;align-items:center">
+                <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--blue);margin-bottom:4px">AI 策略</div><div style="font-size:11px;color:var(--text-3)">AI 持续优化中</div></div>
+                <div style="flex:1"><div style="display:flex;gap:1px;align-items:flex-end;height:36px">${barsHtml}</div>
+                  <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);margin-top:3px"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>24h</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ═══ Tab: 资产 (Assets) ═══ */
+function renderAssetsView(p) {
+  const statusBadge = (s) => {
+    if (s === 'active') return `<span class="risk-badge" style="background:var(--green-light);color:var(--green)">使用中</span>`;
+    if (s === 'draft') return `<span class="risk-badge" style="background:var(--amber-light);color:var(--amber)">草稿</span>`;
+    return `<span class="risk-badge" style="background:var(--surface-alt);color:var(--text-3)">已暂停</span>`;
+  };
+
+  const audienceCards = MOCK_ASSETS.audiences.map(a => `
+    <div class="asset-item">
+      <div><div style="font-size:13px;font-weight:600;margin-bottom:3px">${a.name}</div>
+        <div style="font-size:11px;color:var(--text-2)">${a.size} · x${a.bid}</div></div>
+      ${statusBadge(a.status)}
+    </div>`).join('');
+
+  const keywordCards = MOCK_ASSETS.keywords.map(k => `
+    <div class="asset-item">
+      <div><div style="font-size:13px;font-weight:600;margin-bottom:3px">${k.keyword}</div>
+        <div style="font-size:11px;color:var(--text-2)">${k.volume}/月 · ${k.bid}</div></div>
+      ${statusBadge(k.status)}
+    </div>`).join('');
+
+  const creativeCards = MOCK_ASSETS.creatives.map(c => `
+    <div class="asset-item">
+      <div style="width:48px;height:48px;background:var(--surface);border:1px solid var(--border-light);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span class="icon" style="font-size:18px;color:var(--text-3)">${c.type === '视频' ? 'play_arrow' : 'image'}</span>
+      </div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:3px">${c.title}</div>
+        <div style="font-size:11px;color:var(--text-2)">${c.type} · CTR ${c.ctr}</div></div>
+      ${statusBadge(c.status)}
+    </div>`).join('');
+
+  const colHeader = (icon, title, count) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="panel-title" style="margin-bottom:0"><span class="icon">${icon}</span>${title}
+        <span style="font-size:13px;color:var(--text-3);font-weight:400;margin-left:2px">${count}</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="act-btn primary" style="display:flex;align-items:center;gap:4px"><span class="icon" style="font-size:12px">auto_awesome</span>AI</button>
+        <button class="act-btn primary" style="padding:4px 8px"><span class="icon" style="font-size:14px">add</span></button>
+      </div>
+    </div>`;
+
+  return `
+    <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;gap:24px;align-items:center">
+        <div><span style="font-size:11px;color:var(--text-3);display:block;margin-bottom:2px">已测试计划</span><span style="font-size:22px;font-weight:700;color:var(--blue);font-family:var(--mono)">12<span style="font-size:13px;color:var(--text-2);font-weight:400;margin-left:2px">个</span></span></div>
+        <div style="width:1px;height:32px;background:var(--border)"></div>
+        <div><span style="font-size:11px;color:var(--text-3);display:block;margin-bottom:2px">可新增机会</span><span style="font-size:22px;font-weight:700;color:var(--green);font-family:var(--mono)">8<span style="font-size:13px;color:var(--text-2);font-weight:400;margin-left:2px">个</span></span></div>
+        <div style="width:1px;height:32px;background:var(--border)"></div>
+        <div><span style="font-size:11px;color:var(--text-3);display:block;margin-bottom:2px">放弃计划</span><span style="font-size:22px;font-weight:700;color:var(--text-3);font-family:var(--mono)">3<span style="font-size:13px;color:var(--text-2);font-weight:400;margin-left:2px">个</span></span></div>
+      </div>
+      <button style="display:flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--ui);box-shadow:0 4px 12px rgba(37,99,235,0.3);transition:all 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        <span class="icon" style="font-size:18px">bolt</span>AI 智能创建计划
+      </button>
     </div>
-    <div class="card" style="cursor:default;padding:32px;text-align:center;color:var(--text-3)">
-      <span class="icon" style="font-size:40px;display:block;margin-bottom:12px">construction</span>
-      <p style="font-size:14px;font-weight:500">项目详情开发中</p>
-      <p style="font-size:12px;margin-top:4px">投前/盯盘/投后分析功能即将上线</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+      <div class="panel">${colHeader('group', '人群包', MOCK_ASSETS.audiences.length)}<div style="display:flex;flex-direction:column;gap:8px">${audienceCards}</div></div>
+      <div class="panel">${colHeader('label', '关键词包', MOCK_ASSETS.keywords.length)}<div style="display:flex;flex-direction:column;gap:8px">${keywordCards}</div></div>
+      <div class="panel">${colHeader('image', '素材包', MOCK_ASSETS.creatives.length)}<div style="display:flex;flex-direction:column;gap:8px">${creativeCards}</div></div>
+    </div>`;
+}
+
+/* ═══ Tab: 复盘 (Review) ═══ */
+function renderReview(p) {
+  const ov = MOCK_REVIEW.overview;
+
+  // Overview cards
+  const overviewHtml = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div class="panel-title" style="margin-bottom:0"><span class="icon">target</span>整体表现总览
+        <span style="font-size:12px;color:var(--text-3);padding:4px 10px;background:var(--surface-alt);border:1px solid var(--border);border-radius:6px;font-weight:400;margin-left:8px">截止: 2024-11-15</span>
+      </div>
+      <button class="act-btn primary" style="display:flex;align-items:center;gap:4px"><span class="icon" style="font-size:14px">download</span>导出报告</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+      <div class="kpi-card">
+        <div class="kpi-label" style="display:flex;align-items:center;gap:4px"><span class="icon" style="font-size:14px">payments</span>总消耗</div>
+        <div class="kpi-value" style="font-size:24px">${ov.totalSpend}</div>
+        <div class="kpi-sub">预算: ${ov.budget} (${ov.completionRate}%)</div>
+        <div class="progress-bar" style="margin-top:6px"><div class="progress-fill" style="width:${ov.completionRate}%;background:var(--blue)"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label" style="display:flex;align-items:center;gap:4px"><span class="icon" style="font-size:14px">trending_up</span>总 ROI</div>
+        <div style="display:flex;align-items:baseline;gap:6px"><span class="kpi-value" style="font-size:24px;color:var(--green)">${ov.roi}</span><span class="kpi-trend up"><span class="icon" style="font-size:14px">trending_up</span>${ov.roiChange}</span></div>
+        <div class="kpi-sub">环比上期</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label" style="display:flex;align-items:center;gap:4px"><span class="icon" style="font-size:14px">shopping_cart</span>总 GMV</div>
+        <div class="kpi-value" style="font-size:24px">${ov.gmv}</div>
+        <div class="kpi-sub">目标: ${ov.gmvTarget} (${ov.gmvCompletion}%)</div>
+        <div class="progress-bar" style="margin-top:6px"><div class="progress-fill" style="width:${ov.gmvCompletion}%;background:var(--green)"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label" style="display:flex;align-items:center;gap:4px"><span class="icon" style="font-size:14px">visibility</span>曝光/转化</div>
+        <div class="kpi-value" style="font-size:24px">${ov.impressions}</div>
+        <div style="font-size:13px;color:var(--green)">转化 ${ov.conversions}</div>
+        <div class="kpi-sub">CVR ${((ov.conversions / parseFloat(ov.impressions.replace(/,/g, ''))) * 100).toFixed(2)}%</div>
+      </div>
+    </div>`;
+
+  // Stage analysis
+  const perfCfg = { excellent: { label: '优秀', bg: 'var(--green-light)', color: 'var(--green)' }, good: { label: '良好', bg: 'var(--blue-light)', color: 'var(--blue)' }, warning: { label: '待改进', bg: 'var(--amber-light)', color: 'var(--amber)' } };
+  const stagesHtml = MOCK_REVIEW.stages.map(st => {
+    const pc = perfCfg[st.perf] || perfCfg.good;
+    const eventsHtml = st.events.map(e => `<div style="font-size:11px;color:var(--text-2);display:flex;align-items:center;gap:3px"><span class="icon" style="font-size:12px">chevron_right</span>${e}</div>`).join('');
+    return `<div style="background:var(--surface-alt);border:1px solid var(--border-light);border-radius:8px;padding:14px;position:relative">
+      <span class="risk-badge" style="position:absolute;top:10px;right:10px;background:${pc.bg};color:${pc.color}">${pc.label}</span>
+      <div style="font-size:14px;font-weight:700;margin-bottom:2px">${st.stage}</div>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">${st.range}</div>
+      <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text-3)">消耗</div><div style="font-size:18px;font-weight:700;color:var(--blue);font-family:var(--mono)">${st.spend}</div></div>
+      <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--text-3)">ROI</div><div style="font-size:18px;font-weight:700;${st.roi > 3 ? 'color:var(--green)' : ''};font-family:var(--mono)">${st.roi}</div></div>
+      <div style="border-top:1px solid var(--border-light);padding-top:8px"><div style="font-size:11px;color:var(--text-3);margin-bottom:4px">关键事件</div>${eventsHtml}</div>
+    </div>`;
+  }).join('');
+
+  // Channel / Plan tab
+  let detailTabHtml = '';
+  if (reviewSubTab === 'channel') {
+    const rows = MOCK_REVIEW.channels.map(ch => `<tr>
+      <td style="font-weight:600">${ch.channel}</td>
+      <td style="text-align:right;font-family:var(--mono)">${ch.spend}</td>
+      <td style="text-align:right;font-weight:700;${ch.roi > 3 ? 'color:var(--green)' : ''}">${ch.roi}</td>
+      <td style="text-align:right">${ch.ctr}</td><td style="text-align:right">${ch.cvr}</td>
+      <td style="text-align:right;font-family:var(--mono)">${ch.cpa}</td>
+      <td style="text-align:right;font-family:var(--mono);color:var(--green)">${ch.gmv}</td>
+    </tr>`).join('');
+    detailTabHtml = `<table class="dtable"><thead><tr><th>渠道</th><th style="text-align:right">消耗</th><th style="text-align:right">ROI</th><th style="text-align:right">CTR</th><th style="text-align:right">CVR</th><th style="text-align:right">CPA</th><th style="text-align:right">GMV</th></tr></thead><tbody>${rows}</tbody></table>`;
+  } else {
+    const renderPlanGroup = (plans, title, icon, borderColor) => {
+      const items = plans.map(pl => `
+        <div style="background:${borderColor === 'var(--green)' ? 'var(--green-light)' : 'var(--amber-light)'};border:1px solid ${borderColor === 'var(--green)' ? 'rgba(5,150,105,0.2)' : 'rgba(217,119,6,0.2)'};border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center">
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:4px">${pl.name}</div>
+            <div style="font-size:11px;color:var(--text-3)">消耗 ${pl.spend} · CTR ${pl.ctr} · CVR ${pl.cvr}</div></div>
+          <div style="display:flex;gap:16px;text-align:right">
+            <div><div style="font-size:11px;color:var(--text-3)">ROI</div><div style="font-size:18px;font-weight:700;color:${borderColor};font-family:var(--mono)">${pl.roi}</div></div>
+            <div><div style="font-size:11px;color:var(--text-3)">GMV</div><div style="font-size:18px;font-weight:700;font-family:var(--mono)">${pl.gmv}</div></div>
+          </div>
+        </div>`).join('');
+      return `<div style="margin-bottom:16px">
+        <div style="font-size:13px;font-weight:600;color:${borderColor};display:flex;align-items:center;gap:6px;margin-bottom:8px"><span class="icon" style="font-size:16px">${icon}</span>${title}</div>
+        <div style="display:flex;flex-direction:column;gap:8px">${items}</div>
+      </div>`;
+    };
+    detailTabHtml = renderPlanGroup(MOCK_REVIEW.topPlans, 'Top 3 表现最佳', 'emoji_events', 'var(--green)') + renderPlanGroup(MOCK_REVIEW.bottomPlans, 'Bottom 2 待改进', 'warning', 'var(--amber)');
+  }
+
+  // AI Insights (right)
+  const insightsHtml = `
+    <div class="panel" style="border-color:var(--blue-border);background:linear-gradient(135deg,rgba(37,99,235,0.03),rgba(99,102,241,0.03))">
+      <div class="panel-title"><span class="icon" style="color:var(--blue)">auto_awesome</span>AI 智能洞察</div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:4px;margin-bottom:6px"><span class="icon" style="font-size:14px">check_circle</span>关键发现</div>
+        ${MOCK_REVIEW.insights.findings.map(t => `<div class="insight positive">${t}</div>`).join('')}
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:4px;margin-bottom:6px"><span class="icon" style="font-size:14px">lightbulb</span>表现亮点</div>
+        ${MOCK_REVIEW.insights.highlights.map(t => `<div class="insight info">${t}</div>`).join('')}
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--amber);display:flex;align-items:center;gap:4px;margin-bottom:6px"><span class="icon" style="font-size:14px">warning</span>待改进点</div>
+        ${MOCK_REVIEW.insights.improvements.map(t => `<div class="insight warning">${t}</div>`).join('')}
+      </div>
+    </div>`;
+
+  // Resource rankings (right)
+  const resTabs = [
+    { key: 'audiences', icon: 'group', label: '人群包' },
+    { key: 'keywords', icon: 'label', label: '关键词包' },
+    { key: 'creatives', icon: 'image', label: '素材包' },
+  ];
+  const resTabsHtml = resTabs.map(t =>
+    `<button style="flex:1;padding:6px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:4px;font-family:var(--ui);border:1px solid ${resourceSubTab === t.key ? 'var(--blue-border)' : 'var(--border)'};background:${resourceSubTab === t.key ? 'var(--blue-light)' : 'var(--surface)'};color:${resourceSubTab === t.key ? 'var(--blue)' : 'var(--text-3)'}" onclick="resourceSubTab='${t.key}';renderProject(activeProject)">
+      <span class="icon" style="font-size:12px">${t.icon}</span>${t.label}
+    </button>`
+  ).join('');
+
+  const resList = (MOCK_REVIEW.resources[resourceSubTab] || []).map((res, i) => {
+    const trendIcon = res.change === 'up' ? 'trending_up' : res.change === 'down' ? 'trending_down' : 'remove';
+    const trendColor = res.change === 'up' ? 'var(--green)' : res.change === 'down' ? 'var(--red)' : 'var(--text-3)';
+    const bgColor = i < 3 ? 'var(--green-light)' : i >= (MOCK_REVIEW.resources[resourceSubTab].length - 1) ? 'var(--amber-light)' : 'var(--surface-alt)';
+    const badgeBg = i < 3 ? 'var(--green)' : i >= (MOCK_REVIEW.resources[resourceSubTab].length - 1) ? 'var(--amber)' : 'var(--border)';
+    const badgeColor = i < 3 || i >= (MOCK_REVIEW.resources[resourceSubTab].length - 1) ? '#fff' : 'var(--text-2)';
+    return `<div style="padding:10px;background:${bgColor};border:1px solid var(--border-light);border-radius:6px;display:flex;align-items:center;gap:8px">
+      <div style="width:22px;height:22px;border-radius:50%;background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${badgeColor};flex-shrink:0">${i+1}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${res.name}</div>
+        <div style="font-size:11px;color:var(--text-3)">使用 ${res.usage} 次 · GMV ${res.gmv}</div></div>
+      <div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:var(--text-3)">ROI</div><div style="font-size:15px;font-weight:700;${res.roi > 3 ? 'color:var(--green)' : ''};font-family:var(--mono)">${res.roi}</div></div>
+      <span class="icon" style="font-size:16px;color:${trendColor}">${trendIcon}</span>
+    </div>`;
+  }).join('');
+
+  return `
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        ${overviewHtml}
+        <div class="panel">
+          <div class="panel-title"><span class="icon">emoji_events</span>阶段性分析</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px">${stagesHtml}</div>
+        </div>
+        <div class="panel">
+          <div class="sub-tabs">
+            <button class="sub-tab${reviewSubTab==='channel'?' active':''}" onclick="reviewSubTab='channel';renderProject(activeProject)">渠道对比</button>
+            <button class="sub-tab${reviewSubTab==='plan'?' active':''}" onclick="reviewSubTab='plan';renderProject(activeProject)">计划排行</button>
+          </div>
+          ${detailTabHtml}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        ${insightsHtml}
+        <div class="panel">
+          <div class="panel-title"><span class="icon">emoji_events</span>资源效果排名</div>
+          <div style="display:flex;gap:6px;margin-bottom:12px">${resTabsHtml}</div>
+          <div style="display:flex;flex-direction:column;gap:6px">${resList}</div>
+        </div>
+      </div>
     </div>`;
 }
 
 /* ═══ Navigation ═══ */
 function selectProject(id) {
   activeProject = id;
+  if (!id) projectTab = 'monitor';
   renderSidebar();
   if (id) renderProject(id);
   else renderDashboard();
