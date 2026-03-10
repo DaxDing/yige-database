@@ -1252,7 +1252,7 @@ let DATA = {};
 let META = null;
 let PROJECT_NAMES = {};
 let activeTab = 'project';
-let filters = { project: null, dt: 'all', attribution: '30', marketing: '产品种草', search: '' };
+let filters = { project: null, dt: 'all', attribution: '30', marketing: '产品种草', stat_mode: 'cum', search: '' };
 let sortKey = null;
 let sortDir = 'desc';
 let searchTimer = null;
@@ -1803,6 +1803,16 @@ function renderToolbar() {
           </div>
         </div>
       </div>
+      <div class="filter-group">
+        <span class="filter-label">统计方式</span>
+        <div class="dropdown" id="dd-stat">
+          <div class="dropdown-trigger active">${filters.stat_mode === 'cum' ? '日累计' : '日明细'}</div>
+          <div class="dropdown-menu">
+            <div class="dropdown-item${filters.stat_mode === 'cum' ? ' active' : ''}" data-value="cum">日累计</div>
+            <div class="dropdown-item${filters.stat_mode === 'detail' ? ' active' : ''}" data-value="detail">日明细</div>
+          </div>
+        </div>
+      </div>
       <div class="toolbar-right">
         <button class="dl-btn" onclick="exportCSV()" title="下载 CSV"><span class="icon">download</span></button>
       </div>
@@ -1845,6 +1855,14 @@ function renderToolbar() {
   // Dropdown: attribution
   initDropdown('dd-attr', val => {
     filters.attribution = val;
+    renderSidebar();
+    renderToolbar();
+    renderContent();
+  });
+
+  // Dropdown: stat mode
+  initDropdown('dd-stat', val => {
+    filters.stat_mode = val;
     renderSidebar();
     renderToolbar();
     renderContent();
@@ -2044,6 +2062,15 @@ function renderContent(showLoading = true) {
     document.getElementById('tbl-section').innerHTML =
       `<div style="text-align:center;padding:120px 0;color:var(--text-3)">
         <span class="icon" style="font-size:48px;opacity:0.3;display:block;margin-bottom:16px">construction</span>
+      </div>`;
+    return;
+  }
+  if (filters.stat_mode === 'detail') {
+    document.getElementById('kpi-section').innerHTML = '';
+    document.getElementById('tbl-section').innerHTML =
+      `<div style="text-align:center;padding:80px 0;color:var(--text-3)">
+        <span class="icon" style="font-size:36px;opacity:0.3;display:block;margin-bottom:12px">analytics</span>
+        <p style="font-size:13px">日明细数据暂未接入</p>
       </div>`;
     return;
   }
