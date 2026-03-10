@@ -1409,24 +1409,21 @@ async function loadData(refresh = false, silent = false) {
 
 async function refreshAll() {
   const btn = document.getElementById('sync-btn');
-  const shell = document.querySelector('.shell');
   btn.classList.add('spinning');
-  shell.classList.add('refreshing');
-  showToast('正在刷新数据…', true);
-  const t0 = Date.now();
-  await Promise.allSettled([
-    loadData(false),
-    fetch('/api/cherk'),
-    fetch('/api/feishu/departments?recursive=1'),
-    fetch('/api/feishu/employees'),
-  ]);
+  // 立即用内存数据重渲染
   renderSidebar();
   renderToolbar();
-  renderContent();
+  renderContent(false);
   btn.classList.remove('spinning');
-  shell.classList.remove('refreshing');
-  const sec = ((Date.now() - t0) / 1000).toFixed(1);
-  showToast('刷新完成 ' + sec + 's');
+  showToast('已刷新');
+  // 后台静默拉取最新数据
+  loadData(false, true).then(() => {
+    _pickDefaultDate();
+    renderSidebar();
+    renderToolbar();
+    renderContent(false);
+    showToast('数据已同步');
+  });
 }
 function showToast(msg, persist) {
   let el = document.getElementById('toast');
