@@ -64,7 +64,12 @@ def _warm_cache():
     """清空缓存并重新预热所有数据"""
     _clear_cache()
     print(f'[{datetime.now():%H:%M}] 开始缓存预热…')
+    # 默认日期范围（与前端一致：T-9 ~ T-1）
+    today = datetime.now()
+    end_ds = (today - timedelta(days=1)).strftime('%Y%m%d')
+    start_ds = (today - timedelta(days=9)).strftime('%Y%m%d')
     tasks = [
+        ('ads', lambda: query_ads(start_ds, end_ds)),
         ('project_names', lambda: query_project_names()),
         ('cherk', lambda: query_cherk()),
         ('dim_stats', lambda: query_dim_stats()),

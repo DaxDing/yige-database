@@ -1338,7 +1338,8 @@ function _applyData(json) {
 }
 
 function _saveToLocal(json) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(json)); } catch (_) {}
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(json)); }
+  catch (e) { console.warn('localStorage 写入失败:', e.message); }
 }
 
 function _loadFromLocal() {
@@ -2445,8 +2446,10 @@ async function init() {
     return;
   }
 
-  // 无缓存：正常等待加载
+  // 无缓存：显示加载动画
   setLoading(true);
+  const main = document.getElementById('main');
+  if (main) main.innerHTML = '<div class="filter-loading"><span class="icon spinner">progress_activity</span><span style="margin-left:8px">数据加载中…</span></div>';
   await loadData();
   _pickDefaultDate();
   renderAdsModule();
