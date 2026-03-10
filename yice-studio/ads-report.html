@@ -2474,18 +2474,13 @@ async function init() {
   const cached = _loadFromLocal();
   if (cached) {
     _applyData(cached);
-    _pickDefaultDate();
     dataMode = 'cache';
-    renderAdsModule();
+    switchTab(activeTab);
     showToast('已加载缓存');
 
-    // 2) 后台静默刷新（silent=true 不显示 loading bar）
+    // 后台静默刷新
     loadData(false, true).then(() => {
-      _pickDefaultDate();
-      renderSidebar();
-      renderToolbar();
-      renderContent(false);
-      showToast('数据已更新');
+      showToast('数据已同步');
     });
     return;
   }
@@ -2495,8 +2490,7 @@ async function init() {
   const tbl = document.getElementById('tbl-section');
   if (tbl) tbl.innerHTML = '<div class="filter-loading"><span class="icon spinner">progress_activity</span></div>';
   await loadData();
-  _pickDefaultDate();
-  renderAdsModule();
+  switchTab(activeTab);
 }
 
 init();
