@@ -114,6 +114,8 @@
 .chat-msg.bot .typing-dot:nth-child(2) { animation-delay: 0.2s; }
 .chat-msg.bot .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 @keyframes blink { 0%,80% { opacity: 0.2; } 40% { opacity: 1; } }
+.thinking-anim { color: var(--text-3, #9ca3af); font-size: 12px; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
 `;
   document.head.appendChild(style);
 
@@ -218,7 +220,7 @@
 
     var botEl = document.createElement('div');
     botEl.className = 'chat-msg bot';
-    botEl.innerHTML = '<span class="typing-dot">●</span><span class="typing-dot">●</span><span class="typing-dot">●</span>';
+    botEl.innerHTML = '<span class="thinking-anim"><span class="typing-dot">●</span><span class="typing-dot">●</span><span class="typing-dot">●</span> 思考中</span>';
     area.appendChild(botEl);
     area.scrollTop = area.scrollHeight;
 
@@ -234,7 +236,7 @@
       var reader = res.body.getReader();
       var decoder = new TextDecoder();
       var full = '', reasoning = '', buf = '';
-      botEl.textContent = '';
+      var cleared = false;
 
       while (true) {
         var chunk = await reader.read();
@@ -252,10 +254,12 @@
             if (!delta) continue;
             if (delta.reasoning_content) {
               reasoning += delta.reasoning_content;
+              if (!cleared) { cleared = true; botEl.textContent = ''; }
               botEl.textContent = '💭 ' + reasoning;
               area.scrollTop = area.scrollHeight;
             }
             if (delta.content) {
+              if (!cleared) { cleared = true; botEl.textContent = ''; }
               full += delta.content;
               botEl.textContent = full;
               area.scrollTop = area.scrollHeight;

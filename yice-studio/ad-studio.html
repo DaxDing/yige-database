@@ -584,16 +584,19 @@ function sorted() {
 }
 
 /* ═══ Render: Sidebar ═══ */
-function renderSidebar() {
-  const el = document.getElementById('sidebar');
-  const titleEl = document.getElementById('sidebar-title');
-  if (titleEl) titleEl.textContent = `项目 (${PROJECTS.length})`;
-  // 首页 tab 高亮
+function updateNavHighlight() {
   document.querySelectorAll('#header-nav .nav-tab').forEach(t => t.classList.remove('active'));
   if (!activeProject) {
     const homeTab = document.querySelector('#header-nav .nav-tab');
     if (homeTab) homeTab.classList.add('active');
   }
+}
+
+function renderSidebar() {
+  const el = document.getElementById('sidebar');
+  const titleEl = document.getElementById('sidebar-title');
+  if (titleEl) titleEl.textContent = `项目 (${PROJECTS.length})`;
+  updateNavHighlight();
 
   const q = (document.getElementById('project-search')?.value || '').trim().toLowerCase();
   const list = sorted().filter(p => !q || (p.project_name || '').toLowerCase().includes(q) || (p.department || '').toLowerCase().includes(q));

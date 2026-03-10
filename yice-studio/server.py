@@ -60,12 +60,13 @@ def _get_cache_bytes(key, accept_gzip=False):
 
 
 def _set_cache(key, data):
+    # 序列化在锁外，避免阻塞
+    jb = json.dumps(data, ensure_ascii=False).encode('utf-8')
+    gz = gzip_mod.compress(jb, compresslevel=1) if len(jb) > 1024 else None
     with _cache_lock:
         if len(_cache) >= CACHE['max_entries']:
             oldest = min(_cache, key=lambda k: _cache[k]['ts'])
             del _cache[oldest]
-        jb = json.dumps(data, ensure_ascii=False).encode('utf-8')
-        gz = gzip_mod.compress(jb, compresslevel=6) if len(jb) > 1024 else None
         _cache[key] = {'ts': time.time(), 'data': data, 'jb': jb, 'gz': gz}
 
 
@@ -229,6 +230,11 @@ def query_ads(start_ds, end_ds, refresh=False):
     data = {'meta': meta, 'project_names': pnames, **result}
     if not errors:
         _set_cache(cache_key, data)
+        # 同步写入单表缓存（供 counts 端点使用）
+        for key, rows in result.items():
+            _set_cache(f'ads_{key}_{start_ds}_{end_ds}', {
+                'table': key, 'rows': rows, 'count': len(rows),
+            })
 
     total = sum(len(v) for v in result.values())
     print(f'  完成: {total} rows, {elapsed:.1f}s', flush=True)
@@ -670,11 +676,18 @@ class APIHandler(SimpleHTTPRequestHandler):
 
             try:
                 with urllib.request.urlopen(req, timeout=60) as resp:
+                    buf = b''
                     while True:
-                        line = resp.readline()
-                        if not line:
+                        chunk = resp.read1(8192)
+                        if not chunk:
                             break
-                        self.wfile.write(line)
+                        buf += chunk
+                        while b'\n' in buf:
+                            line, buf = buf.split(b'\n', 1)
+                            self.wfile.write(line + b'\n')
+                            self.wfile.flush()
+                    if buf:
+                        self.wfile.write(buf)
                         self.wfile.flush()
             except BrokenPipeError:
                 pass
@@ -763,10 +776,18 @@ class APIHandler(SimpleHTTPRequestHandler):
             _validate_ds(start)
             _validate_ds(end)
             if counts_only:
+                entity_keys = {
+                    'project': 'project_id', 'task_group': 'task_group_name',
+                    'content_theme': 'content_theme', 'note': 'note_id',
+                }
                 counts = {}
                 for key in ADS_TABLES:
                     cached = _get_cache(f'ads_{key}_{start}_{end}')
-                    counts[key] = cached['count'] if cached else 0
+                    if cached and cached.get('rows'):
+                        ek = entity_keys.get(key)
+                        counts[key] = len({r[ek] for r in cached['rows'] if r.get(ek)}) if ek else cached['count']
+                    else:
+                        counts[key] = 0
                 self.send_json(200, {'counts': counts})
                 return
             if table and table in ADS_TABLES:
@@ -779,7 +800,9 @@ class APIHandler(SimpleHTTPRequestHandler):
                 if not refresh and self.send_cached(200, cache_key):
                     return
                 data = query_ads(start, end, refresh)
-            self.send_json(200, data)
+            # query 后数据已缓存，优先发预序列化 bytes
+            if not self.send_cached(200, cache_key):
+                self.send_json(200, data)
         except ValueError as e:
             self.send_json(400, {'error': str(e)})
         except Exception as e:

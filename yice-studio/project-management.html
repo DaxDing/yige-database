@@ -1231,10 +1231,15 @@ async function refreshAll() {
   btn.classList.add('spinning');
   showToast('正在刷新数据…');
   const t0 = Date.now();
-  entDepts = null;
-  entEmpsCache = {};
-  await Promise.all([loadProjects(), loadAccounts()]);
-  if (document.getElementById('ent-content')) await renderEnterprise();
+  if (document.getElementById('ent-content')) {
+    // 企业管理页面：只刷新飞书数据
+    entDepts = null;
+    entEmpsCache = {};
+    await renderEnterprise();
+  } else {
+    // 项目管理页面：刷新项目和账户
+    await loadData();
+  }
   btn.classList.remove('spinning');
   const sec = ((Date.now() - t0) / 1000).toFixed(1);
   showToast('刷新完成 ' + sec + 's');
@@ -1346,18 +1351,19 @@ function flatChildren(node) {
 }
 
 async function renderEntDeptView() {
-  const [depts, rawEmps] = await Promise.all([fetchEntDepts(), fetchEntEmps()]);
+  const depts = await fetchEntDepts();
   const el = document.getElementById('ent-content');
-  const seen = new Set();
-  const emps = rawEmps.filter(u => { if (seen.has(u.open_id)) return false; seen.add(u.open_id); return true; });
-  const activeCount = emps.filter(u => u.status && u.status.is_activated).length;
+  const totalMembers = depts.reduce((s, d) => s + (d.member_count || 0), 0);
 
-  // 统计卡片（与员工管理一致）
-  let html = `<div class="ent-stats">
-    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--blue-light)"><span class="icon" style="color:var(--blue);font-size:18px">group</span></div><div><div class="ent-stat-val">${emps.length}</div><div class="ent-stat-label">员工总数</div></div></div>
-    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--green-light)"><span class="icon" style="color:var(--green);font-size:18px">check_circle</span></div><div><div class="ent-stat-val">${activeCount}</div><div class="ent-stat-label">在职员工</div></div></div>
-    <div class="ent-stat"><div class="ent-stat-icon" style="background:linear-gradient(135deg,#fffbeb,#fef3c7)"><span class="icon" style="color:var(--amber);font-size:18px">account_tree</span></div><div><div class="ent-stat-val">${depts.length}</div><div class="ent-stat-label">部门数</div></div></div>
-  </div>`;
+  let html = buildEntStats(totalMembers, '-', depts.length);
+  // 后台加载员工数据，更新在职人数
+  fetchEntEmps().then(rawEmps => {
+    const seen = new Set();
+    const emps = rawEmps.filter(u => { if (seen.has(u.open_id)) return false; seen.add(u.open_id); return true; });
+    const activeCount = emps.filter(u => u.status && u.status.is_activated).length;
+    const statsEl = el.querySelector('.ent-stats');
+    if (statsEl) statsEl.outerHTML = buildEntStats(emps.length, activeCount, depts.length);
+  }).catch(() => {});
 
   if (entSelectedDept) {
     const dept = depts.find(d => d.department_id === entSelectedDept);
@@ -1452,17 +1458,21 @@ function buildEntEmpTable(emps, depts) {
   return `<div class="ent-table-wrap"><table class="ent-table"><thead><tr><th style="width:32px"></th><th>姓名</th><th>飞书 ID</th><th>部门</th><th>关联项目</th><th>邮箱</th><th>手机</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
+function buildEntStats(empCount, activeCount, deptCount) {
+  return `<div class="ent-stats">
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--blue-light)"><span class="icon" style="color:var(--blue);font-size:18px">group</span></div><div><div class="ent-stat-val">${empCount}</div><div class="ent-stat-label">员工总数</div></div></div>
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--green-light)"><span class="icon" style="color:var(--green);font-size:18px">check_circle</span></div><div><div class="ent-stat-val">${activeCount}</div><div class="ent-stat-label">在职员工</div></div></div>
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:linear-gradient(135deg,#fffbeb,#fef3c7)"><span class="icon" style="color:var(--amber);font-size:18px">account_tree</span></div><div><div class="ent-stat-val">${deptCount}</div><div class="ent-stat-label">部门数</div></div></div>
+  </div>`;
+}
+
 async function renderEntEmpView() {
   const el = document.getElementById('ent-content');
   const [depts, rawEmps] = await Promise.all([fetchEntDepts(), fetchEntEmps()]);
   const seen = new Set();
   const emps = rawEmps.filter(u => { if (seen.has(u.open_id)) return false; seen.add(u.open_id); return true; });
   const activeCount = emps.filter(u => u.status && u.status.is_activated).length;
-  let html = `<div class="ent-stats">
-    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--blue-light)"><span class="icon" style="color:var(--blue);font-size:18px">group</span></div><div><div class="ent-stat-val">${emps.length}</div><div class="ent-stat-label">员工总数</div></div></div>
-    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--green-light)"><span class="icon" style="color:var(--green);font-size:18px">check_circle</span></div><div><div class="ent-stat-val">${activeCount}</div><div class="ent-stat-label">在职员工</div></div></div>
-    <div class="ent-stat"><div class="ent-stat-icon" style="background:linear-gradient(135deg,#fffbeb,#fef3c7)"><span class="icon" style="color:var(--amber);font-size:18px">account_tree</span></div><div><div class="ent-stat-val">${depts.length}</div><div class="ent-stat-label">部门数</div></div></div>
-  </div>`;
+  let html = buildEntStats(emps.length, activeCount, depts.length);
   html += buildEntEmpTable(emps, depts);
   el.innerHTML = html;
 }

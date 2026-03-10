@@ -1329,7 +1329,6 @@ document.addEventListener('click', e => {
 const CACHE_KEY = 'yice_ads_cache';
 
 const _tableLoaded = {};
-let _tabCounts = {};
 
 async function loadTable(tabKey) {
   if (_tableLoaded[tabKey]) return;
@@ -1337,20 +1336,11 @@ async function loadTable(tabKey) {
   if (!resp.ok) return;
   const json = await resp.json();
   DATA[tabKey] = json.rows || [];
-  _tabCounts[tabKey] = json.count || DATA[tabKey].length;
+
   if (json.meta) META = json.meta;
   _tableLoaded[tabKey] = true;
 }
 
-async function loadCounts() {
-  try {
-    const resp = await fetch('/api/ads?counts=1');
-    if (resp.ok) {
-      const json = await resp.json();
-      _tabCounts = json.counts || {};
-    }
-  } catch (_) {}
-}
 
 async function loadProjectNames() {
   if (Object.keys(PROJECT_NAMES).length) return;
@@ -1553,19 +1543,17 @@ function ensureFilterDefaults(opts) {
 }
 
 function getFilterOptions() {
-  const projects = new Set(), dates = new Set(), attrs = new Set(), mktTargets = new Set();
+  const dates = new Set(), attrs = new Set(), mktTargets = new Set();
   const rows = DATA[activeTab] || [];
-  [rows].forEach(rows => {
-    if (!Array.isArray(rows)) return;
-    rows.forEach(r => {
-      if (r.project_id) projects.add(r.project_id);
-      if (r.dt) dates.add(r.dt);
-      if (r.attribution_period != null) attrs.add(String(r.attribution_period));
-      if (r.marketing_target) mktTargets.add(r.marketing_target);
-    });
+  rows.forEach(r => {
+    if (r.dt) dates.add(r.dt);
+    if (r.attribution_period != null) attrs.add(String(r.attribution_period));
+    if (r.marketing_target) mktTargets.add(r.marketing_target);
   });
+  // 项目列表从全量 PROJECT_NAMES 获取，不依赖当前 tab 数据
+  const projects = Object.keys(PROJECT_NAMES).sort();
   return {
-    projects: Array.from(projects).sort(),
+    projects,
     dates: Array.from(dates).sort(),
     attrs: Array.from(attrs).sort(),
     marketingTargets: Array.from(mktTargets).sort(),
@@ -1683,10 +1671,9 @@ function renderSidebar() {
 
   Object.entries(TABS).forEach(([key, tab]) => {
     const active = key === activeTab ? ' active' : '';
-    const count = _tableLoaded[key] ? filterRows(DATA[key] || []).length : (_tabCounts[key] || '');
     const badge = tab.placeholder
       ? '<span class="icon" style="font-size:14px;color:var(--text-3);opacity:0.4">close</span>'
-      : `<span class="s-count">${count}</span>`;
+      : '';
     html += `
       <div class="sidebar-item${active}" onclick="switchTab('${key}')">
         <div class="s-icon ${tab.iconClass}"><span class="icon">${tab.icon}</span></div>
@@ -1951,17 +1938,16 @@ function renderTable(rows) {
     sumRow += '</tr>';
   }
 
-  // ── BODY ROWS ──
-  let body = '';
-  rows.forEach((row, idx) => {
-    body += '<tr>';
-    // Row number
-    body += `<td class="row-num sticky" style="left:0">${idx + 1}</td>`;
+  // ── 渲染行 HTML（公用） ──
+  const PAGE_SIZE = 100;
+
+  function buildRowHtml(row, idx) {
+    let tr = '<tr>';
+    tr += `<td class="row-num sticky" style="left:0">${idx + 1}</td>`;
     tab.dims.forEach((d, di) => {
       const edge = di === lastDimIdx ? ' sticky-edge' : '';
-      body += `<td class="dim sticky${edge}" style="left:${dimLefts[di]}px">${row[d.key] ?? '-'}</td>`;
+      tr += `<td class="dim sticky${edge}" style="left:${dimLefts[di]}px">${row[d.key] ?? '-'}</td>`;
     });
-    // Metrics
     tab.groups.forEach((g, gi) => {
       g.cols.forEach((c, ci) => {
         const v = row[c.key];
@@ -1970,35 +1956,56 @@ function renderTable(rows) {
         const grpCls = ci === 0 ? ' grp-start' : '';
         const sortCls = sortKey === c.key ? ' col-sorted' : '';
         const valCls = condClass(c, v);
-
-        // Data bar for percentage columns
         if (c.fmt === 'pct' && barMaxes[c.key] > 0 && !isZero) {
           const rawVal = Math.abs(n) < 1 && n !== 0 ? n * 100 : n;
           const maxVal = barMaxes[c.key];
           const barW = Math.min((rawVal / maxVal) * 100, 100);
-          body += `<td class="num bar bar-${g.tint}${grpCls}${sortCls}${valCls}" style="--bw:${barW.toFixed(1)}%"><span>${fmtVal(v, c.fmt)}</span></td>`;
+          tr += `<td class="num bar bar-${g.tint}${grpCls}${sortCls}${valCls}" style="--bw:${barW.toFixed(1)}%"><span>${fmtVal(v, c.fmt)}</span></td>`;
         } else {
-          body += `<td class="num${isZero ? ' zero' : ''}${grpCls}${sortCls}${valCls}">${fmtVal(v, c.fmt)}</td>`;
+          tr += `<td class="num${isZero ? ' zero' : ''}${grpCls}${sortCls}${valCls}">${fmtVal(v, c.fmt)}</td>`;
         }
       });
     });
-    body += '</tr>';
-  });
+    tr += '</tr>';
+    return tr;
+  }
 
+  // ── 首批 + 触底加载 ──
+  let body = '';
   if (rows.length === 0) {
-    const totalCols = dimCount + tab.groups.reduce((s, g) => s + g.cols.length, 0);
+    const totalCols = tab.dims.length + 1 + tab.groups.reduce((s, g) => s + g.cols.length, 0);
     body = `<tr><td colspan="${totalCols}" style="text-align:center;padding:48px;color:var(--text-3);font-size:13px;">
       <span class="icon" style="font-size:32px;display:block;margin-bottom:12px;color:var(--border)">table_chart</span>暂无数据
     </td></tr>`;
+  } else {
+    const first = rows.slice(0, PAGE_SIZE);
+    first.forEach((row, idx) => { body += buildRowHtml(row, idx); });
   }
 
   document.getElementById('tbl-section').innerHTML = `
     <div class="tbl-wrap" id="tbl-wrap">
       <table class="tbl" id="data-table">
         <thead>${grpRow}${colRow}${sumRow}</thead>
-        <tbody>${body}</tbody>
+        <tbody id="tbl-body">${body}</tbody>
       </table>
     </div>`;
+
+  // 触底加载更多
+  if (rows.length > PAGE_SIZE) {
+    let loaded = PAGE_SIZE;
+    const wrap = document.getElementById('tbl-wrap');
+    const tbody = document.getElementById('tbl-body');
+    wrap.addEventListener('scroll', function _onScroll() {
+      if (loaded >= rows.length) { wrap.removeEventListener('scroll', _onScroll); return; }
+      if (wrap.scrollTop + wrap.clientHeight >= wrap.scrollHeight - 100) {
+        const next = rows.slice(loaded, loaded + PAGE_SIZE);
+        let html = '';
+        next.forEach((row, i) => { html += buildRowHtml(row, loaded + i); });
+        tbody.insertAdjacentHTML('beforeend', html);
+        loaded += next.length;
+      }
+    });
+  }
 
   // Bind sort click on column headers
   document.querySelectorAll('#data-table thead th[data-sort]').forEach(th => {
@@ -2415,16 +2422,18 @@ function renderAdsModule() {
    ═══════════════════════════════════════════ */
 
 function _pickDefaultDate() {
-  // 项目分析默认全部，其他 tab 默认最新日
+  // 项目分析默认全部，其他 tab 默认：16点后=昨天，16点前=前天
   if (activeTab === 'project') { filters.dt = 'all'; return; }
-  const y = new Date();
-  y.setDate(y.getDate() - 1);
+  const now = new Date();
+  const offset = now.getHours() >= 17 ? 1 : 2;
+  const d = new Date();
+  d.setDate(d.getDate() - offset);
   const pad2 = v => String(v).padStart(2, '0');
-  const yesterday = `${y.getFullYear()}${pad2(y.getMonth()+1)}${pad2(y.getDate())}`;
+  const target = `${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}`;
   const allDates = new Set();
   const rows = DATA[activeTab] || [];
   if (Array.isArray(rows)) rows.forEach(r => { if (r.dt) allDates.add(r.dt); });
-  if (allDates.has(yesterday)) filters.dt = yesterday;
+  if (allDates.has(target)) filters.dt = target;
   else if (allDates.size > 0) filters.dt = Array.from(allDates).sort().pop();
 }
 
@@ -2436,7 +2445,6 @@ async function ensureTabData(tabKey) {
 async function init() {
   renderSidebar();
   switchTab(activeTab);
-  loadCounts().then(() => renderSidebar());
 }
 
 init();
