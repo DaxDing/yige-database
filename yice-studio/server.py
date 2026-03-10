@@ -7,13 +7,14 @@
     export $(cat .env | xargs) && python3 yice-studio/server.py [port]
 """
 
+import gzip as gzip_mod
 import json
 import os
 import re
-import subprocess
 import sys
 import threading
 import time
+import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
@@ -47,12 +48,25 @@ def _get_cache(key):
     return None
 
 
+def _get_cache_bytes(key, accept_gzip=False):
+    """返回预序列化 bytes，跳过 json.dumps"""
+    with _cache_lock:
+        entry = _cache.get(key)
+        if entry and time.time() - entry['ts'] < CACHE['ttl']:
+            if accept_gzip and entry.get('gz'):
+                return entry['gz'], True
+            return entry.get('jb'), False
+    return None, False
+
+
 def _set_cache(key, data):
     with _cache_lock:
         if len(_cache) >= CACHE['max_entries']:
             oldest = min(_cache, key=lambda k: _cache[k]['ts'])
             del _cache[oldest]
-        _cache[key] = {'ts': time.time(), 'data': data}
+        jb = json.dumps(data, ensure_ascii=False).encode('utf-8')
+        gz = gzip_mod.compress(jb, compresslevel=6) if len(jb) > 1024 else None
+        _cache[key] = {'ts': time.time(), 'data': data, 'jb': jb, 'gz': gz}
 
 
 def _clear_cache():
@@ -625,7 +639,7 @@ class APIHandler(SimpleHTTPRequestHandler):
             self.send_json(500, {'error': str(e)})
 
     def handle_chat(self):
-        """流式代理 GLM API，用 curl 子进程避免 Python HTTP 缓冲"""
+        """流式代理 GLM API（纯 Python urllib，无子进程）"""
         try:
             body = json.loads(self._read_body(100 * 1024))
             messages = body.get('messages', [])
@@ -637,32 +651,39 @@ class APIHandler(SimpleHTTPRequestHandler):
                 'model': GLM['model'],
                 'messages': messages[-20:],
                 'stream': True,
-            }, ensure_ascii=False)
+            }, ensure_ascii=False).encode('utf-8')
 
-            proc = subprocess.Popen(
-                ['curl', '-sN', '--max-time', '60',
-                 '-X', 'POST', GLM['url'],
-                 '-H', 'Content-Type: application/json',
-                 '-H', f'Authorization: Bearer {GLM["key"]}',
-                 '-d', payload],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+            req = urllib.request.Request(
+                GLM['url'], data=payload,
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {GLM["key"]}',
+                },
             )
 
             self.send_response(200)
             self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
             self.send_header('Cache-Control', 'no-cache')
+            self.send_header('X-Accel-Buffering', 'no')
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
 
             try:
-                for line in proc.stdout:
-                    self.wfile.write(line)
-                    self.wfile.flush()
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    while True:
+                        line = resp.readline()
+                        if not line:
+                            break
+                        self.wfile.write(line)
+                        self.wfile.flush()
             except BrokenPipeError:
-                proc.kill()
-
-            proc.wait()
+                pass
+        except urllib.error.HTTPError as e:
+            err = e.read().decode() if e.fp else str(e)
+            try:
+                self.send_json(e.code, {'error': err})
+            except Exception:
+                pass
         except Exception as e:
             try:
                 self.send_json(500, {'error': str(e)})
@@ -749,8 +770,14 @@ class APIHandler(SimpleHTTPRequestHandler):
                 self.send_json(200, {'counts': counts})
                 return
             if table and table in ADS_TABLES:
+                cache_key = f'ads_{table}_{start}_{end}'
+                if not refresh and self.send_cached(200, cache_key):
+                    return
                 data = query_ads_table(table, start, end, refresh)
             else:
+                cache_key = f'ads_{start}_{end}'
+                if not refresh and self.send_cached(200, cache_key):
+                    return
                 data = query_ads(start, end, refresh)
             self.send_json(200, data)
         except ValueError as e:
@@ -769,9 +796,28 @@ class APIHandler(SimpleHTTPRequestHandler):
 
     def send_json(self, code, data):
         body = json.dumps(data, ensure_ascii=False).encode('utf-8')
+        is_gz = False
+        if 'gzip' in self.headers.get('Accept-Encoding', '') and len(body) > 1024:
+            body = gzip_mod.compress(body, compresslevel=6)
+            is_gz = True
+        self._write_json_response(code, body, is_gz)
+
+    def send_cached(self, code, cache_key):
+        """发送预序列化缓存，跳过 json.dumps + gzip"""
+        accept_gz = 'gzip' in self.headers.get('Accept-Encoding', '')
+        body, is_gz = _get_cache_bytes(cache_key, accept_gz)
+        if body:
+            self._write_json_response(code, body, is_gz)
+            return True
+        return False
+
+    def _write_json_response(self, code, body, is_gzip=False):
         self.send_response(code)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Access-Control-Allow-Origin', '*')
+        if is_gzip:
+            self.send_header('Content-Encoding', 'gzip')
+            self.send_header('Vary', 'Accept-Encoding')
         self.send_header('Content-Length', len(body))
         self.end_headers()
         self.wfile.write(body)

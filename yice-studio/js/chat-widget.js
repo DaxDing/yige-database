@@ -233,7 +233,7 @@
 
       var reader = res.body.getReader();
       var decoder = new TextDecoder();
-      var full = '', buf = '';
+      var full = '', reasoning = '', buf = '';
       botEl.textContent = '';
 
       while (true) {
@@ -249,11 +249,22 @@
           try {
             var evt = JSON.parse(data);
             var delta = evt.choices && evt.choices[0] && evt.choices[0].delta;
-            if (delta && delta.content) { full += delta.content; botEl.textContent = full; area.scrollTop = area.scrollHeight; }
+            if (!delta) continue;
+            if (delta.reasoning_content) {
+              reasoning += delta.reasoning_content;
+              botEl.textContent = '💭 ' + reasoning;
+              area.scrollTop = area.scrollHeight;
+            }
+            if (delta.content) {
+              full += delta.content;
+              botEl.textContent = full;
+              area.scrollTop = area.scrollHeight;
+            }
           } catch (e) { if (e instanceof SyntaxError) continue; throw e; }
         }
       }
 
+      if (!full && reasoning) full = reasoning;
       if (!full) full = '(无响应)';
       chatHistory.push({ role: 'assistant', content: full });
     } catch (e) {

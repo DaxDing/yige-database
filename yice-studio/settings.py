@@ -86,7 +86,7 @@ FEISHU = {
 GLM = {
     'url': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
     'key': '4dcab4be8b714ed89f6e1e478320ffa2.hhU9M2n9kASctiYe',
-    'model': 'glm-5',
+    'model': 'glm-4-flash',
     'system_prompt': '你是 YICE 助手，一个专业的小红书营销数据分析助手。简洁、专业地回答问题。',
 }
 
