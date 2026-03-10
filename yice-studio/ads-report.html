@@ -1362,19 +1362,14 @@ async function refreshAll() {
   btn.classList.add('spinning');
   // 清除所有已加载标记
   Object.keys(_tableLoaded).forEach(k => delete _tableLoaded[k]);
-  const key = activeTab;
-  // 非数据 tab 直接 switchTab
-  if (key === 'scheduled_tasks' || key === 'free_spend' || TABS[key]?.placeholder) {
-    switchTab(key);
-  } else {
-    // 数据 tab：等加载完再渲染
-    await ensureTabData(key);
-    _pickDefaultDate();
-    if (key === 'project') filters.dt = 'all';
-    renderSidebar();
-    renderToolbar();
-    renderContent(false);
-  }
+  // 并发刷新所有数据 tab
+  const dataTabs = Object.keys(TABS).filter(k => !TABS[k].placeholder && TABS[k].groups?.length);
+  await Promise.all([
+    loadProjectNames(),
+    ...dataTabs.map(k => loadTable(k)),
+  ]);
+  // 渲染当前 tab
+  switchTab(activeTab);
   btn.classList.remove('spinning');
   showToast('已刷新');
 }
