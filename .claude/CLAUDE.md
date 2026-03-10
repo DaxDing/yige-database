@@ -10,6 +10,10 @@
 | ProjectId | `530486` |
 | MaxCompute | `df_ch_530486` |
 | Region | `cn-hangzhou` |
+| ECS | `114.55.242.136`（yice-studio 部署服务器） |
+| yice-studio | `http://114.55.242.136:8080/` |
+
+> **CRITICAL**: 本项目 ECS 服务器凭证使用 `.env` 中 `ECS_` 前缀的变量，与 DataWorks/MaxCompute 的 `ALIYUN_ACCESS_KEY_*` 是不同账号，勿混用。
 
 ## Directory Structure
 
@@ -25,7 +29,7 @@ dataworks/
 │   │   ├── realtime/  # 实时链路 (dedup/ods/dwd/util)
 │   │   └── offline/   # 离线链路 (dedup/ods/dim/dwd/dws/ads/util)
 │   └── sync/        # 同步任务
-└── portal/          # 前端可视化工具
+└── yice-studio/          # 前端可视化工具
     └── models/      # 数据模型定义
         ├── layers.js    # 分层架构 (ODS/DWD/DIM/DWS/ADS)
         ├── tables.js    # 表字段定义
@@ -60,7 +64,7 @@ dataworks/
 ```
 Excel (platform/import/) → DataWorks 平台 → MaxCompute
                                 ↓
-               JS (portal/models/) → 前端 (portal/)
+               JS (yice-studio/models/) → 前端 (yice-studio/)
 ```
 
 ## Naming Convention
@@ -113,10 +117,15 @@ export $(cat .env | xargs) && python3 script.py
 - **CRITICAL**: 请求聚光/蒲公英 API 前，先执行对应脚本获取 token：
   - 聚光: `bash dataworks_design/token/get_xhs_jg_token.sh`
   - 蒲公英: `bash dataworks_design/token/get_xhs_pgy_token.sh`
-- 表结构变更需同步更新 `portal/models/tables.js`
+- 表结构变更需同步更新 `yice-studio/models/tables.js`
 - SQL 脚本按 `platform/sql/{realtime|offline}/{layer}/` 存放
 - API 规范遵循 `xhs_{platform}_{module}_{action}.openapi.yml`
 - **MaxCompute 建表必须添加 COMMENT**：表和字段都需要中文描述
+- **建表必须配置分层存储**：所有新表需设置 `LIFECYCLE 37231` 并添加 `lifecycle_config`，禁止自动删表：
+  ```sql
+  TBLPROPERTIES ('lifecycle_config'='{"TierToLowFrequency":{"DaysAfterLastAccessGreaterThan":90},"TierToLongterm":{"DaysAfterLastAccessGreaterThan":365}}')
+  LIFECYCLE 37231
+  ```
 
 ## Output Format
 
@@ -251,16 +260,24 @@ export $(cat .env | xargs) && python3 script.py
 | ODS | ods_xhs_creative_realtime_hi, ods_xhs_campaign_realtime_hi, ods_xhs_target_realtime_hi, ods_xhs_keyword_realtime_hi |
 | DWD | dwd_xhs_creative_realtime_hi, dwd_xhs_campaign_realtime_hi, dwd_xhs_target_realtime_hi, dwd_xhs_keyword_realtime_hi |
 
+## Glossary
+
+@glossary.md
+
 ## Skills
 
 | Skill | Description |
 |-------|-------------|
-| `/invoke_dataworks_cli` | **必查** DataWorks CLI（任务、调度、数据集成） |
+| `/invoke_dataworks_cli` | **必查** DataWorks CLI（节点管理、运维、调度） |
+| `/trigger_dw_task` | 触发 DataWorks 补数据任务（14 种预定义任务） |
+| `/request_xhs_api` | 小红书 API 请求（聚光/蒲公英，OpenAPI 规范） |
 | `/operate_maxcompute` | MaxCompute 表操作（建表、SQL、分区） |
 | `/operate_database` | PostgreSQL/MySQL 操作（连接、查询、DDL） |
 | `/operate_feishu_bitable` | 飞书多维表格操作（读写记录） |
 | `/name_dw_object` | 生成数仓对象命名（表、字段、指标） |
-| `/backfill_creative` | 创意层补数据（API → ODS → DWD，10并发） |
-| `/sync_conversion` | 种草联盟转化数据同步（PG → ODS → DWD，bycontent + bytask） |
+| `/backfill_dw` | 本地直连补数据（API→MC、PG→MC、转化同步） |
+| `/crawl_xh_data` | 星河平台任务数据采集（浏览器自动化） |
 | `/check_dim_push_status` | 查看 PG 维度表推送状态（T-1 分区数据量） |
-| `/deploy_site` | 部署 `portal/` 前端到 GitHub Pages |
+| `/query_aliyun_billing` | 阿里云账单查询（余额、月度总览、实例明细） |
+| `/deploy_site` | 部署 `yice-studio/` 前端到 GitHub Pages |
+| `/deploy_server` | ECS 服务器部署与管理（部署、服务控制、Nginx、日志） |

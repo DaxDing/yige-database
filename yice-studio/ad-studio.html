@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YICE 投流工作台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@20,400,1" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-alt: #fafbfc;
+  --border: #e8eaed;
+  --border-light: #f0f1f3;
+  --text-1: #111827;
+  --text-2: #4b5563;
+  --text-3: #9ca3af;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --blue-border: #bfdbfe;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --ui: 'Sora', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.1);
+  --radius: 10px;
+}
+
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--bg); color: var(--text-1); font-family: var(--ui); -webkit-font-smoothing: antialiased; }
+
+.icon {
+  font-family: 'Material Symbols Rounded';
+  font-size: 18px; line-height: 1; vertical-align: middle;
+  font-variation-settings: 'FILL' 1, 'opsz' 20;
+}
+
+/* ═══ Shell ═══ */
+.shell { display: grid; grid-template-rows: 52px 1fr; height: 100vh; }
+
+/* ═══ Header ═══ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: relative; z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.ws-wrap { position: relative; margin-left: 4px; }
+.ws-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-family: var(--ui); font-size: 12px; font-weight: 500;
+  color: var(--text-2); background: none; border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 8px; cursor: pointer; transition: all 0.15s;
+}
+.ws-btn:hover { color: var(--blue); border-color: var(--blue-border); background: var(--blue-light); }
+.ws-btn .icon { font-size: 14px; color: var(--text-3); transition: color 0.15s; }
+.ws-btn:hover .icon { color: var(--blue); }
+.ws-menu {
+  position: absolute; top: 34px; left: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: var(--shadow-lg);
+  min-width: 160px; padding: 4px; z-index: 200; display: none;
+}
+.ws-menu.show { display: block; animation: fadeIn 0.12s ease-out; }
+.ws-menu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 7px;
+  font-family: var(--ui); font-size: 12px; font-weight: 500;
+  color: var(--text-2); cursor: pointer; transition: all 0.1s;
+  text-decoration: none; border: none; background: none; width: 100%;
+}
+.ws-menu-item:hover { background: var(--blue-light); color: var(--blue); }
+.ws-menu-item .icon { font-size: 16px; color: var(--text-3); }
+.ws-menu-item:hover .icon { color: var(--blue); }
+.ws-menu-item.active { color: var(--blue); }
+.ws-menu-item.active .icon { color: var(--blue); }
+.logo {
+  width: 26px; height: 26px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; font-weight: 700; color: #fff;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+}
+.header-brand {
+  font-family: var(--mono); font-size: 13px; font-weight: 700;
+  color: var(--text-1); letter-spacing: 2.5px;
+}
+.header-right { display: flex; align-items: center; gap: 8px; }
+.hdr-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px;
+  background: none; border: 1px solid var(--border);
+  cursor: pointer; color: var(--text-2); transition: all 0.15s;
+}
+.hdr-btn:hover { color: var(--blue); border-color: var(--blue-border); background: var(--blue-light); }
+.hdr-menu-wrap { position: relative; }
+.hdr-menu {
+  position: absolute; top: 42px; right: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: var(--shadow-lg);
+  min-width: 160px; padding: 4px; z-index: 200; display: none;
+}
+.hdr-menu.show { display: block; animation: fadeIn 0.12s ease-out; }
+.hdr-menu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 7px;
+  font-size: 12px; font-weight: 500; color: var(--text-2);
+  text-decoration: none; transition: all 0.1s;
+}
+.hdr-menu-item:hover { background: var(--blue-light); color: var(--blue); }
+.hdr-menu-item .icon { font-size: 16px; color: var(--text-3); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══ Layout ═══ */
+.layout { display: grid; grid-template-columns: 220px 1fr; overflow: hidden; }
+
+/* ═══ Sidebar ═══ */
+.sidebar {
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; padding: 16px 12px; overflow-y: auto;
+}
+.sb-section {
+  font-size: 10px; font-weight: 600; color: var(--text-3);
+  letter-spacing: 1px; padding: 12px 8px 6px; text-transform: uppercase;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 10px; border-radius: 8px; cursor: pointer;
+  font-size: 12px; font-weight: 500; color: var(--text-2);
+  transition: all 0.12s; text-decoration: none;
+}
+.sb-item:hover { background: var(--surface-alt); }
+.sb-item.active { background: var(--blue-light); color: var(--blue); }
+.sb-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sb-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+.sb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+/* ═══ Main ═══ */
+.main { padding: 24px 28px; overflow-y: auto; background: var(--bg); }
+
+/* ═══ Cards ═══ */
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; transition: all 0.15s; cursor: pointer;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card.disabled { opacity: 0.5; cursor: not-allowed; }
+.card.live { border-left: 3px solid var(--green); }
+.badge {
+  font-size: 11px; padding: 1px 8px; border-radius: 99px; font-weight: 500;
+}
+.progress-bar { height: 4px; background: var(--border); border-radius: 99px; }
+.progress-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+
+/* ═══ Notifications ═══ */
+.notif-panel {
+  border-left: 1px solid var(--border); padding-left: 24px;
+  display: flex; flex-direction: column;
+}
+.notif-card {
+  padding: 12px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.07); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header class="header">
+    <div class="header-left">
+      <a href="ads-report.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer">
+        <div class="logo">YC</div>
+        <span class="header-brand">YICE</span>
+      </a>
+      <div class="ws-wrap">
+        <button class="ws-btn" onclick="toggleMenu('ws-menu')">投流工作台<span class="icon">expand_more</span></button>
+        <div class="ws-menu" id="ws-menu">
+          <a class="ws-menu-item" href="ads-report.html"><span class="icon">folder</span>项目工作台</a>
+          <a class="ws-menu-item active" href="#"><span class="icon">rocket_launch</span>投流工作台</a>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="hdr-menu-wrap">
+        <button class="hdr-btn" onclick="toggleMenu('settings-menu')" title="设置"><span class="icon">settings</span></button>
+        <div class="hdr-menu" id="settings-menu">
+          <a class="hdr-menu-item" href="#"><span class="icon">warning</span>预警规则</a>
+          <a class="hdr-menu-item" href="#"><span class="icon">dashboard_customize</span>策略模版</a>
+        </div>
+      </div>
+      <div class="hdr-menu-wrap">
+        <button class="hdr-btn" onclick="toggleMenu('user-menu')" title="用户"><span class="icon">account_circle</span></button>
+        <div class="hdr-menu" id="user-menu">
+          <a class="hdr-menu-item" href="#"><span class="icon">apartment</span>部门</a>
+          <div style="height:1px;background:var(--border);margin:2px 8px"></div>
+          <a class="hdr-menu-item" href="#"><span class="icon">logout</span>退出</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main" id="main"></main>
+  </div>
+</div>
+
+<script src="js/chat-widget.js"></script>
+<script>
+/* ═══ Data ═══ */
+const PROJECTS = [
+  { id: 1, name: '万和私草投流', brand: '万和', status: 'pre-delivery', stage: '蓄水', budget: '¥50,000', spend: '¥0', dailyBudget: '¥2,000', dailySpend: '¥0', roi: '-', progress: 0, deadline: '2025-12-30', account: '1688网服10-伊阁' },
+  { id: 2, name: '海尔热水器信息流6—伊阳', brand: '海尔', status: 'in-delivery', budget: '¥100,000', spend: '¥24,500', dailyBudget: '¥5,000', dailySpend: '¥4,200', roi: '1.8', progress: 24, deadline: '2026-01-15', account: '1688网服16-伊阁' },
+  { id: 3, name: '墨觉私草投流-伊阳', brand: '墨觉', status: 'post-delivery', budget: '¥80,000', spend: '¥78,400', dailyBudget: '¥3,000', dailySpend: '¥0', roi: '1.5', progress: 98, deadline: '2025-10-10', account: '1688网服18-伊阁' },
+  { id: 4, name: 'FJORDA投流-伊阳', brand: 'FJORDA', status: 'pre-delivery', stage: '预热', budget: '¥30,000', spend: '¥0', dailyBudget: '¥1,500', dailySpend: '¥0', roi: '-', progress: 0, deadline: '2025-12-20', account: '1688网服20-伊阁' },
+  { id: 5, name: '乐程式私草投流-伊阳', brand: '乐程式', status: 'pre-delivery', stage: '爆发', budget: '¥60,000', spend: '¥0', dailyBudget: '¥3,000', dailySpend: '¥0', roi: '-', progress: 0, deadline: '2025-09-30', account: '1688网服22-伊阁' },
+];
+
+const NOTIFICATIONS = [
+  { id: 1, type: 'warning', msg: '"新用户获取"计划 ROI 下跌至 1.1', time: '10分钟前', src: '新用户获取计划' },
+  { id: 2, type: 'info', msg: '"夏季大促"素材审核通过', time: '30分钟前', src: '夏季大促推广' },
+  { id: 3, type: 'danger', msg: '账户余额不足 ¥500', time: '1小时前', src: '系统' },
+  { id: 4, type: 'success', msg: '昨日消耗达成率 105%', time: '2小时前', src: '全域' },
+  { id: 5, type: 'warning', msg: '部分关键词搜索量异常波动', time: '4小时前', src: '品牌形象建设' },
+];
+
+const STATUS = {
+  'in-delivery': { bg: 'var(--green-light)', color: 'var(--green)', label: '投放中' },
+  'pre-delivery': { bg: 'var(--amber-light)', color: 'var(--amber)', label: '计划中' },
+  'post-delivery': { bg: 'var(--surface-alt)', color: 'var(--text-3)', label: '已结束' },
+};
+const NOTE_COLORS = { warning: 'var(--amber)', danger: 'var(--red)', success: 'var(--green)', info: 'var(--blue)' };
+
+let activeProject = null;
+
+function sorted() {
+  const order = { 'in-delivery': 0, 'pre-delivery': 1, 'post-delivery': 2 };
+  const stageOrder = { '蓄水': 0, '预热': 1, '爆发': 2, '延续': 3 };
+  return [...PROJECTS]
+    .map(p => ({ ...p, expired: new Date(p.deadline) < new Date() }))
+    .sort((a, b) => {
+      if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+      if (a.status === 'pre-delivery' && b.status === 'pre-delivery')
+        return (stageOrder[a.stage] ?? 9) - (stageOrder[b.stage] ?? 9);
+      return a.id - b.id;
+    });
+}
+
+/* ═══ Render: Sidebar ═══ */
+function renderSidebar() {
+  const list = sorted();
+  let html = `
+    <div class="sb-item${!activeProject ? ' active' : ''}" onclick="selectProject(null)">
+      <div class="sb-icon" style="background:var(--blue-light)"><span class="icon" style="font-size:16px;color:var(--blue)">space_dashboard</span></div>
+      <span class="sb-name">首页</span>
+    </div>
+    <div class="sb-section">项目列表</div>`;
+
+  list.forEach(p => {
+    const cfg = STATUS[p.status] || {};
+    const active = activeProject === p.id ? ' active' : '';
+    html += `
+    <div class="sb-item${active}" onclick="selectProject(${p.id})">
+      <div class="sb-icon" style="background:${cfg.bg || 'var(--surface-alt)'}">
+        <span class="icon" style="font-size:14px;color:${cfg.color || 'var(--text-3)'}">folder</span>
+      </div>
+      <span class="sb-name">${p.name}</span>
+      ${p.status === 'in-delivery' && !p.expired ? '<div class="sb-dot"></div>' : ''}
+    </div>`;
+  });
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+/* ═══ Render: Dashboard ═══ */
+function renderDashboard() {
+  const list = sorted();
+  let cards = '';
+  list.forEach(p => {
+    const s = STATUS[p.status] || {};
+    const cls = (p.expired ? ' disabled' : '') + (p.status === 'in-delivery' && !p.expired ? ' live' : '');
+    const onclick = p.expired ? '' : `onclick="selectProject(${p.id})"`;
+    const fillColor = p.progress >= 95 ? 'var(--green)' : 'var(--blue)';
+    cards += `
+    <div class="card${cls}" ${onclick}>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <h3 style="font-size:14px;font-weight:600">${p.name}</h3>
+            <span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span>
+          </div>
+          <p style="font-size:12px;color:var(--text-3)">${p.brand} · 截止 ${p.deadline}</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div>
+          <p style="font-size:11px;color:var(--text-3);margin-bottom:2px">今日消耗 / 日预算</p>
+          <p style="font-size:14px;font-weight:600;font-family:var(--mono)">${p.dailySpend} <span style="font-size:12px;color:var(--text-3);font-weight:400">/ ${p.dailyBudget}</span></p>
+        </div>
+        <div>
+          <p style="font-size:11px;color:var(--text-3);margin-bottom:2px">ROI</p>
+          <p style="font-size:16px;font-weight:700;font-family:var(--mono);color:${p.roi !== '-' ? 'var(--green)' : 'var(--text-3)'}">${p.roi}</p>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:11px;color:var(--text-3)">总预算进度</span>
+          <span style="font-size:11px;font-weight:600;font-family:var(--mono);color:var(--text-2)">${p.spend} / ${p.budget}</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%;background:${fillColor}"></div></div>
+      </div>
+    </div>`;
+  });
+
+  let notifs = '';
+  NOTIFICATIONS.forEach(n => {
+    notifs += `
+    <div class="notif-card" style="border-left:3px solid ${NOTE_COLORS[n.type] || 'var(--blue)'}">
+      <p style="font-size:12px;margin-bottom:6px;line-height:1.5">${n.msg}</p>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--text-3)">${n.src}</span>
+        <span style="font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:4px">
+          <span class="icon" style="font-size:12px">schedule</span>${n.time}
+        </span>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('main').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:24px;height:calc(100vh - 100px)">
+      <div style="overflow-y:auto;padding-right:8px">
+        <div style="margin-bottom:20px">
+          <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">项目概览</h2>
+          <p style="color:var(--text-3);font-size:13px">实时监控核心指标与进度</p>
+        </div>
+        <div class="card-grid">${cards}</div>
+      </div>
+      <div class="notif-panel">
+        <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+          <h3 style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px">
+            <span class="icon" style="font-size:18px;color:var(--blue)">smart_toy</span>Flooding AI
+          </h3>
+          <span style="font-size:11px;background:var(--red-light);color:var(--red);padding:2px 6px;border-radius:10px;font-weight:600">${NOTIFICATIONS.length}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;overflow-y:auto">${notifs}</div>
+      </div>
+    </div>`;
+}
+
+/* ═══ Render: Project Detail (placeholder) ═══ */
+function renderProject(id) {
+  const p = PROJECTS.find(x => x.id === id);
+  if (!p) return;
+  const s = STATUS[p.status] || {};
+  document.getElementById('main').innerHTML = `
+    <div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <button onclick="selectProject(null)" style="display:flex;align-items:center;color:var(--text-3);cursor:pointer;background:none;border:none;padding:4px">
+          <span class="icon">arrow_back</span>
+        </button>
+        <h2 style="font-size:18px;font-weight:700">${p.name}</h2>
+        <span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-3);margin-left:40px">${p.brand} · ${p.account} · 截止 ${p.deadline}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px">
+      <div class="card" style="cursor:default">
+        <p style="font-size:11px;color:var(--text-3);margin-bottom:4px">总预算</p>
+        <p style="font-size:18px;font-weight:700;font-family:var(--mono)">${p.budget}</p>
+      </div>
+      <div class="card" style="cursor:default">
+        <p style="font-size:11px;color:var(--text-3);margin-bottom:4px">已消耗</p>
+        <p style="font-size:18px;font-weight:700;font-family:var(--mono)">${p.spend}</p>
+      </div>
+      <div class="card" style="cursor:default">
+        <p style="font-size:11px;color:var(--text-3);margin-bottom:4px">日预算</p>
+        <p style="font-size:18px;font-weight:700;font-family:var(--mono)">${p.dailyBudget}</p>
+      </div>
+      <div class="card" style="cursor:default">
+        <p style="font-size:11px;color:var(--text-3);margin-bottom:4px">ROI</p>
+        <p style="font-size:18px;font-weight:700;font-family:var(--mono);color:${p.roi !== '-' ? 'var(--green)' : 'var(--text-3)'}">${p.roi}</p>
+      </div>
+    </div>
+    <div class="card" style="cursor:default;padding:32px;text-align:center;color:var(--text-3)">
+      <span class="icon" style="font-size:40px;display:block;margin-bottom:12px">construction</span>
+      <p style="font-size:14px;font-weight:500">项目详情开发中</p>
+      <p style="font-size:12px;margin-top:4px">投前/盯盘/投后分析功能即将上线</p>
+    </div>`;
+}
+
+/* ═══ Navigation ═══ */
+function selectProject(id) {
+  activeProject = id;
+  renderSidebar();
+  if (id) renderProject(id);
+  else renderDashboard();
+}
+
+/* ═══ Menu ═══ */
+function toggleMenu(id) {
+  const el = document.getElementById(id);
+  const wasOpen = el.classList.contains('show');
+  document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => m.classList.remove('show'));
+  if (!wasOpen) el.classList.add('show');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.hdr-menu-wrap') && !e.target.closest('.ws-wrap'))
+    document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => m.classList.remove('show'));
+});
+
+/* ═══ Init ═══ */
+renderSidebar();
+renderDashboard();
+</script>
+</body>
+</html>

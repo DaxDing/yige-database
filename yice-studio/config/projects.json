@@ -1,0 +1,149 @@
+[
+  {
+    "project_id": "000010",
+    "project_name": "大厨D12/年货节",
+    "department": "项目二部",
+    "marketing_target": "产品种草",
+    "start_time": "2025-11-20",
+    "end_time": "2026-02-11",
+    "advertiser_ids": [
+      "6209396"
+    ],
+    "members": [
+      "只狼",
+      "麦兜",
+      "日立",
+      "Bella",
+      "诺诺",
+      "Zoe"
+    ],
+    "links": {
+      "content_exec": [],
+      "folder": "https://ygwhcm.feishu.cn/drive/folder/Hj1gfaUCDl26z5dnciVcMlFkniw",
+      "budget": "https://ygwhcm.feishu.cn/sheets/SxcvsnmKthnP9ltV8EJc8AA0nDg"
+    },
+    "account_refs": {
+      "jg": null,
+      "pgy": null,
+      "xh": null,
+      "feishu": null
+    }
+  },
+  {
+    "project_id": "000017",
+    "project_name": "泡泡骚年货节",
+    "department": "项目二部",
+    "marketing_target": "产品种草",
+    "start_time": null,
+    "end_time": null,
+    "advertiser_ids": [
+      "896869"
+    ],
+    "members": [],
+    "links": {
+      "content_exec": [],
+      "folder": null,
+      "budget": null
+    },
+    "account_refs": {
+      "jg": null,
+      "pgy": null,
+      "xh": null
+    }
+  },
+  {
+    "project_id": "000023",
+    "project_name": "比乐26年Q1小红书投放",
+    "department": "项目二部",
+    "marketing_target": "产品种草",
+    "start_time": "2026-01-01",
+    "end_time": "2026-03-31",
+    "advertiser_ids": [
+      "6472395"
+    ],
+    "members": [
+      "日立",
+      "萱萱",
+      "彭程",
+      "麦兜"
+    ],
+    "links": {
+      "content_exec": [
+        "https://ygwhcm.feishu.cn/wiki/FWBVww8rBiOykvk1BVqcfdi2nje"
+      ],
+      "folder": "https://ygwhcm.feishu.cn/drive/folder/P7wqfxVr3lofxYdPbC9cvHuwntb",
+      "budget": "https://ygwhcm.feishu.cn/sheets/Vw2hs4iXohPMPltcj3BcraihnCd"
+    },
+    "account_refs": {
+      "jg": null,
+      "pgy": null,
+      "xh": null
+    }
+  },
+  {
+    "project_id": "000024",
+    "project_name": "阿里指定-佳期-海尔-26年2月-星伴计划-空调(内容+投流)",
+    "department": "项目一部",
+    "marketing_target": "产品种草",
+    "start_time": "2026-02-12",
+    "end_time": "2026-03-31",
+    "advertiser_ids": [
+      "8446944",
+      "8517230"
+    ],
+    "members": [
+      "玮哥",
+      "螃蟹",
+      "一一",
+      "蔡蔡",
+      "渔夫",
+      "小如",
+      "10号"
+    ],
+    "links": {
+      "content_exec": [
+        "https://ygwhcm.feishu.cn/wiki/K4UxwqVK9iGRY5kdLmnckzu5nVk?sheet=SAIg6s",
+        "https://ygwhcm.feishu.cn/wiki/SC81wKYOMiVz8mk0sYxcrEMcnoc?sheet=wlGbgo"
+      ],
+      "folder": "https://ygwhcm.feishu.cn/drive/folder/QS74fzjfQlzGjFdZFqycWf8Bnlh",
+      "budget": "https://ygwhcm.feishu.cn/sheets/FiRqsV0cvhx9SHtmWbHcvNt9nmd"
+    },
+    "account_refs": {
+      "jg": null,
+      "pgy": null,
+      "xh": null
+    }
+  },
+  {
+    "project_id": "000027",
+    "project_name": "安莱亚3月",
+    "department": "项目一部",
+    "marketing_target": "产品种草",
+    "start_time": "2026-02-14",
+    "end_time": "2026-03-31",
+    "advertiser_ids": [
+      "9590195",
+      "8936364",
+      "8517830"
+    ],
+    "members": [
+      "77",
+      "渔夫",
+      "小如",
+      "佳怡",
+      "10号"
+    ],
+    "links": {
+      "content_exec": [
+        "https://ygwhcm.feishu.cn/wiki/安吉尔产品26年3月执行表"
+      ],
+      "folder": null,
+      "budget": "https://ygwhcm.feishu.cn/sheets/EnEss8pV5hpS52tktmTcYH8Vnjj"
+    },
+    "account_refs": {
+      "jg": null,
+      "pgy": null,
+      "xh": null
+    }
+  }
+]

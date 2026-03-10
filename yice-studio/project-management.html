@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YICE 项目管理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@20,400,1" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-alt: #fafbfc;
+  --border: #e8eaed;
+  --border-light: #f0f1f3;
+  --text-1: #111827;
+  --text-2: #4b5563;
+  --text-3: #9ca3af;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --blue-border: #bfdbfe;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --red: #dc2626;
+  --amber: #d97706;
+  --ui: 'Sora', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --radius: 10px;
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+.icon {
+  font-family: 'Material Symbols Rounded';
+  font-size: 18px; line-height: 1; vertical-align: middle;
+  font-variation-settings: 'FILL' 1, 'opsz' 20;
+}
+
+/* ═══ Shell ═══ */
+.shell { display: grid; grid-template-rows: 52px 1fr; height: 100vh; }
+
+/* ═══ Header ═══ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: relative; z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.ws-wrap { position: relative; margin-left: 4px; }
+.ws-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-family: var(--ui); font-size: 12px; font-weight: 500;
+  color: var(--text-2); background: none; border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 8px; cursor: pointer; transition: all 0.15s;
+}
+.ws-btn:hover { color: var(--blue); border-color: var(--blue-border); background: var(--blue-light); }
+.ws-btn .icon { font-size: 14px; color: var(--text-3); transition: color 0.15s; }
+.ws-btn:hover .icon { color: var(--blue); }
+.ws-menu {
+  position: absolute; top: 34px; left: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  min-width: 160px; padding: 4px; z-index: 200;
+  display: none;
+}
+.ws-menu.open { display: block; animation: fadeIn 0.12s ease-out; }
+.ws-menu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 7px;
+  font-family: var(--ui); font-size: 12px; font-weight: 500;
+  color: var(--text-2); cursor: pointer; transition: all 0.1s;
+  text-decoration: none; border: none; background: none; width: 100%;
+}
+.ws-menu-item:hover { background: var(--blue-light); color: var(--blue); }
+.ws-menu-item .icon { font-size: 16px; color: var(--text-3); }
+.ws-menu-item:hover .icon { color: var(--blue); }
+.ws-menu-item.active { color: var(--blue); }
+.ws-menu-item.active .icon { color: var(--blue); }
+.logo {
+  width: 26px; height: 26px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; font-weight: 700; color: #fff;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+}
+.header-brand {
+  font-family: var(--mono); font-size: 13px; font-weight: 700;
+  color: var(--text-1); letter-spacing: 2.5px;
+}
+.header-nav {
+  display: flex; align-items: center; gap: 2px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 3px;
+}
+.nav-tab {
+  font-family: var(--ui); font-size: 12px; font-weight: 500;
+  color: var(--text-3); background: none; border: none;
+  padding: 6px 16px; border-radius: 6px; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap; text-decoration: none;
+}
+.nav-tab:hover { color: var(--text-2); background: var(--surface); }
+.nav-tab.active {
+  color: var(--blue); background: var(--surface);
+  font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.header-right {
+  display: flex; align-items: center; gap: 8px;
+}
+.hdr-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px;
+  background: none; border: 1px solid var(--border);
+  cursor: pointer; color: var(--text-2); transition: all 0.15s;
+  text-decoration: none;
+}
+.hdr-btn:hover { color: var(--blue); border-color: var(--blue-border); background: var(--blue-light); }
+.hdr-btn .icon { font-size: 18px; }
+.hdr-btn.spinning { color: var(--blue); border-color: var(--blue-border); background: var(--blue-light); }
+.hdr-btn.spinning .icon { animation: spin 0.8s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.hdr-menu-wrap { position: relative; }
+.hdr-menu {
+  position: absolute; top: 42px; right: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  min-width: 160px; padding: 4px; z-index: 50;
+  display: none;
+}
+.hdr-menu.open { display: block; animation: fadeIn 0.12s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+.hdr-menu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 7px;
+  font-family: var(--ui); font-size: 12px; font-weight: 500;
+  color: var(--text-2); cursor: pointer; transition: all 0.1s;
+  border: none; background: none; width: 100%; text-align: left;
+  text-decoration: none;
+}
+.hdr-menu-item:hover { background: var(--blue-light); color: var(--blue); }
+.hdr-menu-item .icon { font-size: 16px; color: var(--text-3); }
+.hdr-menu-item:hover .icon { color: var(--blue); }
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-60px);
+  background: var(--text-1); color: #fff; padding: 8px 20px; border-radius: 8px;
+  font-family: var(--ui); font-size: 12px; font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 9999;
+  opacity: 0; transition: all 0.3s ease;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.btn-action {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--blue); color: #fff; border: none;
+  border-radius: 7px; padding: 6px 14px; cursor: pointer;
+  font-family: var(--ui); font-size: 12px; font-weight: 600;
+  transition: all 0.15s;
+}
+.btn-action:hover { background: #1d4ed8; }
+.btn-action .icon { font-size: 16px; }
+
+/* ═══ Layout ═══ */
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  overflow: hidden;
+}
+
+/* ═══ Sidebar ═══ */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 16px 16px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sidebar-title {
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 1.5px;
+}
+.btn-add {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--blue); color: #fff; border: none;
+  border-radius: 6px; padding: 5px 10px; cursor: pointer;
+  font-family: var(--ui); font-size: 11px; font-weight: 600;
+  transition: all 0.15s;
+}
+.btn-add:hover { background: #1d4ed8; }
+.btn-add .icon { font-size: 15px; }
+
+.sidebar-search {
+  padding: 0 12px 8px; position: relative;
+}
+.sidebar-search input {
+  width: 100%; height: 32px; border: 1px solid var(--border);
+  border-radius: 7px; padding: 0 10px 0 30px;
+  font-family: var(--ui); font-size: 12px; color: var(--text-1);
+  background: var(--surface-alt); outline: none; transition: all 0.15s;
+}
+.sidebar-search input::placeholder { color: var(--text-3); }
+.sidebar-search input:focus { border-color: var(--blue-border); background: var(--surface); }
+.sidebar-search .icon {
+  position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+  font-size: 15px; color: var(--text-3); pointer-events: none;
+}
+.sidebar-list {
+  flex: 1; overflow-y: auto; padding: 0 8px 16px;
+}
+.sidebar-list::-webkit-scrollbar { width: 4px; }
+.sidebar-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.s-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  cursor: pointer; transition: all 0.12s;
+  margin-bottom: 2px;
+}
+.s-item:hover { background: var(--surface-alt); }
+.s-item.active { background: var(--blue-light); }
+.s-item-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.s-item-info { flex: 1; min-width: 0; }
+.s-item-name {
+  font-size: 12px; font-weight: 600; color: var(--text-1);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.s-item-meta {
+  font-size: 11px; color: var(--text-3); margin-top: 2px;
+  display: flex; gap: 8px;
+}
+
+/* ═══ Main ═══ */
+.main {
+  overflow-y: auto; padding: 28px 36px;
+  background: var(--bg);
+}
+.main::-webkit-scrollbar { width: 6px; }
+.main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.detail-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; color: var(--text-3);
+}
+.detail-empty .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+.detail-empty p { font-size: 13px; }
+
+/* ═══ Detail Card ═══ */
+.detail-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 28px 36px 16px;
+  margin: -28px -36px 20px;
+  position: sticky; top: -1px;
+  background: var(--bg);
+  z-index: 10;
+  border-bottom: 1px solid transparent;
+}
+.detail-header.stuck {
+  border-bottom-color: var(--border);
+}
+.detail-title { font-size: 20px; font-weight: 700; color: var(--text-1); }
+.detail-id {
+  font-family: var(--mono); font-size: 11px; color: var(--text-3);
+  flex: 1;
+}
+.detail-header .btn-action {
+  margin-left: auto;
+}
+
+.form-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+
+.form-label {
+  font-size: 12px; font-weight: 600; color: var(--text-2);
+  display: flex; align-items: center; gap: 4px;
+}
+.form-label .icon { font-size: 14px; color: var(--text-3); }
+
+.form-input, .form-select {
+  font-family: var(--ui); font-size: 13px; color: var(--text-1);
+  background: var(--surface-alt); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 12px;
+  transition: border-color 0.15s;
+  outline: none;
+}
+.form-input:focus, .form-select:focus { border-color: var(--blue); }
+.form-input:read-only { background: var(--border-light, #f0f1f3); color: var(--text-2); }
+
+.form-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 7px 10px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px;
+  min-height: 38px; align-items: center;
+}
+.form-tag {
+  font-family: var(--mono); font-size: 11px;
+  background: var(--blue-light); color: var(--blue);
+  border: 1px solid var(--blue-border);
+  border-radius: 6px; padding: 3px 8px;
+}
+
+.form-members {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.member-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px 4px 4px;
+}
+.member-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+.member-name { font-size: 12px; color: var(--text-2); }
+
+/* ═══ Section ═══ */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-size: 12px; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 6px;
+}
+.section-title .icon { font-size: 16px; }
+
+/* ═══ Links ═══ */
+.links-list { display: flex; flex-direction: column; gap: 0; }
+.link-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light, #f0f1f3);
+}
+.link-row:last-child { border-bottom: none; }
+.link-row .icon { font-size: 16px; color: var(--text-3); flex-shrink: 0; }
+.link-label {
+  font-size: 12px; color: var(--text-2); font-weight: 500;
+  width: 80px; flex-shrink: 0;
+}
+.link-values { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+.link-url {
+  font-size: 12px; color: var(--blue); text-decoration: none;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  display: block;
+}
+.link-url:hover { text-decoration: underline; }
+.link-empty { font-size: 12px; color: var(--text-3); }
+.link-edit-row { display: flex; align-items: center; gap: 6px; }
+.link-edit-row .link-input { flex: 1; }
+.link-rm { background: none; border: none; cursor: pointer; color: var(--text-3); padding: 2px; border-radius: 4px; display: flex; align-items: center; }
+.link-rm:hover { color: var(--red); background: rgba(220,38,38,0.08); }
+.link-rm .icon { font-size: 16px; }
+.link-add { display: flex; align-items: center; gap: 4px; background: none; border: 1px dashed var(--border); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-family: var(--ui); font-size: 12px; color: var(--text-3); transition: all 0.15s; }
+.link-add:hover { color: var(--blue); border-color: var(--blue-border); }
+.link-add .icon { font-size: 14px; }
+
+/* ═══ Credentials ═══ */
+.cred-group { margin-bottom: 16px; }
+.cred-group:last-child { margin-bottom: 0; }
+.cred-group-label {
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-light, #f0f1f3);
+}
+
+/* ═══ Actions ═══ */
+.form-actions {
+  margin-top: 28px; padding-top: 20px;
+  border-top: 1px solid var(--border-light);
+  display: flex; gap: 10px;
+}
+.btn {
+  font-family: var(--ui); font-size: 13px; font-weight: 600;
+  border: none; border-radius: 8px; padding: 9px 20px;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-secondary { background: var(--surface); color: var(--text-2); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--surface-alt); }
+
+/* ═══ Colors ═══ */
+.bg-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.bg-violet { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.bg-emerald { background: linear-gradient(135deg, #10b981, #059669); }
+.bg-amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.bg-rose { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.fade-in { animation: fadeIn 0.25s ease-out; }
+
+/* ═══ Resource Menu ═══ */
+
+/* ═══ Account Cards ═══ */
+.section .link-rm { opacity: 0; transition: opacity 0.15s; }
+.section:hover .link-rm { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="header">
+    <div class="header-left">
+      <a href="ads-report.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer">
+        <div class="logo">YC</div>
+        <span class="header-brand">YICE</span>
+      </a>
+      <div class="ws-wrap">
+        <button class="ws-btn" onclick="toggleMenu('ws-menu')">项目工作台<span class="icon">expand_more</span></button>
+        <div class="ws-menu" id="ws-menu">
+          <a class="ws-menu-item active" href="#"><span class="icon">folder</span>项目工作台</a>
+          <a class="ws-menu-item" href="ad-studio.html"><span class="icon">rocket_launch</span>投流工作台</a>
+        </div>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a class="nav-tab active" href="project-management.html">项目管理</a>
+      <a class="nav-tab" href="ads-report.html">业务看板</a>
+      <a class="nav-tab" href="consistency-check.html">数据检查</a>
+    </nav>
+    <div class="header-right">
+      <button class="hdr-btn" id="sync-btn" onclick="refreshAll()" title="刷新数据">
+        <span class="icon">sync</span>
+      </button>
+      <div class="hdr-menu-wrap">
+        <button class="hdr-btn" onclick="toggleMenu('settings-menu')" title="设置">
+          <span class="icon">settings</span>
+        </button>
+        <div class="hdr-menu" id="settings-menu">
+          <button class="hdr-menu-item" onclick="openResPage('accounts')"><span class="icon">key</span>资源管理</button>
+          <button class="hdr-menu-item" onclick="openResPage('enterprise')"><span class="icon">apartment</span>企业管理</button>
+        </div>
+      </div>
+      <div class="hdr-menu-wrap">
+        <button class="hdr-btn" onclick="toggleMenu('user-menu')" title="用户">
+          <span class="icon">account_circle</span>
+        </button>
+        <div class="hdr-menu" id="user-menu">
+          <button class="hdr-menu-item"><span class="icon">apartment</span>部门</button>
+          <div style="height:1px;background:var(--border);margin:2px 8px"></div>
+          <button class="hdr-menu-item"><span class="icon">logout</span>退出</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Projects</span>
+        <button class="btn-add" onclick="editMode=true;newProject();updateActionBtn()"><span class="icon">add</span>新增</button>
+      </div>
+      <div class="sidebar-search">
+        <span class="icon">search</span>
+        <input type="text" id="project-search" placeholder="搜索项目..." oninput="renderSidebar()">
+      </div>
+      <div class="sidebar-list" id="sidebar"></div>
+    </aside>
+    <main class="main" id="main">
+      <div class="detail-empty">
+        <span class="icon">folder_open</span>
+        <p>选择项目查看详情</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+const COLORS = ['bg-blue', 'bg-violet', 'bg-emerald', 'bg-amber', 'bg-rose'];
+
+let PROJECTS = [];
+let ACCOUNTS = { jg: [], pgy: [], xh: [] };
+let selectedId = null;
+let editMode = false; // false=查看, true=编辑/新增
+
+const PLATFORMS = {
+  jg: { name: '聚光平台', icon: 'campaign', fields: [
+    { key: 'app_id', label: 'App ID', icon: 'fingerprint' },
+    { key: 'secret', label: 'Secret', icon: 'lock' },
+  ]},
+  pgy: { name: '蒲公英平台', icon: 'eco', fields: [
+    { key: 'app_id', label: 'App ID', icon: 'fingerprint' },
+    { key: 'secret', label: 'Secret', icon: 'lock' },
+  ]},
+  xh: { name: '星河平台', icon: 'auto_awesome', fields: [
+    { key: 'account', label: '账号', icon: 'person' },
+    { key: 'password', label: '密码', icon: 'password' },
+  ]},
+  feishu: { name: '飞书应用', icon: 'smart_toy', fields: [
+    { key: 'app_id', label: 'App ID', icon: 'fingerprint' },
+    { key: 'secret', label: 'App Secret', icon: 'lock' },
+  ]},
+};
+
+function updateActionBtn() {
+  const icon = document.getElementById('action-icon');
+  const label = document.getElementById('action-label');
+  if (!icon || !label) return;
+  icon.textContent = editMode ? 'save' : 'edit';
+  label.textContent = editMode ? '保存' : '编辑';
+}
+
+function addLinkInput(btn, key) {
+  const row = document.createElement('div');
+  row.className = 'link-edit-row';
+  row.innerHTML = `<input class="form-input link-input" value="" data-link="${key}" placeholder="输入链接"><button class="link-rm" onclick="this.parentElement.remove()" title="删除"><span class="icon">close</span></button>`;
+  btn.parentElement.insertBefore(row, btn);
+}
+
+function collectFormData() {
+  const data = {};
+  document.querySelectorAll('[data-field]').forEach(el => {
+    const key = el.dataset.field;
+    data[key] = el.tagName === 'SELECT' ? el.value : el.value.trim();
+  });
+  // advertiser_ids: comma-separated → array
+  if (typeof data.advertiser_ids === 'string') {
+    data.advertiser_ids = data.advertiser_ids.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  if (typeof data.brand_user_ids === 'string') {
+    data.brand_user_ids = data.brand_user_ids.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  // links
+  const links = {};
+  document.querySelectorAll('[data-link]').forEach(el => {
+    const key = el.dataset.link;
+    const val = el.value.trim();
+    if (!links[key]) links[key] = [];
+    if (val) links[key].push(val);
+  });
+  // multi keys stay as array, single keys → string or null
+  const multiKeys = ['content_exec'];
+  Object.keys(links).forEach(k => {
+    if (!multiKeys.includes(k)) links[k] = links[k][0] || null;
+  });
+  data.links = links;
+  // account refs
+  const refs = {};
+  document.querySelectorAll('[data-acctref]').forEach(el => {
+    refs[el.dataset.acctref] = el.value || null;
+  });
+  if (Object.keys(refs).length) data.account_refs = refs;
+  return data;
+}
+
+async function saveProjects() {
+  try {
+    const resp = await fetch('/api/projects/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(PROJECTS),
+    });
+    if (!resp.ok) throw new Error(resp.status);
+    return true;
+  } catch (e) {
+    console.error('保存失败:', e);
+    alert('保存失败: ' + e.message);
+    return false;
+  }
+}
+
+async function handleAction() {
+  if (editMode) {
+    // 收集表单数据，更新到 PROJECTS
+    const form = collectFormData();
+    const pid = selectedId || form.project_id;
+    let project = PROJECTS.find(p => p.project_id === pid);
+    if (project) {
+      // 更新
+      Object.assign(project, {
+        project_name: form.project_name || project.project_name,
+        marketing_target: form.marketing_target || project.marketing_target,
+        department: form.department || project.department,
+        start_time: form.start_time || project.start_time,
+        end_time: form.end_time || project.end_time,
+        advertiser_ids: form.advertiser_ids?.length ? form.advertiser_ids : project.advertiser_ids,
+        brand_user_ids: form.brand_user_ids?.length ? form.brand_user_ids : project.brand_user_ids,
+        links: { ...(project.links || {}), ...form.links },
+        account_refs: form.account_refs || project.account_refs,
+      });
+    } else {
+      // 新增
+      project = {
+        project_id: pid,
+        project_name: form.project_name || '',
+        department: form.department || '项目一部',
+        marketing_target: form.marketing_target || '产品种草',
+        start_time: form.start_time || null,
+        end_time: form.end_time || null,
+        advertiser_ids: form.advertiser_ids || [],
+        members: [],
+        links: form.links || { content_exec: [], folder: null, budget: null },
+        account_refs: form.account_refs || { jg: null, pgy: null, xh: null },
+      };
+      PROJECTS.push(project);
+      selectedId = pid;
+    }
+    // 保存到 JSON
+    if (await saveProjects()) {
+      editMode = false;
+      renderSidebar();
+      renderDetail(project);
+      updateActionBtn();
+    }
+    return;
+  }
+  if (selectedId) {
+    editMode = true;
+    const project = PROJECTS.find(p => p.project_id === selectedId);
+    if (project) renderDetail(project);
+    updateActionBtn();
+  } else {
+    editMode = true;
+    newProject();
+    updateActionBtn();
+  }
+}
+
+async function loadAccounts() {
+  try {
+    const resp = await fetch('accounts.json');
+    if (!resp.ok) throw new Error(resp.status);
+    ACCOUNTS = await resp.json();
+  } catch (e) {
+    console.warn('加载 accounts.json 失败:', e.message);
+    ACCOUNTS = { jg: [], pgy: [], xh: [] };
+  }
+}
+
+async function loadData() {
+  try {
+    const resp = await fetch('projects.json');
+    if (!resp.ok) throw new Error(resp.status);
+    PROJECTS = await resp.json();
+  } catch (e) {
+    console.warn('加载 projects.json 失败:', e.message);
+    PROJECTS = [];
+  }
+  await loadAccounts();
+  renderSidebar();
+}
+
+function renderSidebar() {
+  const el = document.getElementById('sidebar');
+  const q = (document.getElementById('project-search')?.value || '').trim().toLowerCase();
+  const filtered = PROJECTS.filter(p => !q || (p.project_name || '').toLowerCase().includes(q) || (p.department || '').toLowerCase().includes(q) || (p.project_id || '').includes(q));
+  if (!filtered.length) {
+    el.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px">${PROJECTS.length ? '无匹配项目' : '暂无项目'}</div>`;
+    return;
+  }
+  el.innerHTML = filtered.map((p, i) => {
+    const c = COLORS[i % COLORS.length];
+    const initials = (p.project_name || '').slice(0, 2);
+    const active = selectedId === p.project_id ? 'active' : '';
+    return `<div class="s-item ${active}" onclick="selectProject('${p.project_id}')">
+      <div class="s-item-icon ${c}">${initials}</div>
+      <div class="s-item-info">
+        <div class="s-item-name">${p.project_name}</div>
+        <div class="s-item-meta"><span>${p.department || '-'}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectProject(pid) {
+  selectedId = pid;
+  editMode = false;
+  renderSidebar();
+  const project = PROJECTS.find(p => p.project_id === pid);
+  if (project) renderDetail(project);
+  updateActionBtn();
+}
+
+function renderDetail(p) {
+  if (!p) return;
+  const main = document.getElementById('main');
+
+  const membersHtml = (p.members || []).map(m => {
+    const name = typeof m === 'string' ? m : (m.name || '?');
+    return `<div class="member-chip">
+      <div class="member-avatar">${name[0]}</div>
+      <span class="member-name">${name}</span>
+    </div>`;
+  }).join('') || '<span style="color:var(--text-3);font-size:12px">未设置</span>';
+
+  const tagsHtml = (p.advertiser_ids || []).map(id =>
+    `<span class="form-tag">${id}</span>`
+  ).join('') || '<span style="color:var(--text-3);font-size:12px">未设置</span>';
+
+  const linkItems = [
+    { key: 'content_exec', icon: 'edit_note', label: '内容执行表', multi: true },
+    { key: 'folder', icon: 'folder', label: '项目文件夹', multi: false },
+    { key: 'budget', icon: 'payments', label: '项目信息表', multi: false },
+  ];
+  const linksHtml = linkItems.map(item => {
+    const raw = p.links?.[item.key];
+    let urls = [];
+    if (Array.isArray(raw)) urls = raw.map(v => typeof v === 'string' ? v : v?.link).filter(Boolean);
+    else if (typeof raw === 'string') urls = [raw];
+    else if (raw?.link) urls = [raw.link];
+
+    let valuesHtml;
+    if (editMode) {
+      if (item.multi) {
+        valuesHtml = urls.map((u, i) => `<div class="link-edit-row"><input class="form-input link-input" value="${u}" data-link="${item.key}" data-idx="${i}" placeholder="输入链接"><button class="link-rm" onclick="this.parentElement.remove()" title="删除"><span class="icon">close</span></button></div>`).join('');
+        valuesHtml += `<button class="link-add" onclick="addLinkInput(this,'${item.key}')"><span class="icon">add</span>添加链接</button>`;
+      } else {
+        valuesHtml = `<input class="form-input link-input" value="${urls[0] || ''}" data-link="${item.key}" placeholder="输入链接">`;
+      }
+    } else {
+      valuesHtml = urls.length > 0
+        ? urls.map(u => `<a class="link-url" href="${u}" target="_blank">${u}</a>`).join('')
+        : '<span class="link-empty">未设置</span>';
+    }
+    return `<div class="link-row">
+      <span class="icon">${item.icon}</span>
+      <span class="link-label">${item.label}</span>
+      <div class="link-values">${valuesHtml}</div>
+    </div>`;
+  }).join('');
+
+  const ro = editMode ? '' : 'readonly';
+  const mktOpts = ['产品种草', '种草直达 CID', '客资收集', '应用推广'];
+  const deptOpts = ['项目一部', '项目二部'];
+
+  const mktField = editMode
+    ? `<select class="form-select" data-field="marketing_target">${mktOpts.map(o => `<option value="${o}" ${p.marketing_target === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`
+    : `<input class="form-input" value="${p.marketing_target || '-'}" readonly>`;
+
+  const deptField = editMode
+    ? `<select class="form-select" data-field="department">${deptOpts.map(o => `<option value="${o}" ${p.department === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`
+    : `<input class="form-input" value="${p.department || '-'}" readonly>`;
+
+  const startField = editMode
+    ? `<input class="form-input" type="date" value="${p.start_time || ''}" data-field="start_time">`
+    : `<input class="form-input" value="${p.start_time || '-'}" readonly>`;
+
+  const endField = editMode
+    ? `<input class="form-input" type="date" value="${p.end_time || ''}" data-field="end_time">`
+    : `<input class="form-input" value="${p.end_time || '-'}" readonly>`;
+
+  const advField = editMode
+    ? `<input class="form-input" value="${(p.advertiser_ids || []).join(', ')}" data-field="advertiser_ids" placeholder="多个用逗号分隔">`
+    : `<div class="form-tags">${tagsHtml}</div>`;
+
+  const brandTagsHtml = (p.brand_user_ids || []).map(id =>
+    `<span class="form-tag">${id}</span>`
+  ).join('') || '<span style="color:var(--text-3);font-size:12px">未设置</span>';
+
+  const brandField = editMode
+    ? `<input class="form-input" value="${(p.brand_user_ids || []).join(', ')}" data-field="brand_user_ids" placeholder="多个用逗号分隔">`
+    : `<div class="form-tags">${brandTagsHtml}</div>`;
+
+  main.innerHTML = `<div class="fade-in">
+    <div class="detail-header">
+      <span class="detail-title">${p.project_name || '新增项目'}</span>
+      <span class="detail-id"># ${p.project_id}</span>
+      <button class="btn-action" id="action-btn" onclick="handleAction()">
+        <span class="icon" id="action-icon">${editMode ? 'save' : 'edit'}</span>
+        <span id="action-label">${editMode ? '保存' : '编辑'}</span>
+      </button>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">info</span>基础信息</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label"><span class="icon">badge</span>项目名称</label>
+          <input class="form-input" value="${p.project_name}" ${ro} data-field="project_name">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">target</span>营销目标</label>
+          ${mktField}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">event</span>开始时间</label>
+          ${startField}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">event_busy</span>结束时间</label>
+          ${endField}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">account_balance</span>投放账户 ID</label>
+          ${advField}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">storefront</span>品牌 User ID</label>
+          ${brandField}
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">business</span>部门信息</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label"><span class="icon">apartment</span>执行部门</label>
+          ${deptField}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">group</span>团队成员</label>
+          <div class="form-members">${membersHtml}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">link</span>关联资料</div>
+      <div class="links-list">${linksHtml}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">key</span>关联账号</div>
+      <div class="form-grid">
+        ${Object.entries(PLATFORMS).map(([pk, pf]) => {
+          const refId = p.account_refs?.[pk] || '';
+          const accts = ACCOUNTS[pk] || [];
+          const matched = accts.find(a => a.id === refId);
+          if (editMode) {
+            const opts = accts.map(a => `<option value="${a.id}" ${a.id === refId ? 'selected' : ''}>${a.name}</option>`).join('');
+            return `<div class="form-group">
+              <label class="form-label"><span class="icon">${pf.icon}</span>${pf.name}</label>
+              <select class="form-select" data-acctref="${pk}">
+                <option value="">未关联</option>
+                ${opts}
+              </select>
+            </div>`;
+          } else {
+            return `<div class="form-group">
+              <label class="form-label"><span class="icon">${pf.icon}</span>${pf.name}</label>
+              <input class="form-input" value="${matched ? matched.name : '未关联'}" readonly>
+            </div>`;
+          }
+        }).join('')}
+      </div>
+    </div>
+
+  </div>`;
+
+  // sticky header shadow on scroll
+  const hdr = main.querySelector('.detail-header');
+  if (hdr) {
+    const sentinel = document.createElement('div');
+    sentinel.style.height = '1px';
+    hdr.after(sentinel);
+    new IntersectionObserver(([e]) => hdr.classList.toggle('stuck', !e.isIntersecting), { root: main, threshold: 1 }).observe(sentinel);
+  }
+}
+
+function nextProjectId() {
+  const max = PROJECTS.reduce((m, p) => Math.max(m, parseInt(p.project_id) || 0), 0);
+  return String(max + 1).padStart(6, '0');
+}
+
+function newProject() {
+  selectedId = null;
+  editMode = true;
+  renderSidebar();
+  const emptyProject = {
+    project_id: nextProjectId(),
+    project_name: '',
+    department: '项目一部',
+    marketing_target: '产品种草',
+    start_time: '',
+    end_time: '',
+    advertiser_ids: [],
+    members: [],
+    links: { content_exec: [], folder: null, budget: null },
+    account_refs: { jg: null, pgy: null, xh: null },
+  };
+  renderDetail(emptyProject);
+}
+
+function createProject() {
+  handleAction(); // 复用保存逻辑
+}
+
+// ─── Init ───
+loadData().then(() => {
+  if (PROJECTS.length > 0) selectProject(PROJECTS[0].project_id);
+});
+
+// ─── Resource Menu ───
+function toggleMenu(id) {
+  document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => { if (m.id !== id) m.classList.remove('open'); });
+  document.getElementById(id).classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.hdr-menu-wrap') && !e.target.closest('.ws-wrap')) document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => m.classList.remove('open'));
+});
+async function refreshAll() {
+  const btn = document.getElementById('sync-btn');
+  btn.classList.add('spinning');
+  showToast('正在刷新数据…');
+  const t0 = Date.now();
+  await loadProjects();
+  await loadAccounts();
+  btn.classList.remove('spinning');
+  const sec = ((Date.now() - t0) / 1000).toFixed(1);
+  showToast('刷新完成 ' + sec + 's');
+}
+function showToast(msg) {
+  let el = document.getElementById('toast');
+  if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.className = 'toast show';
+  clearTimeout(el._t); el._t = setTimeout(() => el.className = 'toast', 2500);
+}
+function openResPage(type) {
+  document.getElementById('settings-menu').classList.remove('open');
+  if (type === 'accounts') {
+    selectedId = null;
+    editMode = false;
+    renderSidebar();
+    renderAccountsView();
+    return;
+  }
+  const labels = { members: '成员', departments: '部门' };
+  alert(`${labels[type]}管理 - 功能开发中`);
+}
+
+let acctActivePlatform = 'jg';
+
+function renderAccountsView() {
+  const main = document.getElementById('main');
+  const tabs = Object.entries(PLATFORMS).map(([pk, pf]) =>
+    `<button class="nav-tab ${pk === acctActivePlatform ? 'active' : ''}" onclick="acctActivePlatform='${pk}';renderAccountsView()">${pf.name}</button>`
+  ).join('');
+
+  const platform = PLATFORMS[acctActivePlatform];
+  const accts = ACCOUNTS[acctActivePlatform] || [];
+
+  const listHtml = accts.length ? accts.map((a, i) => `
+    <div class="section" style="padding:14px 20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${accts.length > 0 ? '12px' : '0'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:14px;font-weight:600;color:var(--text-1)">${a.name}</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--text-3)">${a.id}</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="link-rm" onclick="editAccount('${acctActivePlatform}',${i})" title="编辑"><span class="icon" style="font-size:16px">edit</span></button>
+          <button class="link-rm" onclick="deleteAccount('${acctActivePlatform}',${i})" title="删除"><span class="icon" style="font-size:16px">delete</span></button>
+        </div>
+      </div>
+      <div class="form-grid">
+        ${platform.fields.map(f => `<div class="form-group">
+          <label class="form-label"><span class="icon">${f.icon}</span>${f.label}</label>
+          <input class="form-input" value="${a[f.key] || ''}" readonly>
+        </div>`).join('')}
+      </div>
+    </div>
+  `).join('') : '<div style="text-align:center;padding:40px;color:var(--text-3);font-size:13px">暂无账号，点击上方按钮添加</div>';
+
+  main.innerHTML = `<div class="fade-in">
+    <div class="detail-header">
+      <span class="detail-title">账号管理</span>
+      <span class="detail-id" style="flex:1"></span>
+      <button class="btn-action" onclick="editAccount('${acctActivePlatform}',-1)">
+        <span class="icon">add</span><span>新增</span>
+      </button>
+    </div>
+    <div style="display:flex;gap:2px;background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;padding:3px;margin-bottom:20px;width:fit-content">
+      ${tabs}
+    </div>
+    ${listHtml}
+  </div>`;
+
+  // sticky header
+  const hdr = main.querySelector('.detail-header');
+  if (hdr) {
+    const sentinel = document.createElement('div');
+    sentinel.style.height = '1px';
+    hdr.after(sentinel);
+    new IntersectionObserver(([e]) => hdr.classList.toggle('stuck', !e.isIntersecting), { root: main, threshold: 1 }).observe(sentinel);
+  }
+}
+
+function editAccount(pk, idx) {
+  const platform = PLATFORMS[pk];
+  const accts = ACCOUNTS[pk] || [];
+  const isNew = idx < 0;
+  const a = isNew ? {} : accts[idx];
+  const main = document.getElementById('main');
+
+  const nextId = () => {
+    const max = accts.reduce((m, acc) => {
+      const num = parseInt(acc.id?.split('_')[1]) || 0;
+      return Math.max(m, num);
+    }, 0);
+    return `${pk}_${max + 1}`;
+  };
+
+  main.innerHTML = `<div class="fade-in">
+    <div class="detail-header">
+      <span class="detail-title">${isNew ? '新增' : '编辑'}${platform.name}账号</span>
+      <span class="detail-id" style="flex:1"></span>
+      <button class="btn-action" onclick="saveAccountForm('${pk}',${idx})">
+        <span class="icon">save</span><span>保存</span>
+      </button>
+    </div>
+    <div class="section">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label"><span class="icon">label</span>账号名称</label>
+          <input class="form-input" id="acct-name" value="${a.name || ''}" placeholder="如：品牌A聚光账号">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">tag</span>账号 ID</label>
+          <input class="form-input" id="acct-id" value="${a.id || nextId()}" ${isNew ? '' : 'readonly'} style="font-family:var(--mono)">
+        </div>
+        ${platform.fields.map(f => `<div class="form-group">
+          <label class="form-label"><span class="icon">${f.icon}</span>${f.label}</label>
+          <input class="form-input" id="acct-${f.key}" value="${a[f.key] || ''}" placeholder="输入${f.label}">
+        </div>`).join('')}
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn btn-secondary" onclick="renderAccountsView()">取消</button>
+    </div>
+  </div>`;
+}
+
+async function saveAccountForm(pk, idx) {
+  const platform = PLATFORMS[pk];
+  const acct = {
+    id: document.getElementById('acct-id').value.trim(),
+    name: document.getElementById('acct-name').value.trim(),
+  };
+  if (!acct.name) { alert('请输入账号名称'); return; }
+  platform.fields.forEach(f => {
+    acct[f.key] = document.getElementById(`acct-${f.key}`).value.trim();
+  });
+
+  if (!ACCOUNTS[pk]) ACCOUNTS[pk] = [];
+  if (idx < 0) {
+    ACCOUNTS[pk].push(acct);
+  } else {
+    ACCOUNTS[pk][idx] = acct;
+  }
+
+  try {
+    const resp = await fetch('/api/accounts/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ACCOUNTS),
+    });
+    if (!resp.ok) throw new Error(resp.status);
+    renderAccountsView();
+  } catch (e) {
+    alert('保存失败: ' + e.message);
+  }
+}
+
+async function deleteAccount(pk, idx) {
+  const a = ACCOUNTS[pk]?.[idx];
+  if (!a || !confirm(`确定删除账号「${a.name}」？`)) return;
+  ACCOUNTS[pk].splice(idx, 1);
+  // 清除项目中对该账号的引用
+  PROJECTS.forEach(p => {
+    if (p.account_refs?.[pk] === a.id) p.account_refs[pk] = null;
+  });
+  try {
+    await fetch('/api/accounts/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ACCOUNTS) });
+    await fetch('/api/projects/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(PROJECTS) });
+    renderAccountsView();
+  } catch (e) {
+    alert('删除失败: ' + e.message);
+  }
+}
+
+</script>
+
+<script src="js/chat-widget.js"></script>
+</body>
+</html>
