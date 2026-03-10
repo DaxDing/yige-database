@@ -2493,7 +2493,7 @@ async function init() {
   // 无缓存：显示加载动画
   setLoading(true);
   const tbl = document.getElementById('tbl-section');
-  if (tbl) tbl.innerHTML = '<div class="filter-loading"><span class="icon spinner">progress_activity</span><span style="margin-left:8px">数据加载中…</span></div>';
+  if (tbl) tbl.innerHTML = '<div class="filter-loading"><span class="icon spinner">progress_activity</span></div>';
   await loadData();
   _pickDefaultDate();
   renderAdsModule();
