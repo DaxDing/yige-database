@@ -737,9 +737,17 @@ class APIHandler(SimpleHTTPRequestHandler):
         end = params.get('end', [default_end.strftime('%Y%m%d')])[0].replace('-', '')
         refresh = params.get('refresh', ['0'])[0] == '1'
         table = params.get('table', [None])[0]
+        counts_only = params.get('counts', ['0'])[0] == '1'
         try:
             _validate_ds(start)
             _validate_ds(end)
+            if counts_only:
+                counts = {}
+                for key in ADS_TABLES:
+                    cached = _get_cache(f'ads_{key}_{start}_{end}')
+                    counts[key] = cached['count'] if cached else 0
+                self.send_json(200, {'counts': counts})
+                return
             if table and table in ADS_TABLES:
                 data = query_ads_table(table, start, end, refresh)
             else:

@@ -1329,6 +1329,7 @@ document.addEventListener('click', e => {
 const CACHE_KEY = 'yice_ads_cache';
 
 const _tableLoaded = {};
+let _tabCounts = {};
 
 async function loadTable(tabKey) {
   if (_tableLoaded[tabKey]) return;
@@ -1336,8 +1337,19 @@ async function loadTable(tabKey) {
   if (!resp.ok) return;
   const json = await resp.json();
   DATA[tabKey] = json.rows || [];
+  _tabCounts[tabKey] = json.count || DATA[tabKey].length;
   if (json.meta) META = json.meta;
   _tableLoaded[tabKey] = true;
+}
+
+async function loadCounts() {
+  try {
+    const resp = await fetch('/api/ads?counts=1');
+    if (resp.ok) {
+      const json = await resp.json();
+      _tabCounts = json.counts || {};
+    }
+  } catch (_) {}
 }
 
 async function loadProjectNames() {
@@ -1671,7 +1683,7 @@ function renderSidebar() {
 
   Object.entries(TABS).forEach(([key, tab]) => {
     const active = key === activeTab ? ' active' : '';
-    const count = filterRows(DATA[key] || []).length;
+    const count = _tableLoaded[key] ? filterRows(DATA[key] || []).length : (_tabCounts[key] || '');
     const badge = tab.placeholder
       ? '<span class="icon" style="font-size:14px;color:var(--text-3);opacity:0.4">close</span>'
       : `<span class="s-count">${count}</span>`;
@@ -2422,9 +2434,9 @@ async function ensureTabData(tabKey) {
 }
 
 async function init() {
-  // 默认 tab（定时任务）不需要 ADS 数据，秒开
   renderSidebar();
   switchTab(activeTab);
+  loadCounts().then(() => renderSidebar());
 }
 
 init();
