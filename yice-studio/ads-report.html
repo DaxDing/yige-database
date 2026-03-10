@@ -1632,7 +1632,11 @@ function filterRows(rows) {
 }
 
 function sortRows(rows) {
-  if (!sortKey) return rows;
+  if (!sortKey) {
+    // 全部日期时默认按 ds 降序
+    if (filters.dt === 'all') return [...rows].sort((a, b) => String(b.ds || b.dt || '').localeCompare(String(a.ds || a.dt || '')));
+    return rows;
+  }
   return [...rows].sort((a, b) => {
     const va = Number(a[sortKey]), vb = Number(b[sortKey]);
     if (isNaN(va) && isNaN(vb)) return String(a[sortKey] || '').localeCompare(String(b[sortKey] || ''));
@@ -1775,6 +1779,7 @@ function renderToolbar() {
       </div>
       <div class="filter-group">
         <span class="filter-label">数据日期</span>
+        <button class="chip${filters.dt === 'all' ? ' active' : ''}" id="dt-all-btn">全部</button>
         <div class="cal-wrap" id="cal-dt">
           <div class="cal-trigger${dtActive}"><span class="icon">calendar_today</span>${dtLabel}</div>
           <div class="cal-popup"><div id="cal-dt-body"></div></div>
@@ -1811,6 +1816,14 @@ function renderToolbar() {
       renderSidebar();
       renderContent();
     });
+  });
+
+  // Date: "全部" button
+  document.getElementById('dt-all-btn')?.addEventListener('click', () => {
+    filters.dt = 'all';
+    renderSidebar();
+    renderToolbar();
+    renderContent();
   });
 
   // Calendar: date
