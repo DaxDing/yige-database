@@ -1328,102 +1328,47 @@ document.addEventListener('click', e => {
 
 const CACHE_KEY = 'yice_ads_cache';
 
-function _applyData(json) {
-  META = json.meta || null;
-  PROJECT_NAMES = json.project_names || {};
-  DATA.project = json.project || [];
-  DATA.note = json.note || [];
-  DATA.content_theme = json.content_theme || [];
-  DATA.task_group = json.task_group || [];
+const _tableLoaded = {};
+
+async function loadTable(tabKey) {
+  if (_tableLoaded[tabKey]) return;
+  const resp = await fetch('/api/ads?table=' + tabKey);
+  if (!resp.ok) return;
+  const json = await resp.json();
+  DATA[tabKey] = json.rows || [];
+  if (json.meta) META = json.meta;
+  _tableLoaded[tabKey] = true;
 }
 
-function _saveToLocal(json) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(json)); }
-  catch (e) { console.warn('localStorage 写入失败:', e.message); }
-}
-
-function _loadFromLocal() {
+async function loadProjectNames() {
+  if (Object.keys(PROJECT_NAMES).length) return;
   try {
-    const raw = localStorage.getItem(CACHE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (_) { return null; }
-}
-
-async function loadData(refresh = false, silent = false) {
-  if (!silent) setLoading(true);
-
-  // 1) 后端 API
+    const resp = await fetch('/api/project_names');
+    if (resp.ok) { PROJECT_NAMES = await resp.json(); return; }
+  } catch (_) {}
   try {
-    const url = '/api/ads' + (refresh ? '?refresh=1' : '');
-    const resp = await fetch(url);
-    if (resp.ok) {
-      const json = await resp.json();
-      _applyData(json);
-      _saveToLocal(json);
-      if (!Object.keys(PROJECT_NAMES).length) {
-        try {
-          const pResp = await fetch('projects.json');
-          if (pResp.ok) {
-            const pList = await pResp.json();
-            pList.forEach(p => { PROJECT_NAMES[p.project_id] = p.project_name; });
-          }
-        } catch (_) {}
-      }
-      dataMode = 'live';
-      setLoading(false);
-      return;
+    const pResp = await fetch('projects.json');
+    if (pResp.ok) {
+      const pList = await pResp.json();
+      pList.forEach(p => { PROJECT_NAMES[p.project_id] = p.project_name; });
     }
   } catch (_) {}
-
-  // 2) 回退到静态 JSON（并发加载）
-  try {
-    const keys = Object.keys(TABS);
-    const results = await Promise.allSettled(
-      keys.map(k => TABS[k].file
-        ? fetch(TABS[k].file).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-        : Promise.resolve([])
-      )
-    );
-    keys.forEach((k, i) => {
-      DATA[k] = results[i].status === 'fulfilled' ? results[i].value : [];
-    });
-    const metaResp = await fetch('data/meta.json');
-    if (metaResp.ok) META = await metaResp.json();
-    dataMode = Object.values(DATA).some(d => d.length > 0) ? 'static' : 'offline';
-  } catch (_) {
-    dataMode = 'offline';
-  }
-
-  if (!Object.keys(PROJECT_NAMES).length) {
-    try {
-      const pResp = await fetch('projects.json');
-      if (pResp.ok) {
-        const pList = await pResp.json();
-        pList.forEach(p => { PROJECT_NAMES[p.project_id] = p.project_name; });
-      }
-    } catch (_) {}
-  }
-
-  setLoading(false);
 }
 
 async function refreshAll() {
   const btn = document.getElementById('sync-btn');
   btn.classList.add('spinning');
-  // 立即用内存数据重渲染
+  // 清除当前 tab 缓存，重新加载
+  const key = activeTab;
+  if (_tableLoaded[key]) delete _tableLoaded[key];
+  await ensureTabData(key);
+  _pickDefaultDate();
+  if (key === 'project') filters.dt = 'all';
   renderSidebar();
   renderToolbar();
   renderContent(false);
   btn.classList.remove('spinning');
   showToast('已刷新');
-  // 后台静默拉取最新数据
-  loadData(false, true).then(() => {
-    _pickDefaultDate();
-    renderSidebar();
-    renderToolbar();
-    renderContent(false);
-    showToast('数据已同步');
-  });
 }
 function showToast(msg, persist) {
   let el = document.getElementById('toast');
@@ -1597,7 +1542,8 @@ function ensureFilterDefaults(opts) {
 
 function getFilterOptions() {
   const projects = new Set(), dates = new Set(), attrs = new Set(), mktTargets = new Set();
-  Object.values(DATA).forEach(rows => {
+  const rows = DATA[activeTab] || [];
+  [rows].forEach(rows => {
     if (!Array.isArray(rows)) return;
     rows.forEach(r => {
       if (r.project_id) projects.add(r.project_id);
@@ -2139,7 +2085,7 @@ function switchTab(key) {
     return;
   }
 
-  ensureData().then(() => {
+  ensureTabData(key).then(() => {
     _pickDefaultDate();
     if (key === 'project') filters.dt = 'all';
     renderToolbar();
@@ -2464,31 +2410,15 @@ function _pickDefaultDate() {
   const pad2 = v => String(v).padStart(2, '0');
   const yesterday = `${y.getFullYear()}${pad2(y.getMonth()+1)}${pad2(y.getDate())}`;
   const allDates = new Set();
-  Object.values(DATA).forEach(rows => {
-    if (Array.isArray(rows)) rows.forEach(r => { if (r.dt) allDates.add(r.dt); });
-  });
+  const rows = DATA[activeTab] || [];
+  if (Array.isArray(rows)) rows.forEach(r => { if (r.dt) allDates.add(r.dt); });
   if (allDates.has(yesterday)) filters.dt = yesterday;
   else if (allDates.size > 0) filters.dt = Array.from(allDates).sort().pop();
 }
 
-let _dataLoaded = false;
-
-async function ensureData() {
-  if (_dataLoaded) return;
-  const cached = _loadFromLocal();
-  if (cached) {
-    _applyData(cached);
-    dataMode = 'cache';
-    _dataLoaded = true;
-    // 后台静默刷新
-    loadData(false, true).then(() => { _dataLoaded = true; });
-    return;
-  }
-  setLoading(true);
-  const tbl = document.getElementById('tbl-section');
-  if (tbl) tbl.innerHTML = '<div class="filter-loading"><span class="icon spinner">progress_activity</span></div>';
-  await loadData();
-  _dataLoaded = true;
+async function ensureTabData(tabKey) {
+  await loadProjectNames();
+  await loadTable(tabKey);
 }
 
 async function init() {
