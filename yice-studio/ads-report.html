@@ -1360,10 +1360,8 @@ async function loadProjectNames() {
 async function refreshAll() {
   const btn = document.getElementById('sync-btn');
   btn.classList.add('spinning');
-  // 清除所有 tab 缓存
+  // 清除所有已加载标记，切 tab 时会重新请求
   Object.keys(_tableLoaded).forEach(k => delete _tableLoaded[k]);
-  Object.keys(DATA).forEach(k => delete DATA[k]);
-  Object.keys(PROJECT_NAMES).forEach(k => delete PROJECT_NAMES[k]);
   // 重新加载当前 tab
   await ensureTabData(activeTab);
   _pickDefaultDate();
