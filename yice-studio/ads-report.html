@@ -2107,6 +2107,11 @@ function switchTab(key) {
   sortKey = null;
   sortDir = 'desc';
   filters.search = '';
+  if (key === 'project') {
+    filters.dt = 'all';
+  } else {
+    _pickDefaultDate();
+  }
   renderSidebar();
 
   // 先显示菊花
@@ -2453,6 +2458,8 @@ function renderAdsModule() {
    ═══════════════════════════════════════════ */
 
 function _pickDefaultDate() {
+  // 项目分析默认全部，其他 tab 默认最新日
+  if (activeTab === 'project') { filters.dt = 'all'; return; }
   const y = new Date();
   y.setDate(y.getDate() - 1);
   const pad2 = v => String(v).padStart(2, '0');
