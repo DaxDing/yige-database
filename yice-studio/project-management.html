@@ -1232,6 +1232,7 @@ async function refreshAll() {
   showToast('正在刷新数据…');
   const t0 = Date.now();
   entDepts = null;
+  entEmpsCache = {};
   await Promise.all([loadProjects(), loadAccounts()]);
   if (document.getElementById('ent-content')) await renderEnterprise();
   btn.classList.remove('spinning');
@@ -1267,7 +1268,7 @@ function openResPage(type) {
 /* ═══ Enterprise Management ═══ */
 let entTab = 'departments';
 let entDepts = null;
-let entEmps = null;
+let entEmpsCache = {};
 let entSelectedDept = null;
 
 async function fetchEntDepts() {
@@ -1280,11 +1281,14 @@ async function fetchEntDepts() {
 }
 
 async function fetchEntEmps(deptId) {
+  const key = deptId || '__all__';
+  if (entEmpsCache[key]) return entEmpsCache[key];
   const url = deptId ? `/api/feishu/employees?department_id=${deptId}` : '/api/feishu/employees';
   const resp = await fetch(url);
   const data = await resp.json();
   if (data.error) throw new Error(data.error);
-  return data.employees || [];
+  entEmpsCache[key] = data.employees || [];
+  return entEmpsCache[key];
 }
 
 

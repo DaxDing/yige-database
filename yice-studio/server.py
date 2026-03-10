@@ -55,6 +55,45 @@ def _set_cache(key, data):
         _cache[key] = {'ts': time.time(), 'data': data}
 
 
+def _clear_cache():
+    with _cache_lock:
+        _cache.clear()
+
+
+def _warm_cache():
+    """清空缓存并重新预热所有数据"""
+    _clear_cache()
+    print(f'[{datetime.now():%H:%M}] 开始缓存预热…')
+    tasks = [
+        ('project_names', lambda: query_project_names()),
+        ('cherk', lambda: query_cherk()),
+        ('dim_stats', lambda: query_dim_stats()),
+        ('feishu_depts', lambda: query_feishu_departments('0', recursive=True)),
+        ('feishu_emps', lambda: query_feishu_employees()),
+    ]
+    for name, fn in tasks:
+        try:
+            fn()
+            print(f'  ✓ {name}')
+        except Exception as e:
+            print(f'  ✗ {name}: {e}')
+    print(f'[{datetime.now():%H:%M}] 缓存预热完成')
+
+
+def _schedule_nightly_refresh():
+    """每天凌晨 3:00 清空并预热缓存"""
+    def _run():
+        while True:
+            now = datetime.now()
+            target = now.replace(hour=3, minute=0, second=0, microsecond=0)
+            if target <= now:
+                target += timedelta(days=1)
+            time.sleep((target - now).total_seconds())
+            _warm_cache()
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+
+
 # ── MaxCompute ──
 
 def get_odps():
@@ -747,6 +786,7 @@ if __name__ == '__main__':
     for w in warns:
         print(f'  ⚠ {w}')
 
+    _schedule_nightly_refresh()
     server = ThreadedServer((SERVER['host'], port), APIHandler)
     try:
         server.serve_forever()

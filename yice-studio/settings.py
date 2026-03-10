@@ -27,7 +27,7 @@ SERVER = {
 # ── 缓存 ──
 
 CACHE = {
-    'ttl': 3600,       # 秒
+    'ttl': 86400,      # 24 小时
     'max_entries': 64,
 }
 
