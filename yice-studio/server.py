@@ -792,6 +792,8 @@ if __name__ == '__main__':
         print(f'  ⚠ {w}')
 
     _schedule_nightly_refresh()
+    # 启动后台预热缓存（不阻塞服务）
+    threading.Thread(target=_warm_cache, daemon=True).start()
     server = ThreadedServer((SERVER['host'], port), APIHandler)
     try:
         server.serve_forever()
