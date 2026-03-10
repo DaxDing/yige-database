@@ -322,7 +322,29 @@ body {
   background: var(--blue-light); color: var(--blue);
   border: 1px solid var(--blue-border);
   border-radius: 6px; padding: 3px 8px;
+  display: inline-flex; align-items: center; gap: 4px;
 }
+.tag-rm { cursor: pointer; opacity: 0.5; font-size: 13px; line-height: 1; }
+.tag-rm:hover { opacity: 1; }
+.tag-input-wrap {
+  display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+  min-height: 34px; padding: 4px 8px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px;
+  transition: border-color 0.15s;
+}
+.tag-input-wrap:focus-within { border-color: var(--blue); }
+.tag-input {
+  border: none; outline: none; background: transparent; font-size: 12px;
+  color: var(--text-1); flex: 1; min-width: 80px; padding: 2px 0;
+  font-family: var(--mono);
+}
+.tag-add-btn {
+  border: none; background: none; cursor: pointer; padding: 2px;
+  color: var(--text-3); border-radius: 4px; display: flex;
+  align-items: center; transition: all 0.12s;
+}
+.tag-add-btn:hover { color: var(--blue); background: var(--blue-light); }
+.tag-add-btn .icon { font-size: 16px; }
 
 .form-members {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -337,8 +359,51 @@ body {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
   display: flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 700; color: #fff;
+  flex-shrink: 0; object-fit: cover;
 }
+img.member-avatar { background: none; }
 .member-name { font-size: 12px; color: var(--text-2); }
+
+/* ═══ Multi-select ═══ */
+.ms-wrap { position: relative; }
+.ms-trigger {
+  display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+  min-height: 34px; padding: 4px 8px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.ms-trigger:hover, .ms-wrap.open .ms-trigger { border-color: var(--blue); }
+.ms-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border);
+  border-radius: 5px; padding: 2px 6px; font-size: 11px; font-weight: 500;
+}
+.ms-chip-rm {
+  cursor: pointer; font-size: 13px; line-height: 1; opacity: 0.6;
+  transition: opacity 0.1s; margin-left: 2px;
+}
+.ms-chip-rm:hover { opacity: 1; }
+.ms-placeholder { color: var(--text-3); font-size: 12px; }
+.ms-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 100;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12); max-height: 240px;
+  display: none; flex-direction: column;
+}
+.ms-wrap.open .ms-dropdown { display: flex; }
+.ms-search {
+  padding: 8px 10px; border: none; border-bottom: 1px solid var(--border-light);
+  font-size: 12px; outline: none; background: transparent; color: var(--text-1);
+}
+.ms-list { overflow-y: auto; padding: 4px; flex: 1; }
+.ms-option {
+  display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+  border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--text-2);
+  transition: background 0.1s;
+}
+.ms-option:hover { background: var(--blue-light); }
+.ms-option input[type="checkbox"] { accent-color: var(--blue); margin: 0; }
+.ms-option-sub { font-size: 10px; color: var(--text-3); margin-left: auto; }
 
 /* ═══ Section ═══ */
 .section {
@@ -421,7 +486,60 @@ body {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .fade-in { animation: fadeIn 0.25s ease-out; }
 
-/* ═══ Resource Menu ═══ */
+/* ═══ Enterprise ═══ */
+.ent-tabs { display: flex; gap: 4px; background: var(--surface-alt); border-radius: 8px; padding: 3px; border: 1px solid var(--border); }
+.ent-tab {
+  padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  color: var(--text-3); cursor: pointer; transition: all 0.15s; border: none; background: none;
+  display: flex; align-items: center; gap: 5px;
+}
+.ent-tab:hover { color: var(--text-2); }
+.ent-tab.active { background: var(--surface); color: var(--blue); box-shadow: var(--shadow-sm); }
+.ent-tab .icon { font-size: 15px; }
+.ent-stats { display: flex; gap: 12px; margin-bottom: 20px; }
+.ent-stat {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 20px; flex: 1; display: flex; align-items: center; gap: 12px;
+}
+.ent-stat-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.ent-stat-val { font-size: 20px; font-weight: 700; color: var(--text-1); }
+.ent-stat-label { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.ent-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.ent-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ent-table thead { background: var(--surface-alt); }
+.ent-table th { padding: 10px 16px; font-weight: 600; color: var(--text-3); text-align: left; border-bottom: 1px solid var(--border); font-size: 11px; letter-spacing: 0.5px; }
+.ent-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); color: var(--text-2); }
+.ent-table tr:last-child td { border-bottom: none; }
+.ent-table tr:hover td { background: var(--blue-light); }
+.ent-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--blue-light); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--blue); flex-shrink: 0; }
+.ent-user-cell { display: flex; align-items: center; gap: 10px; }
+.ent-user-name { font-weight: 500; color: var(--text-1); }
+.ent-user-title { font-size: 11px; color: var(--text-3); }
+.ent-tree { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.ent-tree-node {}
+.ent-tree-row {
+  display: flex; align-items: center; gap: 6px; padding: 8px 12px; cursor: pointer;
+  transition: background 0.12s; border-bottom: 1px solid var(--border-light); font-size: 13px;
+}
+.ent-tree-row:hover { background: var(--blue-light); }
+.ent-tree-row.selected { background: var(--blue-light); color: var(--blue); }
+.ent-tree-toggle { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.15s; }
+.ent-tree-toggle.expanded { transform: rotate(90deg); }
+.ent-tree-toggle.placeholder { visibility: hidden; }
+.ent-tree-toggle .icon { font-size: 14px; color: var(--text-3); }
+.ent-tree-icon { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ent-tree-icon .icon { font-size: 14px; }
+.ent-tree-name { flex: 1; font-weight: 500; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ent-tree-row.selected .ent-tree-name { color: var(--blue); font-weight: 600; }
+.ent-tree-count { font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.ent-tree-children { display: none; }
+.ent-tree-children.open { display: block; }
+.ent-loading { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 60px 0; color: var(--text-3); font-size: 13px; }
+.ent-loading .icon { animation: entSpin 1s linear infinite; }
+@keyframes entSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.ent-empty { text-align: center; padding: 60px 0; color: var(--text-3); font-size: 13px; }
+.ent-back-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-3); cursor: pointer; border: none; background: none; padding: 4px 8px; border-radius: 6px; transition: all 0.15s; }
+.ent-back-btn:hover { color: var(--blue); background: var(--blue-light); }
 
 /* ═══ Account Cards ═══ */
 .section .link-rm { opacity: 0; transition: opacity 0.15s; }
@@ -445,9 +563,9 @@ body {
       </div>
     </div>
     <nav class="header-nav">
-      <a class="nav-tab active" href="project-management.html">项目管理</a>
       <a class="nav-tab" href="ads-report.html">业务看板</a>
       <a class="nav-tab" href="consistency-check.html">数据检查</a>
+      <a class="nav-tab active" href="project-management.html">项目管理</a>
     </nav>
     <div class="header-right">
       <button class="hdr-btn" id="sync-btn" onclick="refreshAll()" title="刷新数据">
@@ -463,13 +581,25 @@ body {
         </div>
       </div>
       <div class="hdr-menu-wrap">
-        <button class="hdr-btn" onclick="toggleMenu('user-menu')" title="用户">
-          <span class="icon">account_circle</span>
+        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="丁旭义">
+          <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" alt="丁旭义" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
         </button>
-        <div class="hdr-menu" id="user-menu">
-          <button class="hdr-menu-item"><span class="icon">apartment</span>部门</button>
-          <div style="height:1px;background:var(--border);margin:2px 8px"></div>
-          <button class="hdr-menu-item"><span class="icon">logout</span>退出</button>
+        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0">
+          <div style="padding:20px 20px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+            <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border-light,#f3f4f6)">
+            <div style="text-align:center">
+              <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:2px">
+                <span style="font-size:14px;font-weight:600;color:var(--text-1)">丁旭义</span>
+                <span style="font-size:10px;padding:1px 8px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-weight:500;letter-spacing:0.5px">root</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--text-3)">
+                <span class="icon" style="font-size:13px">corporate_fare</span>EMT执行管理团队
+              </div>
+            </div>
+          </div>
+          <div style="padding:4px">
+            <button class="hdr-menu-item"><span class="icon">logout</span>退出登录</button>
+          </div>
         </div>
       </div>
     </div>
@@ -477,7 +607,7 @@ body {
   <div class="layout">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <span class="sidebar-title">Projects</span>
+        <span class="sidebar-title" id="sidebar-title">项目</span>
         <button class="btn-add" onclick="editMode=true;newProject();updateActionBtn()"><span class="icon">add</span>新增</button>
       </div>
       <div class="sidebar-search">
@@ -506,19 +636,19 @@ let editMode = false; // false=查看, true=编辑/新增
 const PLATFORMS = {
   jg: { name: '聚光平台', icon: 'campaign', fields: [
     { key: 'app_id', label: 'App ID', icon: 'fingerprint' },
-    { key: 'secret', label: 'Secret', icon: 'lock' },
+    { key: 'secret', label: 'Secret', icon: 'lock', masked: true },
   ]},
   pgy: { name: '蒲公英平台', icon: 'eco', fields: [
     { key: 'app_id', label: 'App ID', icon: 'fingerprint' },
-    { key: 'secret', label: 'Secret', icon: 'lock' },
+    { key: 'secret', label: 'Secret', icon: 'lock', masked: true },
   ]},
   xh: { name: '星河平台', icon: 'auto_awesome', fields: [
     { key: 'account', label: '账号', icon: 'person' },
-    { key: 'password', label: '密码', icon: 'password' },
+    { key: 'password', label: '密码', icon: 'password', masked: true },
   ]},
   feishu: { name: '飞书应用', icon: 'smart_toy', fields: [
     { key: 'app_id', label: 'App ID', icon: 'fingerprint' },
-    { key: 'secret', label: 'App Secret', icon: 'lock' },
+    { key: 'secret', label: 'App Secret', icon: 'lock', masked: true },
   ]},
 };
 
@@ -537,18 +667,162 @@ function addLinkInput(btn, key) {
   btn.parentElement.insertBefore(row, btn);
 }
 
+/* ═══ Multi-select Component ═══ */
+const _msState = {}; // { 'ms-dept': Set(['项目1部']), 'ms-members': Set(['玮哥']) }
+const _msLookup = {}; // { 'ms-dept': {name: {name, department_id}}, 'ms-members': {name: {name, open_id, avatar}} }
+
+async function initMultiSelects(p) {
+  // 初始化执行部门
+  const deptWrap = document.getElementById('ms-dept');
+  if (deptWrap) {
+    const rawDepts = Array.isArray(p.departments) ? p.departments : (p.department ? [p.department] : []);
+    const selected = rawDepts.map(d => typeof d === 'object' ? d.name : d);
+    _msState['ms-dept'] = new Set(selected);
+    _msLookup['ms-dept'] = {};
+    // 已有的部门对象保留 ID
+    rawDepts.forEach(d => { if (typeof d === 'object') _msLookup['ms-dept'][d.name] = d; });
+    try {
+      const depts = await fetchEntDepts();
+      depts.forEach(d => { _msLookup['ms-dept'][d.name] = { name: d.name, department_id: d.department_id }; });
+      const listEl = document.getElementById('ms-dept-list');
+      if (listEl) {
+        listEl.innerHTML = depts.map(d => {
+          const checked = _msState['ms-dept'].has(d.name) ? 'checked' : '';
+          const sub = d.member_count ? `<span class="ms-option-sub">${d.member_count} 人</span>` : '';
+          return `<label class="ms-option"><input type="checkbox" value="${d.name}" ${checked} onchange="msOnChange('ms-dept',this)"><span>${d.name}</span>${sub}</label>`;
+        }).join('');
+      }
+    } catch (_) {}
+  }
+  // 初始化团队成员
+  const memWrap = document.getElementById('ms-members');
+  if (memWrap) {
+    const selected = (p.members || []).map(m => typeof m === 'string' ? m : (m.name || ''));
+    _msState['ms-members'] = new Set(selected);
+    _msLookup['ms-members'] = {};
+    // 已有的成员对象保留 ID/avatar
+    (p.members || []).forEach(m => { if (typeof m === 'object' && m.name) _msLookup['ms-members'][m.name] = m; });
+    try {
+      const [depts, emps] = await Promise.all([fetchEntDepts(), fetchEntEmps()]);
+      const seen = new Set();
+      const unique = emps.filter(u => { if (seen.has(u.open_id)) return false; seen.add(u.open_id); return true; });
+      const deptMap = {};
+      depts.forEach(d => { deptMap[d.department_id] = d.name; });
+      unique.forEach(u => {
+        if (u.status && u.status.is_activated) {
+          _msLookup['ms-members'][u.name] = { name: u.name, open_id: u.open_id, avatar: (u.avatar || {}).avatar_72 || '' };
+        }
+      });
+      const listEl = document.getElementById('ms-members-list');
+      if (listEl) {
+        listEl.innerHTML = unique.filter(u => u.status && u.status.is_activated).map(u => {
+          const checked = _msState['ms-members'].has(u.name) ? 'checked' : '';
+          const dept = (u.department_ids || []).map(id => deptMap[id] || '').filter(Boolean).join(', ');
+          return `<label class="ms-option"><input type="checkbox" value="${u.name}" ${checked} onchange="msOnChange('ms-members',this)"><span>${u.name}</span>${dept ? `<span class="ms-option-sub">${dept}</span>` : ''}</label>`;
+        }).join('');
+      }
+    } catch (_) {}
+  }
+}
+
+function msToggle(id) {
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  const wasOpen = wrap.classList.contains('open');
+  // 关闭所有
+  document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+  if (!wasOpen) {
+    wrap.classList.add('open');
+    const search = wrap.querySelector('.ms-search');
+    if (search) { search.value = ''; search.focus(); msFilterList(search); }
+  }
+}
+
+function msOnChange(id, checkbox) {
+  const set = _msState[id];
+  if (!set) return;
+  if (checkbox.checked) set.add(checkbox.value);
+  else set.delete(checkbox.value);
+  msRenderChips(id);
+}
+
+function msDeselect(id, val) {
+  const set = _msState[id];
+  if (!set) return;
+  set.delete(val);
+  // 同步 checkbox
+  const wrap = document.getElementById(id);
+  const cb = wrap?.querySelector(`input[type="checkbox"][value="${val}"]`);
+  if (cb) cb.checked = false;
+  msRenderChips(id);
+}
+
+function msRenderChips(id) {
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  const trigger = wrap.querySelector('.ms-trigger');
+  const set = _msState[id];
+  if (!set || set.size === 0) {
+    const ph = id === 'ms-dept' ? '选择部门...' : '选择成员...';
+    trigger.innerHTML = `<span class="ms-placeholder">${ph}</span>`;
+  } else {
+    trigger.innerHTML = Array.from(set).map(v =>
+      `<span class="ms-chip">${v}<span class="ms-chip-rm" onclick="event.stopPropagation();msDeselect('${id}','${v}')">&times;</span></span>`
+    ).join('');
+  }
+}
+
+function msFilterList(input) {
+  const q = input.value.trim().toLowerCase();
+  const list = input.closest('.ms-dropdown').querySelector('.ms-list');
+  list.querySelectorAll('.ms-option').forEach(opt => {
+    const text = opt.textContent.toLowerCase();
+    opt.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+// 点击外部关闭
+document.addEventListener('click', e => {
+  if (!e.target.closest('.ms-wrap')) {
+    document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+  }
+});
+
+function tagInputKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); tagAddFromInput(e.target.nextElementSibling); }
+}
+function tagAddFromInput(btn) {
+  const input = btn.previousElementSibling;
+  const val = input.value.trim();
+  if (!val) return;
+  const tag = document.createElement('span');
+  tag.className = 'form-tag';
+  tag.innerHTML = `${val}<span class="tag-rm" onclick="this.parentElement.remove()">&times;</span>`;
+  btn.parentElement.insertBefore(tag, input);
+  input.value = '';
+  input.focus();
+}
+
 function collectFormData() {
   const data = {};
   document.querySelectorAll('[data-field]').forEach(el => {
     const key = el.dataset.field;
-    data[key] = el.tagName === 'SELECT' ? el.value : el.value.trim();
+    if (el.classList.contains('tag-input-wrap')) {
+      // tag 输入：从 .form-tag 子元素收集
+      data[key] = Array.from(el.querySelectorAll('.form-tag')).map(t => t.firstChild.textContent.trim()).filter(Boolean);
+    } else {
+      data[key] = el.tagName === 'SELECT' ? el.value : (el.value || '').trim();
+    }
   });
-  // advertiser_ids: comma-separated → array
-  if (typeof data.advertiser_ids === 'string') {
-    data.advertiser_ids = data.advertiser_ids.split(',').map(s => s.trim()).filter(Boolean);
+  // multi-select: departments & members (保存为带 ID 的对象数组)
+  if (_msState['ms-dept']) {
+    const lookup = _msLookup['ms-dept'] || {};
+    data.departments = Array.from(_msState['ms-dept']).map(name => lookup[name] || { name, department_id: '' });
+    data.department = data.departments[0]?.name || '';
   }
-  if (typeof data.brand_user_ids === 'string') {
-    data.brand_user_ids = data.brand_user_ids.split(',').map(s => s.trim()).filter(Boolean);
+  if (_msState['ms-members']) {
+    const lookup = _msLookup['ms-members'] || {};
+    data.members = Array.from(_msState['ms-members']).map(name => lookup[name] || { name, open_id: '', avatar: '' });
   }
   // links
   const links = {};
@@ -600,7 +874,9 @@ async function handleAction() {
       Object.assign(project, {
         project_name: form.project_name || project.project_name,
         marketing_target: form.marketing_target || project.marketing_target,
-        department: form.department || project.department,
+        department: form.department ?? project.department,
+        departments: form.departments || project.departments || [],
+        members: form.members || project.members || [],
         start_time: form.start_time || project.start_time,
         end_time: form.end_time || project.end_time,
         advertiser_ids: form.advertiser_ids?.length ? form.advertiser_ids : project.advertiser_ids,
@@ -613,12 +889,13 @@ async function handleAction() {
       project = {
         project_id: pid,
         project_name: form.project_name || '',
-        department: form.department || '项目一部',
+        department: form.department || '',
+        departments: form.departments || [],
         marketing_target: form.marketing_target || '产品种草',
         start_time: form.start_time || null,
         end_time: form.end_time || null,
         advertiser_ids: form.advertiser_ids || [],
-        members: [],
+        members: form.members || [],
         links: form.links || { content_exec: [], folder: null, budget: null },
         account_refs: form.account_refs || { jg: null, pgy: null, xh: null },
       };
@@ -653,7 +930,15 @@ async function loadAccounts() {
     ACCOUNTS = await resp.json();
   } catch (e) {
     console.warn('加载 accounts.json 失败:', e.message);
-    ACCOUNTS = { jg: [], pgy: [], xh: [] };
+    ACCOUNTS = { jg: [], pgy: [], xh: [], feishu: [] };
+  }
+  if (!ACCOUNTS.feishu) ACCOUNTS.feishu = [];
+  if (!ACCOUNTS.feishu.length) {
+    try {
+      const r = await fetch('/api/feishu/config');
+      const cfg = await r.json();
+      if (cfg.app_id) ACCOUNTS.feishu = [{ name: '通讯录应用', id: 'feishu_1', app_id: cfg.app_id, secret: cfg.secret }];
+    } catch (e) {}
   }
 }
 
@@ -672,8 +957,11 @@ async function loadData() {
 
 function renderSidebar() {
   const el = document.getElementById('sidebar');
+  const titleEl = document.getElementById('sidebar-title');
+  if (titleEl) titleEl.textContent = `项目 (${PROJECTS.length})`;
   const q = (document.getElementById('project-search')?.value || '').trim().toLowerCase();
-  const filtered = PROJECTS.filter(p => !q || (p.project_name || '').toLowerCase().includes(q) || (p.department || '').toLowerCase().includes(q) || (p.project_id || '').includes(q));
+  const filtered = PROJECTS.filter(p => !q || (p.project_name || '').toLowerCase().includes(q) || (p.department || '').toLowerCase().includes(q) || (p.project_id || '').includes(q))
+    .sort((a, b) => (b.end_time || '').localeCompare(a.end_time || ''));
   if (!filtered.length) {
     el.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px">${PROJECTS.length ? '无匹配项目' : '暂无项目'}</div>`;
     return;
@@ -686,7 +974,7 @@ function renderSidebar() {
       <div class="s-item-icon ${c}">${initials}</div>
       <div class="s-item-info">
         <div class="s-item-name">${p.project_name}</div>
-        <div class="s-item-meta"><span>${p.department || '-'}</span></div>
+        <div class="s-item-meta"><span>${(p.departments || []).length ? p.departments.map(d => typeof d === 'object' ? d.name : d).join(', ') : (p.department || '-')}</span></div>
       </div>
     </div>`;
   }).join('');
@@ -707,10 +995,10 @@ function renderDetail(p) {
 
   const membersHtml = (p.members || []).map(m => {
     const name = typeof m === 'string' ? m : (m.name || '?');
-    return `<div class="member-chip">
-      <div class="member-avatar">${name[0]}</div>
-      <span class="member-name">${name}</span>
-    </div>`;
+    const avatar = typeof m === 'object' && m.avatar
+      ? `<img class="member-avatar" src="${m.avatar}" alt="${name}">`
+      : `<div class="member-avatar">${name[0]}</div>`;
+    return `<div class="member-chip">${avatar}<span class="member-name">${name}</span></div>`;
   }).join('') || '<span style="color:var(--text-3);font-size:12px">未设置</span>';
 
   const tagsHtml = (p.advertiser_ids || []).map(id =>
@@ -751,15 +1039,27 @@ function renderDetail(p) {
 
   const ro = editMode ? '' : 'readonly';
   const mktOpts = ['产品种草', '种草直达 CID', '客资收集', '应用推广'];
-  const deptOpts = ['项目一部', '项目二部'];
 
   const mktField = editMode
     ? `<select class="form-select" data-field="marketing_target">${mktOpts.map(o => `<option value="${o}" ${p.marketing_target === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`
     : `<input class="form-input" value="${p.marketing_target || '-'}" readonly>`;
 
+  // 执行部门：多选，数据来源企业管理
+  const rawDepts = Array.isArray(p.departments) ? p.departments : (p.department ? [p.department] : []);
+  const pDeptNames = rawDepts.map(d => typeof d === 'object' ? d.name : d);
+  const deptChips = pDeptNames.map(d => `<div class="member-chip"><div class="member-avatar" style="background:linear-gradient(135deg,#3b82f6,#6366f1)"><span class="icon" style="font-size:12px;color:#fff">corporate_fare</span></div><span class="member-name">${d}</span></div>`).join('') || '<span style="color:var(--text-3);font-size:12px">未设置</span>';
   const deptField = editMode
-    ? `<select class="form-select" data-field="department">${deptOpts.map(o => `<option value="${o}" ${p.department === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`
-    : `<input class="form-input" value="${p.department || '-'}" readonly>`;
+    ? `<div class="ms-wrap" id="ms-dept"><div class="ms-trigger" onclick="msToggle('ms-dept')">${pDeptNames.length ? pDeptNames.map(d => `<span class="ms-chip">${d}<span class="ms-chip-rm" onclick="event.stopPropagation();msDeselect('ms-dept','${d}')">&times;</span></span>`).join('') : '<span class="ms-placeholder">选择部门...</span>'}</div><div class="ms-dropdown"><input class="ms-search" placeholder="搜索部门..." oninput="msFilterList(this)"><div class="ms-list" id="ms-dept-list"></div></div></div>`
+    : `<div class="form-members">${deptChips}</div>`;
+
+  // 团队成员：多选，数据来源员工管理
+  const pMembers = (p.members || []).map(m => typeof m === 'string' ? m : (m.name || ''));
+  const memberChipsEdit = pMembers.length
+    ? pMembers.map(n => `<span class="ms-chip">${n}<span class="ms-chip-rm" onclick="event.stopPropagation();msDeselect('ms-members','${n}')">&times;</span></span>`).join('')
+    : '<span class="ms-placeholder">选择成员...</span>';
+  const membersField = editMode
+    ? `<div class="ms-wrap" id="ms-members"><div class="ms-trigger" onclick="msToggle('ms-members')">${memberChipsEdit}</div><div class="ms-dropdown"><input class="ms-search" placeholder="搜索员工..." oninput="msFilterList(this)"><div class="ms-list" id="ms-members-list"></div></div></div>`
+    : `<div class="form-members">${membersHtml}</div>`;
 
   const startField = editMode
     ? `<input class="form-input" type="date" value="${p.start_time || ''}" data-field="start_time">`
@@ -770,7 +1070,7 @@ function renderDetail(p) {
     : `<input class="form-input" value="${p.end_time || '-'}" readonly>`;
 
   const advField = editMode
-    ? `<input class="form-input" value="${(p.advertiser_ids || []).join(', ')}" data-field="advertiser_ids" placeholder="多个用逗号分隔">`
+    ? `<div class="tag-input-wrap" data-field="advertiser_ids">${(p.advertiser_ids||[]).map(id => `<span class="form-tag">${id}<span class="tag-rm" onclick="this.parentElement.remove()">&times;</span></span>`).join('')}<input class="tag-input" placeholder="输入 ID 后回车" onkeydown="tagInputKey(event)"><button class="tag-add-btn" onclick="tagAddFromInput(this)" title="添加"><span class="icon">add</span></button></div>`
     : `<div class="form-tags">${tagsHtml}</div>`;
 
   const brandTagsHtml = (p.brand_user_ids || []).map(id =>
@@ -778,7 +1078,7 @@ function renderDetail(p) {
   ).join('') || '<span style="color:var(--text-3);font-size:12px">未设置</span>';
 
   const brandField = editMode
-    ? `<input class="form-input" value="${(p.brand_user_ids || []).join(', ')}" data-field="brand_user_ids" placeholder="多个用逗号分隔">`
+    ? `<div class="tag-input-wrap" data-field="brand_user_ids">${(p.brand_user_ids||[]).map(id => `<span class="form-tag">${id}<span class="tag-rm" onclick="this.parentElement.remove()">&times;</span></span>`).join('')}<input class="tag-input" placeholder="输入 ID 后回车" onkeydown="tagInputKey(event)"><button class="tag-add-btn" onclick="tagAddFromInput(this)" title="添加"><span class="icon">add</span></button></div>`
     : `<div class="form-tags">${brandTagsHtml}</div>`;
 
   main.innerHTML = `<div class="fade-in">
@@ -830,7 +1130,7 @@ function renderDetail(p) {
         </div>
         <div class="form-group">
           <label class="form-label"><span class="icon">group</span>团队成员</label>
-          <div class="form-members">${membersHtml}</div>
+          ${membersField}
         </div>
       </div>
     </div>
@@ -876,6 +1176,9 @@ function renderDetail(p) {
     hdr.after(sentinel);
     new IntersectionObserver(([e]) => hdr.classList.toggle('stuck', !e.isIntersecting), { root: main, threshold: 1 }).observe(sentinel);
   }
+
+  // 编辑模式：加载多选下拉数据
+  if (editMode) initMultiSelects(p);
 }
 
 function nextProjectId() {
@@ -890,7 +1193,8 @@ function newProject() {
   const emptyProject = {
     project_id: nextProjectId(),
     project_name: '',
-    department: '项目一部',
+    department: '',
+    departments: [],
     marketing_target: '产品种草',
     start_time: '',
     end_time: '',
@@ -908,6 +1212,9 @@ function createProject() {
 
 // ─── Init ───
 loadData().then(() => {
+  const urlPage = new URLSearchParams(location.search).get('page');
+  if (urlPage === 'accounts') { openResPage('accounts'); return; }
+  if (urlPage === 'enterprise') { openResPage('enterprise'); return; }
   if (PROJECTS.length > 0) selectProject(PROJECTS[0].project_id);
 });
 
@@ -924,8 +1231,9 @@ async function refreshAll() {
   btn.classList.add('spinning');
   showToast('正在刷新数据…');
   const t0 = Date.now();
-  await loadProjects();
-  await loadAccounts();
+  entDepts = null;
+  await Promise.all([loadProjects(), loadAccounts()]);
+  if (document.getElementById('ent-content')) await renderEnterprise();
   btn.classList.remove('spinning');
   const sec = ((Date.now() - t0) / 1000).toFixed(1);
   showToast('刷新完成 ' + sec + 's');
@@ -941,12 +1249,218 @@ function openResPage(type) {
   if (type === 'accounts') {
     selectedId = null;
     editMode = false;
-    renderSidebar();
+    const sidebar = document.querySelector('.sidebar');
+    const layout = document.querySelector('.layout');
+    sidebar.style.display = 'none';
+    layout.style.gridTemplateColumns = '1fr';
     renderAccountsView();
     return;
   }
-  const labels = { members: '成员', departments: '部门' };
-  alert(`${labels[type]}管理 - 功能开发中`);
+  if (type === 'enterprise') {
+    selectedId = null;
+    editMode = false;
+    showEnterprise();
+    return;
+  }
+}
+
+/* ═══ Enterprise Management ═══ */
+let entTab = 'departments';
+let entDepts = null;
+let entEmps = null;
+let entSelectedDept = null;
+
+async function fetchEntDepts() {
+  if (entDepts) return entDepts;
+  const resp = await fetch('/api/feishu/departments?recursive=1');
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error);
+  entDepts = data.departments || [];
+  return entDepts;
+}
+
+async function fetchEntEmps(deptId) {
+  const url = deptId ? `/api/feishu/employees?department_id=${deptId}` : '/api/feishu/employees';
+  const resp = await fetch(url);
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error);
+  return data.employees || [];
+}
+
+
+function showEnterprise() {
+  const sidebar = document.querySelector('.sidebar');
+  const layout = document.querySelector('.layout');
+  sidebar.style.display = 'none';
+  layout.style.gridTemplateColumns = '1fr';
+  renderEnterprise();
+}
+
+function exitEnterprise() {
+  const sidebar = document.querySelector('.sidebar');
+  const layout = document.querySelector('.layout');
+  sidebar.style.display = '';
+  layout.style.gridTemplateColumns = '220px 1fr';
+  renderSidebar();
+  if (PROJECTS.length > 0) selectProject(PROJECTS[0].project_id);
+  else document.getElementById('main').innerHTML = `<div class="detail-empty"><span class="icon">folder_open</span><p>选择左侧项目查看详情</p></div>`;
+}
+
+async function renderEnterprise() {
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div style="margin-bottom:16px"><button class="ent-back-btn" onclick="exitEnterprise()"><span class="icon">arrow_back</span>返回项目管理</button></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:8px"><span class="icon" style="font-size:20px;color:var(--blue)">apartment</span><span style="font-size:16px;font-weight:600">企业管理</span></div>
+      <div class="ent-tabs">
+        <button class="ent-tab${entTab === 'departments' ? ' active' : ''}" onclick="entTab='departments';entSelectedDept=null;renderEnterprise()"><span class="icon">account_tree</span>部门管理</button>
+        <button class="ent-tab${entTab === 'employees' ? ' active' : ''}" onclick="entTab='employees';renderEnterprise()"><span class="icon">group</span>员工管理</button>
+      </div>
+    </div>
+    <div id="ent-content"><div class="ent-loading"><span class="icon">progress_activity</span>加载中...</div></div>`;
+  try {
+    if (entTab === 'departments') await renderEntDeptView();
+    else await renderEntEmpView();
+  } catch (e) {
+    document.getElementById('ent-content').innerHTML = `<div class="ent-empty" style="color:var(--red)"><span class="icon" style="font-size:24px;display:block;margin-bottom:8px">error</span>${e.message}</div>`;
+  }
+}
+
+const ENT_COLORS = ['#3b82f6','#22c55e','#8b5cf6','#f59e0b','#ef4444','#14b8a6','#f97316','#ec4899','#6366f1','#06b6d4'];
+
+function buildDeptTree(depts) {
+  const byParent = {};
+  depts.forEach(d => { const pid = d.parent_id || '0'; if (!byParent[pid]) byParent[pid] = []; byParent[pid].push(d); });
+  function build(parentId) { return (byParent[parentId] || []).map(d => ({ ...d, children: build(d.department_id) })); }
+  return build('0');
+}
+
+function flatChildren(node) {
+  let out = [];
+  (node.children || []).forEach(c => { out.push(c); out = out.concat(flatChildren(c)); });
+  return out;
+}
+
+async function renderEntDeptView() {
+  const [depts, rawEmps] = await Promise.all([fetchEntDepts(), fetchEntEmps()]);
+  const el = document.getElementById('ent-content');
+  const seen = new Set();
+  const emps = rawEmps.filter(u => { if (seen.has(u.open_id)) return false; seen.add(u.open_id); return true; });
+  const activeCount = emps.filter(u => u.status && u.status.is_activated).length;
+
+  // 统计卡片（与员工管理一致）
+  let html = `<div class="ent-stats">
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--blue-light)"><span class="icon" style="color:var(--blue);font-size:18px">group</span></div><div><div class="ent-stat-val">${emps.length}</div><div class="ent-stat-label">员工总数</div></div></div>
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--green-light)"><span class="icon" style="color:var(--green);font-size:18px">check_circle</span></div><div><div class="ent-stat-val">${activeCount}</div><div class="ent-stat-label">在职员工</div></div></div>
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:linear-gradient(135deg,#fffbeb,#fef3c7)"><span class="icon" style="color:var(--amber);font-size:18px">account_tree</span></div><div><div class="ent-stat-val">${depts.length}</div><div class="ent-stat-label">部门数</div></div></div>
+  </div>`;
+
+  if (entSelectedDept) {
+    const dept = depts.find(d => d.department_id === entSelectedDept);
+    html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+      <button class="ent-back-btn" onclick="entSelectedDept=null;renderEnterprise()" style="margin:0"><span class="icon">arrow_back</span>全部部门</button>
+      <span style="font-size:13px;font-weight:600">${dept ? dept.name : ''}</span>
+      <span style="font-size:11px;color:var(--text-3)">${dept ? dept.member_count + ' 人' : ''}</span>
+    </div><div id="dept-emps"><div class="ent-loading"><span class="icon">progress_activity</span>加载部门员工...</div></div>`;
+    el.innerHTML = html;
+    const deptEmps = await fetchEntEmps(entSelectedDept);
+    document.getElementById('dept-emps').innerHTML = buildEntEmpTable(deptEmps, depts);
+    return;
+  }
+
+  // 树结构
+  const tree = buildDeptTree(depts);
+  function renderTreeNode(node, depth) {
+    const c = ENT_COLORS[depth % ENT_COLORS.length];
+    const hasChildren = node.children && node.children.length > 0;
+    const indent = depth * 24;
+    let h = `<div class="ent-tree-node">
+      <div class="ent-tree-row" style="padding-left:${12 + indent}px" onclick="toggleTreeNode(this, '${node.department_id}')">
+        <span class="ent-tree-toggle ${hasChildren ? '' : 'placeholder'}"><span class="icon">chevron_right</span></span>
+        <div class="ent-tree-icon" style="background:${c}18;color:${c}"><span class="icon">corporate_fare</span></div>
+        <span class="ent-tree-name">${node.name}</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text-3);user-select:all">${node.department_id}</span>
+        <span class="ent-tree-count">${node.member_count || 0} 人</span>
+      </div>`;
+    if (hasChildren) {
+      h += `<div class="ent-tree-children">`;
+      node.children.forEach(child => { h += renderTreeNode(child, depth + 1); });
+      h += `</div>`;
+    }
+    h += `</div>`;
+    return h;
+  }
+  html += `<div class="ent-tree">`;
+  tree.forEach(d => { html += renderTreeNode(d, 0); });
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+function toggleTreeNode(rowEl, deptId) {
+  const node = rowEl.closest('.ent-tree-node');
+  const children = node.querySelector('.ent-tree-children');
+  const toggle = rowEl.querySelector('.ent-tree-toggle');
+  if (children) {
+    const isOpen = children.classList.toggle('open');
+    toggle.classList.toggle('expanded', isOpen);
+  } else {
+    // 叶子节点 → 查看员工
+    entSelectedDept = deptId;
+    renderEnterprise();
+  }
+}
+
+function _buildEmpProjectMap() {
+  const map = {};
+  (PROJECTS || []).forEach(p => {
+    (p.members || []).forEach(m => {
+      if (!m.open_id) return;
+      if (!map[m.open_id]) map[m.open_id] = [];
+      map[m.open_id].push(p.project_name);
+    });
+  });
+  return map;
+}
+
+function buildEntEmpTable(emps, depts) {
+  if (!emps.length) return '<div class="ent-empty">暂无员工数据</div>';
+  const deptMap = {};
+  (depts || []).forEach(d => { deptMap[d.department_id] = d.name; });
+  const projMap = _buildEmpProjectMap();
+  // 有项目的排前面
+  const sorted = [...emps].sort((a, b) => {
+    const pa = (projMap[a.open_id] || []).length;
+    const pb = (projMap[b.open_id] || []).length;
+    return pb - pa;
+  });
+  let rows = '';
+  sorted.forEach(u => {
+    const deptNames = (u.department_ids || []).map(id => deptMap[id] || id).join(', ');
+    const avatar = u.avatar ? `<img class="ent-avatar" src="${u.avatar}" alt="">` : `<span class="ent-avatar">${(u.name || '?')[0]}</span>`;
+    const isActive = u.status && u.status.is_activated;
+    const dot = `<span style="width:8px;height:8px;border-radius:50%;background:${isActive ? 'var(--green)' : 'var(--text-3)'};display:inline-block${isActive ? ';box-shadow:0 0 6px rgba(5,150,105,0.4)' : ''}"></span>`;
+    const projs = projMap[u.open_id] || [];
+    const projHtml = projs.length
+      ? projs.map(n => `<span style="display:inline-block;font-size:11px;padding:1px 8px;border-radius:6px;background:var(--blue-light,#eff6ff);color:var(--blue,#2563eb);white-space:nowrap">${n}</span>`).join(' ')
+      : '<span style="color:var(--text-3);font-size:11px">-</span>';
+    rows += `<tr><td style="text-align:center">${dot}</td><td><div class="ent-user-cell">${avatar}<div><div class="ent-user-name">${u.name || '-'}</div><div class="ent-user-title">${u.job_title || ''}</div></div></div></td><td style="font-family:var(--mono);font-size:11px;user-select:all">${u.open_id || '-'}</td><td>${deptNames || '-'}</td><td><div style="display:flex;flex-wrap:wrap;gap:4px">${projHtml}</div></td><td>${u.email || '-'}</td><td>${u.mobile || '-'}</td></tr>`;
+  });
+  return `<div class="ent-table-wrap"><table class="ent-table"><thead><tr><th style="width:32px"></th><th>姓名</th><th>飞书 ID</th><th>部门</th><th>关联项目</th><th>邮箱</th><th>手机</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+async function renderEntEmpView() {
+  const el = document.getElementById('ent-content');
+  const [depts, rawEmps] = await Promise.all([fetchEntDepts(), fetchEntEmps()]);
+  const seen = new Set();
+  const emps = rawEmps.filter(u => { if (seen.has(u.open_id)) return false; seen.add(u.open_id); return true; });
+  const activeCount = emps.filter(u => u.status && u.status.is_activated).length;
+  let html = `<div class="ent-stats">
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--blue-light)"><span class="icon" style="color:var(--blue);font-size:18px">group</span></div><div><div class="ent-stat-val">${emps.length}</div><div class="ent-stat-label">员工总数</div></div></div>
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:var(--green-light)"><span class="icon" style="color:var(--green);font-size:18px">check_circle</span></div><div><div class="ent-stat-val">${activeCount}</div><div class="ent-stat-label">在职员工</div></div></div>
+    <div class="ent-stat"><div class="ent-stat-icon" style="background:linear-gradient(135deg,#fffbeb,#fef3c7)"><span class="icon" style="color:var(--amber);font-size:18px">account_tree</span></div><div><div class="ent-stat-val">${depts.length}</div><div class="ent-stat-label">部门数</div></div></div>
+  </div>`;
+  html += buildEntEmpTable(emps, depts);
+  el.innerHTML = html;
 }
 
 let acctActivePlatform = 'jg';
@@ -973,18 +1487,30 @@ function renderAccountsView() {
         </div>
       </div>
       <div class="form-grid">
-        ${platform.fields.map(f => `<div class="form-group">
-          <label class="form-label"><span class="icon">${f.icon}</span>${f.label}</label>
-          <input class="form-input" value="${a[f.key] || ''}" readonly>
-        </div>`).join('')}
+        ${platform.fields.map(f => {
+          if (f.masked && a[f.key]) {
+            const uid = 'mask_' + i + '_' + f.key;
+            return `<div class="form-group">
+              <label class="form-label"><span class="icon">${f.icon}</span>${f.label}</label>
+              <div style="display:flex;gap:4px">
+                <input class="form-input" id="${uid}" type="password" value="${a[f.key]}" readonly style="flex:1">
+                <button class="link-rm" onclick="const el=document.getElementById('${uid}');el.type=el.type==='password'?'text':'password';this.querySelector('.icon').textContent=el.type==='password'?'visibility':'visibility_off'" title="显示/隐藏" style="opacity:1"><span class="icon" style="font-size:16px">visibility</span></button>
+              </div>
+            </div>`;
+          }
+          return `<div class="form-group">
+            <label class="form-label"><span class="icon">${f.icon}</span>${f.label}</label>
+            <input class="form-input" value="${a[f.key] || ''}" readonly>
+          </div>`;
+        }).join('')}
       </div>
     </div>
   `).join('') : '<div style="text-align:center;padding:40px;color:var(--text-3);font-size:13px">暂无账号，点击上方按钮添加</div>';
 
   main.innerHTML = `<div class="fade-in">
-    <div class="detail-header">
-      <span class="detail-title">账号管理</span>
-      <span class="detail-id" style="flex:1"></span>
+    <div style="margin-bottom:16px"><button class="ent-back-btn" onclick="exitEnterprise()"><span class="icon">arrow_back</span>返回项目管理</button></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:8px"><span class="icon" style="font-size:20px;color:var(--blue)">key</span><span style="font-size:16px;font-weight:600">资源管理</span></div>
       <button class="btn-action" onclick="editAccount('${acctActivePlatform}',-1)">
         <span class="icon">add</span><span>新增</span>
       </button>
@@ -995,14 +1521,6 @@ function renderAccountsView() {
     ${listHtml}
   </div>`;
 
-  // sticky header
-  const hdr = main.querySelector('.detail-header');
-  if (hdr) {
-    const sentinel = document.createElement('div');
-    sentinel.style.height = '1px';
-    hdr.after(sentinel);
-    new IntersectionObserver(([e]) => hdr.classList.toggle('stuck', !e.isIntersecting), { root: main, threshold: 1 }).observe(sentinel);
-  }
 }
 
 function editAccount(pk, idx) {
@@ -1040,7 +1558,10 @@ function editAccount(pk, idx) {
         </div>
         ${platform.fields.map(f => `<div class="form-group">
           <label class="form-label"><span class="icon">${f.icon}</span>${f.label}</label>
-          <input class="form-input" id="acct-${f.key}" value="${a[f.key] || ''}" placeholder="输入${f.label}">
+          <div style="display:flex;gap:4px">
+            <input class="form-input" id="acct-${f.key}" type="${f.masked ? 'password' : 'text'}" value="${a[f.key] || ''}" placeholder="输入${f.label}" style="flex:1">
+            ${f.masked ? `<button type="button" class="link-rm" onclick="const el=document.getElementById('acct-${f.key}');el.type=el.type==='password'?'text':'password';this.querySelector('.icon').textContent=el.type==='password'?'visibility':'visibility_off'" title="显示/隐藏" style="opacity:1"><span class="icon" style="font-size:16px">visibility</span></button>` : ''}
+          </div>
         </div>`).join('')}
       </div>
     </div>

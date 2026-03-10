@@ -14,83 +14,42 @@ import subprocess
 import sys
 import threading
 import time
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from decimal import Decimal
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from socketserver import ThreadingMixIn
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urlencode
 
-# ── 路径 ──
+import psycopg2
+import psycopg2.extras
+from odps import ODPS
 
-STUDIO_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(STUDIO_DIR)
-CONFIG_DIR = os.path.join(STUDIO_DIR, 'config')
-
-# ── MaxCompute ADS 表 ──
-
-ADS_TABLES = {
-    'project': {
-        'name': 'ads_xhs_project_bycontent_daily_agg',
-        'order': 'ds, project_id, attribution_period',
-    },
-    'note': {
-        'name': 'ads_xhs_note_bycontent_daily_agg',
-        'order': 'ds, project_id, attribution_period, note_id',
-    },
-    'content_theme': {
-        'name': 'ads_xhs_content_theme_bycontent_daily_agg',
-        'order': 'ds, project_id, attribution_period, content_theme',
-    },
-    'task_group': {
-        'name': 'ads_xhs_task_group_bytask_daily_agg',
-        'order': 'ds, attribution_period, ad_product_name, task_group_name',
-    },
-}
-
-# ── PostgreSQL 一致性检查 ──
-
-CHERK_DB = {
-    'host': os.environ.get('DB_HOST', ''),
-    'port': int(os.environ.get('DB_PORT', 5432)),
-    'dbname': 'data_cherk',
-    'user': os.environ.get('DB_USER', ''),
-    'password': os.environ.get('DB_PASSWORD', ''),
-}
-
-# ── PostgreSQL 维度基准 ──
-
-DIM_DB = {
-    'host': os.environ.get('DB_HOST', ''),
-    'port': int(os.environ.get('DB_PORT', 5432)),
-    'dbname': 'sync_dim',
-    'user': os.environ.get('DB_USER', ''),
-    'password': os.environ.get('DB_PASSWORD', ''),
-}
+from settings import (
+    STUDIO_DIR, PROJECT_ROOT, CONFIG_DIR, SERVER, CACHE,
+    MAXCOMPUTE, ADS_TABLES, POSTGRES, FEISHU, GLM, API_ROUTES, check_env,
+)
 
 # ── 缓存 ──
-
-CACHE_TTL = 3600  # 1 小时
-CACHE_MAX = 64    # 最大条目数
 
 _cache = {}
 _cache_lock = threading.Lock()
 _odps = None
-
 _DS_RE = re.compile(r'^\d{8}$')
 
 
 def _get_cache(key):
     with _cache_lock:
         entry = _cache.get(key)
-        if entry and time.time() - entry['ts'] < CACHE_TTL:
+        if entry and time.time() - entry['ts'] < CACHE['ttl']:
             return entry['data']
     return None
 
 
 def _set_cache(key, data):
     with _cache_lock:
-        if len(_cache) >= CACHE_MAX:
+        if len(_cache) >= CACHE['max_entries']:
             oldest = min(_cache, key=lambda k: _cache[k]['ts'])
             del _cache[oldest]
         _cache[key] = {'ts': time.time(), 'data': data}
@@ -101,14 +60,13 @@ def _set_cache(key, data):
 def get_odps():
     global _odps
     if _odps is None:
-        ak = os.environ.get('ALIYUN_ACCESS_KEY_ID', '')
-        sk = os.environ.get('ALIYUN_ACCESS_KEY_SECRET', '')
-        if not ak or not sk:
+        mc = MAXCOMPUTE
+        if not mc['access_key_id'] or not mc['access_key_secret']:
             raise RuntimeError('ALIYUN_ACCESS_KEY_ID / SECRET 未配置')
         _odps = ODPS(
-            ak, sk,
-            project='df_ch_530486',
-            endpoint='http://service.cn-hangzhou.maxcompute.aliyun.com/api',
+            mc['access_key_id'], mc['access_key_secret'],
+            project=mc['project'],
+            endpoint=mc['endpoint'],
         )
     return _odps
 
@@ -225,7 +183,7 @@ def query_project_names():
     cached = _get_cache('project_names')
     if cached:
         return cached
-    with psycopg2.connect(**CHERK_DB) as conn:
+    with psycopg2.connect(**POSTGRES['cherk']) as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(
                 'SELECT DISTINCT project_id, project_name '
@@ -247,7 +205,7 @@ def query_cherk(refresh=False):
     print('  查询 PostgreSQL: cherk_xhs_data_check_df ...', flush=True)
     t0 = time.time()
 
-    with psycopg2.connect(**CHERK_DB) as conn:
+    with psycopg2.connect(**POSTGRES['cherk']) as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(
                 'SELECT * FROM cherk_xhs_data_check_df '
@@ -296,9 +254,8 @@ def query_dim_stats(refresh=False):
 
     stats = {}  # project_id → { note: {total, active}, ... }
 
-    with psycopg2.connect(**DIM_DB) as conn:
+    with psycopg2.connect(**POSTGRES['dim']) as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            # 笔记: total=执行笔记(is_proxy='f'), active=复用笔记标记(is_backlink='t')
             cur.execute('''
                 SELECT b.project_id,
                        COUNT(DISTINCT CASE WHEN b.is_proxy = 'f' THEN b.note_id END) AS total,
@@ -312,7 +269,6 @@ def query_dim_stats(refresh=False):
                 stats.setdefault(pid, {})
                 stats[pid]['note'] = {'total': r['total'], 'active': r['active']}
 
-            # 任务组: total=全部, active=有 task_auth_status
             cur.execute('''
                 SELECT project_id,
                        COUNT(DISTINCT task_group_id) AS total,
@@ -326,7 +282,6 @@ def query_dim_stats(refresh=False):
                 stats.setdefault(pid, {})
                 stats[pid]['task_group'] = {'total': r['total'], 'active': r['active']}
 
-            # 创意: total=全部, active=有效(creativity_status有值)
             cur.execute('''
                 SELECT project_id,
                        COUNT(DISTINCT creativity_id) AS total,
@@ -340,7 +295,6 @@ def query_dim_stats(refresh=False):
                 stats.setdefault(pid, {})
                 stats[pid]['creative'] = {'total': r['total'], 'active': r['active']}
 
-            # 关键词: total=关键词数, active=0(无搜索词维度)
             cur.execute('''
                 SELECT project_id,
                        COUNT(DISTINCT keyword_id) AS total
@@ -353,7 +307,6 @@ def query_dim_stats(refresh=False):
                 stats.setdefault(pid, {})
                 stats[pid]['keyword'] = {'total': r['total'], 'active': 0}
 
-            # 定向: total=定向包数, active=0
             cur.execute('''
                 SELECT project_id,
                        COUNT(DISTINCT target_id) AS total
@@ -366,7 +319,6 @@ def query_dim_stats(refresh=False):
                 stats.setdefault(pid, {})
                 stats[pid]['target'] = {'total': r['total'], 'active': 0}
 
-            # 投流账户: total=账户数
             cur.execute('''
                 SELECT project_id,
                        COUNT(DISTINCT advertiser_id) AS total
@@ -393,6 +345,181 @@ def query_dim_stats(refresh=False):
     return data
 
 
+# ── 飞书 API ──
+
+def _feishu_tenant_token():
+    """获取飞书 tenant_access_token"""
+    cached = _get_cache('feishu_token')
+    if cached:
+        return cached
+
+    fs = FEISHU
+    url = f"{fs['base_url']}/auth/v3/tenant_access_token/internal"
+    body = json.dumps({
+        'app_id': fs['app_id'],
+        'app_secret': fs['app_secret'],
+    }).encode('utf-8')
+    req = urllib.request.Request(url, data=body, headers={'Content-Type': 'application/json'})
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        data = json.loads(resp.read())
+    if data.get('code') != 0:
+        raise RuntimeError(f"飞书认证失败: {data.get('msg')}")
+    token = data['tenant_access_token']
+    _set_cache('feishu_token', token)
+    return token
+
+
+def _feishu_get(path, params=None):
+    """飞书 GET 请求"""
+    token = _feishu_tenant_token()
+    url = f"{FEISHU['base_url']}{path}"
+    if params:
+        url += '?' + urlencode(params)
+    req = urllib.request.Request(url, headers={
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json',
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        body = json.loads(e.read().decode())
+        code = body.get('code', '')
+        msg = body.get('msg', '')
+        if code == 99991672:
+            raise RuntimeError('飞书应用缺少通讯录权限，请到飞书开放平台开通 contact:contact:readonly_as_app')
+        raise RuntimeError(f'飞书 API 错误 {code}: {msg}')
+
+
+def _feishu_list_departments(parent_id='0'):
+    """查询飞书某一层级的部门"""
+    all_depts = []
+    page_token = None
+    while True:
+        params = {'department_id_type': 'open_department_id', 'parent_department_id': parent_id, 'page_size': '50'}
+        if page_token:
+            params['page_token'] = page_token
+        data = _feishu_get('/contact/v3/departments', params)
+        if data.get('code') != 0:
+            raise RuntimeError(f"飞书部门查询失败: {data.get('msg')}")
+        items = data.get('data', {}).get('items', [])
+        all_depts.extend(items)
+        if not data.get('data', {}).get('has_more'):
+            break
+        page_token = data['data'].get('page_token')
+    return all_depts
+
+
+def _format_dept(d):
+    return {
+        'department_id': d.get('open_department_id', ''),
+        'name': d.get('name', ''),
+        'parent_id': d.get('parent_department_id', ''),
+        'leader_user_id': d.get('leader_user_id', ''),
+        'member_count': d.get('member_count', 0),
+        'status': d.get('status', {}),
+    }
+
+
+def query_feishu_departments(parent_id='0', recursive=False, refresh=False):
+    """查询飞书部门列表，recursive=True 递归获取所有子部门"""
+    cache_key = f'feishu_dept_{parent_id}_{"r" if recursive else "f"}'
+    if not refresh:
+        cached = _get_cache(cache_key)
+        if cached is not None:
+            return cached
+
+    print(f'  查询飞书部门: parent={parent_id} recursive={recursive} ...', flush=True)
+    top_depts = _feishu_list_departments(parent_id)
+    result = [_format_dept(d) for d in top_depts]
+
+    if recursive:
+        queue = [d.get('open_department_id', '') for d in top_depts]
+        while queue:
+            pid = queue.pop(0)
+            children = _feishu_list_departments(pid)
+            for c in children:
+                result.append(_format_dept(c))
+                queue.append(c.get('open_department_id', ''))
+
+    _set_cache(cache_key, result)
+    print(f'  完成: {len(result)} departments', flush=True)
+    return result
+
+
+def _feishu_list_users(department_id=None):
+    """查询飞书某部门的直属员工"""
+    all_users = []
+    page_token = None
+    while True:
+        params = {'department_id_type': 'open_department_id', 'page_size': '50'}
+        if department_id:
+            params['department_id'] = department_id
+        if page_token:
+            params['page_token'] = page_token
+        data = _feishu_get('/contact/v3/users', params)
+        if data.get('code') != 0:
+            raise RuntimeError(f"飞书员工查询失败: {data.get('msg')}")
+        items = data.get('data', {}).get('items', [])
+        all_users.extend(items)
+        if not data.get('data', {}).get('has_more'):
+            break
+        page_token = data['data'].get('page_token')
+    return all_users
+
+
+def _format_user(u):
+    return {
+        'user_id': u.get('user_id', ''),
+        'open_id': u.get('open_id', ''),
+        'name': u.get('name', ''),
+        'en_name': u.get('en_name', ''),
+        'email': u.get('email', ''),
+        'mobile': u.get('mobile', ''),
+        'avatar': u.get('avatar', {}).get('avatar_72', ''),
+        'department_ids': u.get('department_ids', []),
+        'status': u.get('status', {}),
+        'job_title': u.get('job_title', ''),
+    }
+
+
+def query_feishu_employees(department_id=None, refresh=False):
+    """查询飞书员工列表。department_id=None 时递归查询全部部门员工"""
+    cache_key = f'feishu_emp_{department_id or "all"}'
+    if not refresh:
+        cached = _get_cache(cache_key)
+        if cached is not None:
+            return cached
+
+    print(f'  查询飞书员工: dept={department_id or "全部"} ...', flush=True)
+
+    if department_id:
+        raw = _feishu_list_users(department_id)
+        result = [_format_user(u) for u in raw]
+    else:
+        # 递归所有部门获取全量员工，按 open_id 去重
+        depts = query_feishu_departments(parent_id='0', recursive=True)
+        seen = set()
+        result = []
+        # 先查根部门直属
+        for u in _feishu_list_users():
+            fu = _format_user(u)
+            if fu['open_id'] not in seen:
+                seen.add(fu['open_id'])
+                result.append(fu)
+        # 再查每个子部门
+        for dept in depts:
+            for u in _feishu_list_users(dept['department_id']):
+                fu = _format_user(u)
+                if fu['open_id'] not in seen:
+                    seen.add(fu['open_id'])
+                    result.append(fu)
+
+    _set_cache(cache_key, result)
+    print(f'  完成: {len(result)} employees', flush=True)
+    return result
+
+
 # ── Config 读写 ──
 
 def _read_config(name):
@@ -411,17 +538,10 @@ def _write_config(name, data):
 
 # ── HTTP Handler ──
 
-MAX_BODY = 1 * 1024 * 1024  # 1 MB
-
-import psycopg2
-import psycopg2.extras
-from odps import ODPS
+R = API_ROUTES  # 路由别名
 
 
 class APIHandler(SimpleHTTPRequestHandler):
-    _chat_first = True
-    _chat_lock = threading.Lock()
-    _chat_busy = False
 
     # ── CORS ──
 
@@ -432,7 +552,7 @@ class APIHandler(SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
-    def _read_body(self, max_size=MAX_BODY):
+    def _read_body(self, max_size=SERVER['max_body']):
         length = int(self.headers.get('Content-Length', 0))
         if length > max_size:
             raise ValueError(f'请求体过大: {length} > {max_size}')
@@ -443,17 +563,13 @@ class APIHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         parsed = urlparse(self.path)
         try:
-            if parsed.path == '/api/chat':
+            if parsed.path == R['chat']:
                 self.handle_chat()
-            elif parsed.path == '/api/chat/reset':
-                with APIHandler._chat_lock:
-                    APIHandler._chat_first = True
-                self.send_json(200, {'ok': True})
-            elif parsed.path == '/api/projects/save':
+            elif parsed.path == R['projects_save']:
                 data = json.loads(self._read_body())
                 _write_config('projects.json', data)
                 self.send_json(200, {'ok': True})
-            elif parsed.path == '/api/accounts/save':
+            elif parsed.path == R['accounts_save']:
                 data = json.loads(self._read_body())
                 _write_config('accounts.json', data)
                 self.send_json(200, {'ok': True})
@@ -465,73 +581,49 @@ class APIHandler(SimpleHTTPRequestHandler):
             self.send_json(500, {'error': str(e)})
 
     def handle_chat(self):
-        with APIHandler._chat_lock:
-            if APIHandler._chat_busy:
-                self.send_json(429, {'error': '正在处理中，请稍后'})
-                return
-            APIHandler._chat_busy = True
-
+        """流式代理 GLM API，用 curl 子进程避免 Python HTTP 缓冲"""
         try:
             body = json.loads(self._read_body(100 * 1024))
-            message = body.get('message', '')
+            messages = body.get('messages', [])
+            if not messages:
+                self.send_json(400, {'error': 'messages required'})
+                return
 
-            args = ['claude', '--pipe', '--output-format', 'stream-json']
-            if not APIHandler._chat_first:
-                args.append('--continue')
+            payload = json.dumps({
+                'model': GLM['model'],
+                'messages': messages[-20:],
+                'stream': True,
+            }, ensure_ascii=False)
 
-            env = {k: v for k, v in os.environ.items() if k != 'CLAUDECODE'}
             proc = subprocess.Popen(
-                args,
-                stdin=subprocess.PIPE,
+                ['curl', '-sN', '--max-time', '60',
+                 '-X', 'POST', GLM['url'],
+                 '-H', 'Content-Type: application/json',
+                 '-H', f'Authorization: Bearer {GLM["key"]}',
+                 '-d', payload],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                cwd=PROJECT_ROOT,
-                env=env,
             )
-
-            proc.stdin.write(message.encode('utf-8'))
-            proc.stdin.close()
 
             self.send_response(200)
             self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
             self.send_header('Cache-Control', 'no-cache')
-            self.send_header('Connection', 'keep-alive')
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
 
             try:
-                while True:
-                    line = proc.stdout.readline()
-                    if not line:
-                        break
-                    line = line.decode('utf-8').strip()
-                    if not line:
-                        continue
-                    try:
-                        evt = json.loads(line)
-                        if evt.get('type') == 'content_block_delta':
-                            delta = evt.get('delta', {})
-                            if delta.get('type') == 'text_delta':
-                                sse = f"data: {json.dumps({'text': delta['text']}, ensure_ascii=False)}\n\n"
-                                self.wfile.write(sse.encode('utf-8'))
-                                self.wfile.flush()
-                    except (json.JSONDecodeError, KeyError):
-                        pass
+                for line in proc.stdout:
+                    self.wfile.write(line)
+                    self.wfile.flush()
             except BrokenPipeError:
                 proc.kill()
 
             proc.wait()
-            APIHandler._chat_first = False
-
+        except Exception as e:
             try:
-                self.wfile.write(b'data: [DONE]\n\n')
-                self.wfile.flush()
-            except BrokenPipeError:
+                self.send_json(500, {'error': str(e)})
+            except Exception:
                 pass
-
-        finally:
-            with APIHandler._chat_lock:
-                APIHandler._chat_busy = False
 
     # ── GET ──
 
@@ -539,16 +631,40 @@ class APIHandler(SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
 
-        if path == '/api/ads':
+        if path == R['ads']:
             self.handle_ads(parsed)
-        elif path == '/api/project_names':
+        elif path == R['project_names']:
             try:
                 self.send_json(200, query_project_names())
             except Exception as e:
                 self.send_json(500, {'error': str(e)})
-        elif path == '/api/cherk':
+        elif path == R['cherk']:
             self.handle_cherk(parsed)
-        elif path == '/api/dim-stats':
+        elif path == R['feishu_departments']:
+            params = parse_qs(parsed.query)
+            parent_id = params.get('parent_id', ['0'])[0]
+            recursive = params.get('recursive', ['0'])[0] == '1'
+            refresh = params.get('refresh', ['0'])[0] == '1'
+            try:
+                depts = query_feishu_departments(parent_id, recursive=recursive, refresh=refresh)
+                self.send_json(200, {'departments': depts})
+            except Exception as e:
+                self.send_json(500, {'error': str(e)})
+        elif path == R['feishu_employees']:
+            params = parse_qs(parsed.query)
+            dept_id = params.get('department_id', [None])[0]
+            refresh = params.get('refresh', ['0'])[0] == '1'
+            try:
+                emps = query_feishu_employees(dept_id, refresh=refresh)
+                self.send_json(200, {'employees': emps})
+            except Exception as e:
+                self.send_json(500, {'error': str(e)})
+        elif path == R['feishu_config']:
+            app_id = FEISHU['app_id']
+            secret = FEISHU['app_secret']
+            masked = secret[:4] + '****' + secret[-4:] if len(secret) > 8 else '****'
+            self.send_json(200, {'app_id': app_id, 'secret_masked': masked, 'secret': secret})
+        elif path == R['dim_stats']:
             params = parse_qs(parsed.query)
             refresh = 'refresh' in params
             try:
@@ -557,7 +673,7 @@ class APIHandler(SimpleHTTPRequestHandler):
                 self.send_json(500, {'error': str(e)})
         elif path == '/':
             self.send_response(302)
-            self.send_header('Location', '/ads-report.html')
+            self.send_header('Location', SERVER['default_redirect'])
             self.end_headers()
         elif path in ('/projects.json', '/accounts.json'):
             name = os.path.basename(path)
@@ -619,31 +735,19 @@ class ThreadedServer(ThreadingMixIn, HTTPServer):
 
 # ── Startup ──
 
-def check_env():
-    """启动时检查关键环境变量"""
-    warns = []
-    if not os.environ.get('ALIYUN_ACCESS_KEY_ID'):
-        warns.append('ALIYUN_ACCESS_KEY_ID 未设置 → MaxCompute API 不可用')
-    if not os.environ.get('DB_HOST'):
-        warns.append('DB_HOST 未设置 → PostgreSQL API 不可用')
-    for w in warns:
-        print(f'  ⚠ {w}')
-    return warns
-
-
 if __name__ == '__main__':
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else SERVER['port']
 
     os.chdir(STUDIO_DIR)
 
     print(f'YICE Data Studio: http://localhost:{port}')
-    print(f'  /             → ads-report.html')
-    print(f'  /api/ads      → MaxCompute ADS 报表')
-    print(f'  /api/cherk    → PostgreSQL 一致性检查')
-    print(f'  /api/chat     → Claude Code 对话')
-    check_env()
+    for key, route in API_ROUTES.items():
+        print(f'  {route}')
+    warns = check_env()
+    for w in warns:
+        print(f'  ⚠ {w}')
 
-    server = ThreadedServer(('0.0.0.0', port), APIHandler)
+    server = ThreadedServer((SERVER['host'], port), APIHandler)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

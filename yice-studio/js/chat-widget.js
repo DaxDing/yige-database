@@ -131,7 +131,7 @@
     <span class="chat-header-status">● 在线</span>
   </div>
   <div class="chat-messages" id="chat-messages">
-    <div class="chat-msg bot">你好！我是 YICE 助手，由 Claude Code 驱动。我可以直接查数仓、读文件、跑分析。有什么想了解的？</div>
+    <div class="chat-msg bot">你好！我是 YICE 助手，有什么想了解的？</div>
   </div>
   <div id="chat-file-area"></div>
   <div class="chat-input-area">
@@ -186,6 +186,9 @@
     document.getElementById('chat-file-area').innerHTML = '';
   }
 
+  /* ═══ Chat State ═══ */
+  var chatHistory = [{ role: 'system', content: '你是 YICE 助手，一个专业的小红书营销数据分析助手。简洁、专业地回答问题。' }];
+
   /* ═══ Send ═══ */
   async function send() {
     var input = document.getElementById('chat-input');
@@ -211,6 +214,8 @@
     area.innerHTML += '<div class="chat-msg user">' + userHtml + '</div>';
     input.value = '';
 
+    chatHistory.push({ role: 'user', content: contentMsg });
+
     var botEl = document.createElement('div');
     botEl.className = 'chat-msg bot';
     botEl.innerHTML = '<span class="typing-dot">●</span><span class="typing-dot">●</span><span class="typing-dot">●</span>';
@@ -221,7 +226,7 @@
       var res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: contentMsg })
+        body: JSON.stringify({ messages: chatHistory.slice(-20) })
       });
 
       if (!res.ok) throw new Error('API ' + res.status);
@@ -243,13 +248,14 @@
           if (data === '[DONE]') continue;
           try {
             var evt = JSON.parse(data);
-            if (evt.text) { full += evt.text; botEl.textContent = full; area.scrollTop = area.scrollHeight; }
-            if (evt.error) throw new Error(evt.error);
+            var delta = evt.choices && evt.choices[0] && evt.choices[0].delta;
+            if (delta && delta.content) { full += delta.content; botEl.textContent = full; area.scrollTop = area.scrollHeight; }
           } catch (e) { if (e instanceof SyntaxError) continue; throw e; }
         }
       }
 
       if (!full) full = '(无响应)';
+      chatHistory.push({ role: 'assistant', content: full });
     } catch (e) {
       botEl.textContent = '请求失败: ' + e.message;
     }

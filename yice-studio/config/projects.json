@@ -2,7 +2,7 @@
   {
     "project_id": "000010",
     "project_name": "大厨D12/年货节",
-    "department": "项目二部",
+    "department": "项目2部",
     "marketing_target": "产品种草",
     "start_time": "2025-11-20",
     "end_time": "2026-02-11",
@@ -10,12 +10,36 @@
       "6209396"
     ],
     "members": [
-      "只狼",
-      "麦兜",
-      "日立",
-      "Bella",
-      "诺诺",
-      "Zoe"
+      {
+        "name": "只狼",
+        "open_id": "ou_29565f4d1cdb8d12d88d4155d1d38d3a",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_0088_fe59f0ca-8f0e-4229-b238-4d472e9c85bg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "麦兜",
+        "open_id": "ou_4468dd8ffcd705bd297f3f72bbff743d",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00k1_d3de06a2-2d05-4a5e-a33a-70ea1836c42g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "日立",
+        "open_id": "ou_fd3b9621e4db43ba2823ace45fccb590",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v2_fe84aa0d-8058-486f-9049-a64fdef131cg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "Bella",
+        "open_id": "ou_859b27339943180438dc1620a39ded00",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00o1_d7f2fcbb-5110-49f4-b63e-7dd7bfa4541g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "诺诺",
+        "open_id": "ou_a7d47953088998a78649d35530e8353c",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00n7_038b3d5f-d553-467c-b776-02a3a472898g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "Zoe",
+        "open_id": "ou_9199523df1bf59aafa3cd12cd4a0b9dd",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00ct_2122500a-8c7c-4d3a-a61c-4f9d21de29ag~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      }
     ],
     "links": {
       "content_exec": [],
@@ -26,13 +50,22 @@
       "jg": null,
       "pgy": null,
       "xh": null,
-      "feishu": null
-    }
+      "feishu": "feishu_1"
+    },
+    "brand_user_ids": [
+      "5cf89d080000000018003029"
+    ],
+    "departments": [
+      {
+        "name": "项目2部",
+        "department_id": "od-f2d878a26b047db085ee5f385510b338"
+      }
+    ]
   },
   {
     "project_id": "000017",
     "project_name": "泡泡骚年货节",
-    "department": "项目二部",
+    "department": "项目2部",
     "marketing_target": "产品种草",
     "start_time": null,
     "end_time": null,
@@ -49,12 +82,18 @@
       "jg": null,
       "pgy": null,
       "xh": null
-    }
+    },
+    "departments": [
+      {
+        "name": "项目2部",
+        "department_id": "od-f2d878a26b047db085ee5f385510b338"
+      }
+    ]
   },
   {
     "project_id": "000023",
     "project_name": "比乐26年Q1小红书投放",
-    "department": "项目二部",
+    "department": "项目2部",
     "marketing_target": "产品种草",
     "start_time": "2026-01-01",
     "end_time": "2026-03-31",
@@ -62,10 +101,26 @@
       "6472395"
     ],
     "members": [
-      "日立",
-      "萱萱",
-      "彭程",
-      "麦兜"
+      {
+        "name": "日立",
+        "open_id": "ou_fd3b9621e4db43ba2823ace45fccb590",
+        "avatar": ""
+      },
+      {
+        "name": "萱萱",
+        "open_id": "ou_b4ed8639d1513a66a245a15de81840de",
+        "avatar": ""
+      },
+      {
+        "name": "彭程",
+        "open_id": "ou_069000a9ec6d4a2e4f1665fe272c3b62",
+        "avatar": ""
+      },
+      {
+        "name": "麦兜",
+        "open_id": "ou_4468dd8ffcd705bd297f3f72bbff743d",
+        "avatar": ""
+      }
     ],
     "links": {
       "content_exec": [
@@ -77,13 +132,23 @@
     "account_refs": {
       "jg": null,
       "pgy": null,
-      "xh": null
-    }
+      "xh": null,
+      "feishu": null
+    },
+    "brand_user_ids": [
+      "5cf89d080000000018003029"
+    ],
+    "departments": [
+      {
+        "name": "项目2部",
+        "department_id": "od-f2d878a26b047db085ee5f385510b338"
+      }
+    ]
   },
   {
     "project_id": "000024",
     "project_name": "阿里指定-佳期-海尔-26年2月-星伴计划-空调(内容+投流)",
-    "department": "项目一部",
+    "department": "项目1部",
     "marketing_target": "产品种草",
     "start_time": "2026-02-12",
     "end_time": "2026-03-31",
@@ -92,13 +157,41 @@
       "8517230"
     ],
     "members": [
-      "玮哥",
-      "螃蟹",
-      "一一",
-      "蔡蔡",
-      "渔夫",
-      "小如",
-      "10号"
+      {
+        "name": "玮哥",
+        "open_id": "ou_ca006ac868f15903757e66f2119e44d1",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00ov_5d9865d3-bd97-4ef4-aa1e-a8e7c06570dg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "螃蟹",
+        "open_id": "ou_a3a8a24245c8107d6127446b3196ef40",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00og_5b01e27c-bfed-491d-886a-8b8707d2dc9g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "一一",
+        "open_id": "ou_29995c7b5c7e1c755eba7d378ee16ae2",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00n5_97726ad2-a304-4206-a7ef-bc680632f07g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "蔡蔡",
+        "open_id": "ou_fd8c200cd413b68d410dac7c2b418a27",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00ta_ea376c99-4738-48bc-9dce-3344fed271dg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "渔夫",
+        "open_id": "ou_0f8f5c9b9c661e69c3e87f5f026a7117",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00rm_7a4b6697-5da0-4a8d-8b88-5cc7fad9d47g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "小如",
+        "open_id": "ou_7d59a8e7936885310872c3cc433c39f1",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00qi_852a2300-1b7e-4727-ab7f-3617123dfc7g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "10号",
+        "open_id": "ou_9f1313257b082210317e8df9a155240c",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00tb_7adc3af9-a323-4112-a7a2-abf67ec50a4g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      }
     ],
     "links": {
       "content_exec": [
@@ -112,12 +205,18 @@
       "jg": null,
       "pgy": null,
       "xh": null
-    }
+    },
+    "departments": [
+      {
+        "name": "项目1部",
+        "department_id": "od-277f5d2530064b94dcf9d9cd7f0d3ed9"
+      }
+    ]
   },
   {
     "project_id": "000027",
     "project_name": "安莱亚3月",
-    "department": "项目一部",
+    "department": "项目1部",
     "marketing_target": "产品种草",
     "start_time": "2026-02-14",
     "end_time": "2026-03-31",
@@ -127,11 +226,31 @@
       "8517830"
     ],
     "members": [
-      "77",
-      "渔夫",
-      "小如",
-      "佳怡",
-      "10号"
+      {
+        "name": "77",
+        "open_id": "ou_071ad5b70b815e1affe13c2637df7256",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00qv_05e4e239-5883-4c55-85aa-91662e7a78eg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "渔夫",
+        "open_id": "ou_0f8f5c9b9c661e69c3e87f5f026a7117",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00rm_7a4b6697-5da0-4a8d-8b88-5cc7fad9d47g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "小如",
+        "open_id": "ou_7d59a8e7936885310872c3cc433c39f1",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00qi_852a2300-1b7e-4727-ab7f-3617123dfc7g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "佳怡",
+        "open_id": "ou_b251468ba6bbbb71e1634af66e2572dc",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00ui_dfadfee1-8bdd-4082-8538-1c740067ee1g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      },
+      {
+        "name": "10号",
+        "open_id": "ou_9f1313257b082210317e8df9a155240c",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00tb_7adc3af9-a323-4112-a7a2-abf67ec50a4g~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      }
     ],
     "links": {
       "content_exec": [
@@ -144,6 +263,12 @@
       "jg": null,
       "pgy": null,
       "xh": null
-    }
+    },
+    "departments": [
+      {
+        "name": "项目1部",
+        "department_id": "od-277f5d2530064b94dcf9d9cd7f0d3ed9"
+      }
+    ]
   }
 ]

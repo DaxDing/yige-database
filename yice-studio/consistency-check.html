@@ -610,9 +610,9 @@ body {
       </div>
     </div>
     <nav class="header-nav">
-      <a class="nav-tab" href="project-management.html">项目管理</a>
       <a class="nav-tab" href="ads-report.html">业务看板</a>
       <a class="nav-tab active" href="consistency-check.html">数据检查</a>
+      <a class="nav-tab" href="project-management.html">项目管理</a>
     </nav>
     <div class="header-right">
       <button class="hdr-btn" id="sync-btn" onclick="refreshAll()" title="刷新数据">
@@ -628,13 +628,25 @@ body {
         </div>
       </div>
       <div class="hdr-menu-wrap">
-        <button class="hdr-btn" onclick="toggleMenu('user-menu')" title="用户">
-          <span class="icon">account_circle</span>
+        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="丁旭义">
+          <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" alt="丁旭义" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
         </button>
-        <div class="hdr-menu" id="user-menu">
-          <button class="hdr-menu-item"><span class="icon">apartment</span>部门</button>
-          <div style="height:1px;background:var(--border);margin:2px 8px"></div>
-          <button class="hdr-menu-item"><span class="icon">logout</span>退出</button>
+        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0">
+          <div style="padding:20px 20px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+            <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border-light,#f3f4f6)">
+            <div style="text-align:center">
+              <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:2px">
+                <span style="font-size:14px;font-weight:600;color:var(--text-1)">丁旭义</span>
+                <span style="font-size:10px;padding:1px 8px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-weight:500;letter-spacing:0.5px">root</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--text-3)">
+                <span class="icon" style="font-size:13px">corporate_fare</span>EMT执行管理团队
+              </div>
+            </div>
+          </div>
+          <div style="padding:4px">
+            <button class="hdr-menu-item"><span class="icon">logout</span>退出登录</button>
+          </div>
         </div>
       </div>
     </div>
@@ -819,7 +831,7 @@ function transformCherkData(rows, targetDt) {
   // 以 projects.json 为基准构建项目列表
   const projectMap = {};
   _projectList.forEach(p => {
-    projectMap[p.id] = { id: p.id, name: p.name, checks: {} };
+    projectMap[p.id] = { id: p.id, name: p.name, end_time: p.end_time || '', checks: {} };
   });
 
   // 填充 cherk 检查结果
@@ -910,7 +922,7 @@ async function loadProjectList() {
     const resp = await fetch('projects.json');
     if (resp.ok) {
       const list = await resp.json();
-      _projectList = list.map(p => ({ id: p.project_id, name: p.project_name }));
+      _projectList = list.map(p => ({ id: p.project_id, name: p.project_name, end_time: p.end_time || '' }));
     }
   } catch (_) {}
 }
@@ -1042,7 +1054,8 @@ function renderSidebar() {
   let h = `<div class="sidebar-section">PROJECT</div>`;
   h += `<div class="sidebar-item ${selected === '__all__' ? 'active' : ''}" data-id="__all__"><span class="s-name">全部</span><span class="s-count">${PROJECTS.length}</span></div>`;
   h += `<div class="sidebar-gap"></div>`;
-  PROJECTS.forEach(p => {
+  const sorted = [...PROJECTS].sort((a, b) => (b.end_time || '').localeCompare(a.end_time || ''));
+  sorted.forEach(p => {
     const st = projectStatus(p), s = summarize(p);
     const issues = s.fail;
     h += `<div class="sidebar-item ${selected === p.id ? 'active' : ''}" data-id="${p.id}"><span class="s-dot ${st}"></span><span class="s-name">${p.name}</span>${issues > 0 ? `<span class="s-count warn">${issues}</span>` : ''}</div>`;

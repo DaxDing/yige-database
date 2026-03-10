@@ -334,6 +334,30 @@ a.nav-tab { text-decoration: none; }
 .task-run-btn.running { color: var(--blue); border-color: var(--blue-border); background: var(--blue-light); pointer-events: none; }
 .task-run-btn.running .icon { animation: spin 0.8s linear infinite; }
 
+/* ═══ Task Running Border ═══ */
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes task-border-spin { to { --border-angle: 360deg; } }
+.task-card.running {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(var(--surface, #fff), var(--surface, #fff)) padding-box,
+    conic-gradient(from var(--border-angle), #f59e0b, #fbbf24, #fde68a, transparent 40%, #f59e0b) border-box;
+  animation: task-border-spin 2s linear infinite;
+  box-shadow: 0 0 20px rgba(245,158,11,0.2);
+}
+.shell.refreshing {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(var(--bg, #f8fafc), var(--bg, #f8fafc)) padding-box,
+    conic-gradient(from var(--border-angle), #f59e0b, #fbbf24, #fde68a, transparent 30%, #f59e0b) border-box;
+  animation: task-border-spin 1.5s linear infinite;
+  box-shadow: inset 0 0 24px rgba(245,158,11,0.08);
+}
+
 /* ═══ Task Modal ═══ */
 .task-modal-backdrop {
   position: fixed; inset: 0; background: rgba(0,0,0,0.25);
@@ -923,15 +947,7 @@ a.nav-tab { text-decoration: none; }
 .placeholder-module p { font-size: 13px; }
 
 /* ═══ Loading ═══ */
-.loading-bar {
-  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 999;
-  background: linear-gradient(90deg, var(--blue) 0%, #60a5fa 50%, var(--blue) 100%);
-  background-size: 200% 100%;
-  animation: loading-slide 1.2s ease-in-out infinite;
-  opacity: 0; transition: opacity 0.2s;
-}
-
-.loading-bar.active { opacity: 1; }
+.loading-bar { display: none; }
 
 @keyframes loading-slide {
   0% { background-position: 200% 0; }
@@ -1004,9 +1020,9 @@ a.nav-tab { text-decoration: none; }
       </div>
     </div>
     <nav class="header-nav" id="header-nav">
-      <a class="nav-tab" href="project-management.html">项目管理</a>
       <a class="nav-tab active" href="ads-report.html" onclick="event.preventDefault(); renderAdsModule(); document.querySelectorAll('#header-nav .nav-tab').forEach(e=>e.classList.remove('active')); this.classList.add('active');">业务看板</a>
       <a class="nav-tab" href="consistency-check.html">数据检查</a>
+      <a class="nav-tab" href="project-management.html">项目管理</a>
     </nav>
     <div class="header-right">
       <button class="hdr-btn" id="sync-btn" onclick="refreshAll()" title="刷新数据">
@@ -1022,13 +1038,25 @@ a.nav-tab { text-decoration: none; }
         </div>
       </div>
       <div class="hdr-menu-wrap">
-        <button class="hdr-btn" onclick="toggleMenu('user-menu')" title="用户">
-          <span class="icon">account_circle</span>
+        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="丁旭义">
+          <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" alt="丁旭义" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
         </button>
-        <div class="hdr-menu" id="user-menu">
-          <button class="hdr-menu-item"><span class="icon">apartment</span>部门</button>
-          <div style="height:1px;background:var(--border);margin:2px 8px"></div>
-          <button class="hdr-menu-item"><span class="icon">logout</span>退出</button>
+        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0">
+          <div style="padding:20px 20px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+            <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border-light,#f3f4f6)">
+            <div style="text-align:center">
+              <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:2px">
+                <span style="font-size:14px;font-weight:600;color:var(--text-1)">丁旭义</span>
+                <span style="font-size:10px;padding:1px 8px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-weight:500;letter-spacing:0.5px">root</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--text-3)">
+                <span class="icon" style="font-size:13px">corporate_fare</span>EMT执行管理团队
+              </div>
+            </div>
+          </div>
+          <div style="padding:4px">
+            <button class="hdr-menu-item"><span class="icon">logout</span>退出登录</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1284,7 +1312,8 @@ function fmtCompact(val, fmt) {
    ═══════════════════════════════════════════ */
 
 function setLoading(on) {
-  document.getElementById('loading-bar').classList.toggle('active', on);
+  const shell = document.querySelector('.shell');
+  if (shell) shell.classList.toggle('refreshing', on);
   const btn = document.getElementById('sync-btn');
   if (btn) { btn.disabled = on; btn.classList.toggle('spinning', on); }
 }
@@ -1319,8 +1348,8 @@ function _loadFromLocal() {
   } catch (_) { return null; }
 }
 
-async function loadData(refresh = false) {
-  setLoading(true);
+async function loadData(refresh = false, silent = false) {
+  if (!silent) setLoading(true);
 
   // 1) 后端 API
   try {
@@ -1379,17 +1408,22 @@ async function loadData(refresh = false) {
 
 async function refreshAll() {
   const btn = document.getElementById('sync-btn');
+  const shell = document.querySelector('.shell');
   btn.classList.add('spinning');
+  shell.classList.add('refreshing');
   showToast('正在刷新数据…', true);
   const t0 = Date.now();
   await Promise.allSettled([
     loadData(true),
     fetch('/api/cherk?refresh=1'),
+    fetch('/api/feishu/departments?recursive=1&refresh=1'),
+    fetch('/api/feishu/employees?refresh=1'),
   ]);
   renderSidebar();
   renderToolbar();
   renderContent();
   btn.classList.remove('spinning');
+  shell.classList.remove('refreshing');
   const sec = ((Date.now() - t0) / 1000).toFixed(1);
   showToast('刷新完成 ' + sec + 's');
 }
@@ -2087,7 +2121,7 @@ function renderScheduledTasks() {
       ? '<span class="icon" style="font-size:14px;color:var(--green)">check_circle</span>'
       : '<span class="icon" style="font-size:14px;color:var(--red)">error</span>';
     html += `
-      <div class="task-card" style="cursor:pointer" onclick="openTaskModal('${t.id}')">
+      <div class="task-card" id="task-card-${t.id}" style="cursor:pointer" onclick="openTaskModal('${t.id}')">
         <div class="task-icon ${t.icon}"><span class="icon">smart_toy</span></div>
         <div class="task-info">
           <div class="task-name">${t.name} <span style="font-family:var(--mono);font-size:10px;color:var(--text-3);font-weight:400;margin-left:6px">${t.id}</span></div>
@@ -2118,6 +2152,9 @@ function runTask(id) {
   if (!btn || btn.classList.contains('running')) return;
   btn.classList.add('running');
   btn.innerHTML = '<span class="icon">progress_activity</span>';
+
+  const card = document.getElementById('task-card-' + id);
+  if (card) card.classList.add('running');
 
   // 模拟执行
   const duration = (1 + Math.random() * 4).toFixed(1);
@@ -2395,10 +2432,10 @@ async function init() {
     _pickDefaultDate();
     dataMode = 'cache';
     renderAdsModule();
-    showToast('已加载缓存，正在更新…', true);
+    showToast('已加载缓存');
 
-    // 2) 后台静默刷新
-    loadData().then(() => {
+    // 2) 后台静默刷新（silent=true 不显示 loading bar）
+    loadData(false, true).then(() => {
       _pickDefaultDate();
       renderSidebar();
       renderToolbar();
