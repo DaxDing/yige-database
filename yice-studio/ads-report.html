@@ -1360,12 +1360,14 @@ async function loadProjectNames() {
 async function refreshAll() {
   const btn = document.getElementById('sync-btn');
   btn.classList.add('spinning');
-  // 清除当前 tab 缓存，重新加载
-  const key = activeTab;
-  if (_tableLoaded[key]) delete _tableLoaded[key];
-  await ensureTabData(key);
+  // 清除所有 tab 缓存
+  Object.keys(_tableLoaded).forEach(k => delete _tableLoaded[k]);
+  Object.keys(DATA).forEach(k => delete DATA[k]);
+  Object.keys(PROJECT_NAMES).forEach(k => delete PROJECT_NAMES[k]);
+  // 重新加载当前 tab
+  await ensureTabData(activeTab);
   _pickDefaultDate();
-  if (key === 'project') filters.dt = 'all';
+  if (activeTab === 'project') filters.dt = 'all';
   renderSidebar();
   renderToolbar();
   renderContent(false);
