@@ -2139,10 +2139,12 @@ function switchTab(key) {
     return;
   }
 
-  setTimeout(() => {
+  ensureData().then(() => {
+    _pickDefaultDate();
+    if (key === 'project') filters.dt = 'all';
     renderToolbar();
     renderContent(false);
-  }, 300);
+  });
 }
 
 /* ═══════════════════════════════════════════
@@ -2469,27 +2471,29 @@ function _pickDefaultDate() {
   else if (allDates.size > 0) filters.dt = Array.from(allDates).sort().pop();
 }
 
-async function init() {
-  // 1) 先用 localStorage 缓存秒开
+let _dataLoaded = false;
+
+async function ensureData() {
+  if (_dataLoaded) return;
   const cached = _loadFromLocal();
   if (cached) {
     _applyData(cached);
     dataMode = 'cache';
-    switchTab(activeTab);
-    showToast('已加载缓存');
-
+    _dataLoaded = true;
     // 后台静默刷新
-    loadData(false, true).then(() => {
-      showToast('数据已同步');
-    });
+    loadData(false, true).then(() => { _dataLoaded = true; });
     return;
   }
-
-  // 无缓存：显示加载动画
   setLoading(true);
   const tbl = document.getElementById('tbl-section');
   if (tbl) tbl.innerHTML = '<div class="filter-loading"><span class="icon spinner">progress_activity</span></div>';
   await loadData();
+  _dataLoaded = true;
+}
+
+async function init() {
+  // 默认 tab（定时任务）不需要 ADS 数据，秒开
+  renderSidebar();
   switchTab(activeTab);
 }
 
