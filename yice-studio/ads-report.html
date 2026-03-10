@@ -1357,18 +1357,12 @@ async function loadProjectNames() {
   } catch (_) {}
 }
 
-async function refreshAll() {
+function refreshAll() {
   const btn = document.getElementById('sync-btn');
   btn.classList.add('spinning');
   // 清除所有已加载标记，切 tab 时会重新请求
   Object.keys(_tableLoaded).forEach(k => delete _tableLoaded[k]);
-  // 重新加载当前 tab
-  await ensureTabData(activeTab);
-  _pickDefaultDate();
-  if (activeTab === 'project') filters.dt = 'all';
-  renderSidebar();
-  renderToolbar();
-  renderContent(false);
+  switchTab(activeTab);
   btn.classList.remove('spinning');
   showToast('已刷新');
 }
