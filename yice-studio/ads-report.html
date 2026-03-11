@@ -622,7 +622,6 @@ a.nav-tab { text-decoration: none; }
 .cal-footer-btn.primary:hover { background: #1d4ed8; }
 
 .chip-group { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-
 .chip {
   font-family: var(--ui); font-size: 12px; font-weight: 500;
   padding: 5px 14px; border-radius: 999px;
@@ -1079,8 +1078,8 @@ a.nav-tab { text-decoration: none; }
 const METRIC_GROUPS_BYCONTENT = [
   { label: '投入', tint: 'blue', cols: [
     { key: 'fee', label: '总消费', fmt: 'currency' },
-    { key: 'ad_fee', label: '投流', fmt: 'currency' },
-    { key: 'kols_fee', label: '蒲公英', fmt: 'currency' },
+    { key: 'ad_fee', label: '投流金额', fmt: 'currency' },
+    { key: 'kols_fee', label: '蒲公英金额', fmt: 'currency' },
   ]},
   { label: '流量', tint: 'green', cols: [
     { key: 'note_count', label: '笔记数', fmt: 'int' },
@@ -1180,17 +1179,23 @@ const TABS = {
     label: '任务组分析', icon: 'assignment', iconClass: 'task_group',
     file: 'data/ads_task_group.json',
     dims: [
-      { key: 'ad_product_name', label: '产品', w: 100 },
-      { key: 'task_group_name', label: '任务组', w: 140 },
       { key: 'dt', label: '日期', w: 100 },
+      { key: 'task_group_name', label: '任务组', w: 140 },
+      { key: 'ad_product_name', label: '产品', w: 100 },
     ],
     groups: [
+      { label: '投入', tint: 'blue', cols: [
+        { key: 'fee', label: '总消费', fmt: 'currency' },
+        { key: 'ad_fee', label: '投流金额', fmt: 'currency' },
+        { key: 'kols_fee', label: '蒲公英金额', fmt: 'currency' },
+      ]},
       { label: '流量', tint: 'green', cols: [
         { key: 'read_uv', label: '阅读UV', fmt: 'int' },
       ]},
       { label: '转化', tint: 'purple', cols: [
         { key: 'enter_shop_uv', label: '进店UV', fmt: 'int' },
         { key: 'enter_shop_rate', label: '进店率', fmt: 'pct' },
+        { key: 'cpuv', label: 'CPUV', fmt: 'dec2' },
         { key: 'shop_order_uv', label: '成交UV', fmt: 'int' },
         { key: 'conversion_rate', label: '转化率', fmt: 'pct' },
         { key: 'average_order_value', label: '客单价', fmt: 'currency' },
@@ -1200,12 +1205,6 @@ const TABS = {
         { key: 'task_product_gmv', label: '任务商品GMV', fmt: 'currency' },
         { key: 'collect_rate', label: '收加率', fmt: 'pct' },
         { key: 'rpv', label: 'UV价值', fmt: 'dec2' },
-      ]},
-      { label: '投入', tint: 'blue', cols: [
-        { key: 'kols_fee', label: '蒲公英', fmt: 'currency' },
-        { key: 'ad_fee', label: '投流', fmt: 'currency' },
-        { key: 'fee', label: '总消费', fmt: 'currency' },
-        { key: 'cpuv', label: 'CPUV', fmt: 'dec2' },
         { key: 'roi', label: 'ROI', fmt: 'dec2', cond: 'roi' },
       ]},
     ],
@@ -1214,9 +1213,9 @@ const TABS = {
     label: '内容方向分析', icon: 'category', iconClass: 'content_theme',
     file: 'data/ads_content_theme.json',
     dims: [
+      { key: 'dt', label: '日期', w: 100 },
       { key: 'content_theme', label: '内容方向', w: 130 },
       { key: 'delivery_product', label: '产品', w: 100 },
-      { key: 'dt', label: '日期', w: 100 },
     ],
     groups: METRIC_GROUPS_BYCONTENT,
   },
@@ -1236,9 +1235,9 @@ const TABS = {
     label: '笔记分析', icon: 'description', iconClass: 'note',
     file: 'data/ads_note.json',
     dims: [
+      { key: 'dt', label: '日期', w: 100 },
       { key: 'kol_name', label: '博主', w: 100 },
       { key: 'note_id', label: '笔记ID', w: 120 },
-      { key: 'dt', label: '日期', w: 100 },
     ],
     groups: METRIC_GROUPS_BYCONTENT,
   },
@@ -1251,6 +1250,7 @@ const TABS = {
 let DATA = {};
 let META = null;
 let PROJECT_NAMES = {};
+let PROJECT_LIST = [];
 let activeTab = 'scheduled_tasks';
 let filters = { project: null, dt: 'all', attribution: '30', marketing: '产品种草', stat_mode: 'cum', search: '' };
 let sortKey = null;
@@ -1269,12 +1269,12 @@ function fmtVal(val, fmt) {
 
   switch (fmt) {
     case 'currency':
-      if (Math.abs(n) >= 1e8) return '¥' + (n / 1e8).toFixed(1) + '亿';
-      if (Math.abs(n) >= 1e4) return '¥' + (n / 1e4).toFixed(1) + '万';
+      if (Math.abs(n) >= 1e8) return '¥' + (n / 1e8).toFixed(2) + '亿';
+      if (Math.abs(n) >= 1e4) return '¥' + (n / 1e4).toFixed(2) + '万';
       return '¥' + n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     case 'int':
-      if (Math.abs(n) >= 1e8) return (n / 1e8).toFixed(1) + '亿';
-      if (Math.abs(n) >= 1e4) return (n / 1e4).toFixed(1) + '万';
+      if (Math.abs(n) >= 1e8) return (n / 1e8).toFixed(2) + '亿';
+      if (Math.abs(n) >= 1e4) return (n / 1e4).toFixed(2) + '万';
       return n.toLocaleString('zh-CN');
     case 'dec2':
       return n.toFixed(2);
@@ -1291,17 +1291,17 @@ function fmtCompact(val, fmt) {
   if (isNaN(n)) return '-';
   switch (fmt) {
     case 'currency':
-      if (Math.abs(n) >= 1e8) return '¥' + (n / 1e8).toFixed(1) + '亿';
-      if (Math.abs(n) >= 1e4) return '¥' + (n / 1e4).toFixed(1) + '万';
+      if (Math.abs(n) >= 1e8) return '¥' + (n / 1e8).toFixed(2) + '亿';
+      if (Math.abs(n) >= 1e4) return '¥' + (n / 1e4).toFixed(2) + '万';
       return '¥' + Math.round(n).toLocaleString('zh-CN');
     case 'int':
-      if (Math.abs(n) >= 1e8) return (n / 1e8).toFixed(1) + '亿';
-      if (Math.abs(n) >= 1e4) return (n / 1e4).toFixed(1) + '万';
+      if (Math.abs(n) >= 1e8) return (n / 1e8).toFixed(2) + '亿';
+      if (Math.abs(n) >= 1e4) return (n / 1e4).toFixed(2) + '万';
       return Math.round(n).toLocaleString('zh-CN');
     case 'dec2': return n.toFixed(2);
     case 'pct': {
       const pct = Math.abs(n) < 1 && n !== 0 ? n * 100 : n;
-      return pct.toFixed(1) + '%';
+      return pct.toFixed(2) + '%';
     }
     default: return String(n);
   }
@@ -1330,9 +1330,10 @@ const CACHE_KEY = 'yice_ads_cache';
 
 const _tableLoaded = {};
 
-async function loadTable(tabKey) {
-  if (_tableLoaded[tabKey]) return;
-  const resp = await fetch('/api/ads?table=' + tabKey);
+async function loadTable(tabKey, refresh = false) {
+  if (!refresh && _tableLoaded[tabKey]) return;
+  const url = '/api/ads?table=' + tabKey + (refresh ? '&refresh=1' : '');
+  const resp = await fetch(url);
   if (!resp.ok) return;
   const json = await resp.json();
   DATA[tabKey] = json.rows || [];
@@ -1342,35 +1343,42 @@ async function loadTable(tabKey) {
 }
 
 
-async function loadProjectNames() {
-  if (Object.keys(PROJECT_NAMES).length) return;
+async function loadProjectNames(refresh = false) {
+  if (!refresh && Object.keys(PROJECT_NAMES).length) return;
+  // 加载 projects.json 获取完整信息（含 end_time 用于排序）
   try {
-    const resp = await fetch('/api/project_names');
-    if (resp.ok) { PROJECT_NAMES = await resp.json(); return; }
-  } catch (_) {}
-  try {
-    const pResp = await fetch('projects.json');
+    const pResp = await fetch('config/projects.json');
     if (pResp.ok) {
-      const pList = await pResp.json();
-      pList.forEach(p => { PROJECT_NAMES[p.project_id] = p.project_name; });
+      PROJECT_LIST = await pResp.json();
+      PROJECT_LIST.forEach(p => { PROJECT_NAMES[p.project_id] = p.project_name; });
+    }
+  } catch (_) {}
+  // 补充 API 中有但 projects.json 中没有的项目
+  try {
+    const resp = await fetch('/api/project_names' + (refresh ? '?refresh=1' : ''));
+    if (resp.ok) {
+      const apiNames = await resp.json();
+      Object.entries(apiNames).forEach(([id, name]) => {
+        if (!PROJECT_NAMES[id]) PROJECT_NAMES[id] = name;
+      });
     }
   } catch (_) {}
 }
 
 async function refreshAll() {
-  const btn = document.getElementById('sync-btn');
-  btn.classList.add('spinning');
+  setLoading(true);
+  showToast('正在刷新数据…', true);
   // 清除所有已加载标记
   Object.keys(_tableLoaded).forEach(k => delete _tableLoaded[k]);
-  // 并发刷新所有数据 tab
+  // 并发刷新所有数据 tab（强制刷新服务端缓存）
   const dataTabs = Object.keys(TABS).filter(k => !TABS[k].placeholder && TABS[k].groups?.length);
   await Promise.all([
-    loadProjectNames(),
-    ...dataTabs.map(k => loadTable(k)),
+    loadProjectNames(true),
+    ...dataTabs.map(k => loadTable(k, true)),
   ]);
   // 渲染当前 tab
   switchTab(activeTab);
-  btn.classList.remove('spinning');
+  setLoading(false);
   showToast('已刷新');
 }
 function showToast(msg, persist) {
@@ -1536,7 +1544,18 @@ document.addEventListener('click', () => {
 
 function ensureFilterDefaults(opts) {
   if (!opts) opts = getFilterOptions();
-  if (!filters.project && opts.projects.length) filters.project = opts.projects[0];
+  // 默认选第一个执行项目
+  const endTimeMap_ = {};
+  const startTimeMap_ = {};
+  PROJECT_LIST.forEach(p => { endTimeMap_[p.project_id] = p.end_time || ''; startTimeMap_[p.project_id] = p.start_time || ''; });
+  const today_ = new Date(); today_.setHours(0,0,0,0);
+  const activeProjects_ = opts.projects.filter(pid => {
+    const et = endTimeMap_[pid], st = startTimeMap_[pid];
+    if (!et && !st) return false; // 无时间信息不显示
+    const endDate = et ? new Date(et + 'T00:00:00') : null;
+    return !endDate || endDate >= today_;
+  });
+  if (!filters.project && activeProjects_.length) filters.project = activeProjects_[0];
   if (!filters.marketing || filters.marketing === 'all') {
     const mkt = opts.marketingTargets || [];
     filters.marketing = mkt.includes('产品种草') ? '产品种草' : (mkt[0] || '产品种草');
@@ -1551,8 +1570,10 @@ function getFilterOptions() {
     if (r.attribution_period != null) attrs.add(String(r.attribution_period));
     if (r.marketing_target) mktTargets.add(r.marketing_target);
   });
-  // 项目列表从全量 PROJECT_NAMES 获取，不依赖当前 tab 数据
-  const projects = Object.keys(PROJECT_NAMES).sort();
+  // 项目列表按 end_time 降序排列（与数据检查侧边栏一致）
+  const endTimeMap = {};
+  PROJECT_LIST.forEach(p => { endTimeMap[p.project_id] = p.end_time || ''; });
+  const projects = Object.keys(PROJECT_NAMES).sort((a, b) => (endTimeMap[b] || '').localeCompare(endTimeMap[a] || ''));
   return {
     projects,
     dates: Array.from(dates).sort(),
@@ -1665,7 +1686,7 @@ function renderSidebar() {
     <div class="sidebar-item${schedActive}" onclick="switchTab('scheduled_tasks')" style="margin-bottom:4px">
       <div class="s-icon scheduled"><span class="icon">schedule_send</span></div>
       <span class="s-name">定时任务</span>
-      <span class="s-count">${SCHEDULED_TASKS.filter(t => t.enabled).length}/${SCHEDULED_TASKS.length}</span>
+      <span class="icon" style="font-size:14px;color:var(--red);opacity:0.6">close</span>
     </div>`;
   html += '<div class="sidebar-gap"></div>';
   html += '<div class="sidebar-section">固定看板</div>';
@@ -1673,7 +1694,7 @@ function renderSidebar() {
   Object.entries(TABS).forEach(([key, tab]) => {
     const active = key === activeTab ? ' active' : '';
     const badge = tab.placeholder
-      ? '<span class="icon" style="font-size:14px;color:var(--text-3);opacity:0.4">close</span>'
+      ? '<span class="icon" style="font-size:14px;color:var(--red);opacity:0.6">close</span>'
       : '';
     html += `
       <div class="sidebar-item${active}" onclick="switchTab('${key}')">
@@ -1689,7 +1710,7 @@ function renderSidebar() {
     <div class="sidebar-item${freeActive}" onclick="switchTab('free_spend')">
       <div class="s-icon free_spend"><span class="icon">show_chart</span></div>
       <span class="s-name">消费趋势</span>
-      <span class="icon" style="font-size:15px;color:var(--text-3);opacity:0.5;margin-left:auto">smart_toy</span>
+      <span class="icon" style="font-size:14px;color:var(--red);opacity:0.6">close</span>
     </div>`;
   el.innerHTML = html;
 }
@@ -1712,14 +1733,40 @@ function renderToolbar() {
   const attrItems = opts.attrs.map(a => ({v:a, l:a+'天'}));
   const mktItems = opts.marketingTargets.map(m => ({v:m,l:m}));
 
+  // 按 end_time 分组：执行中 vs 已结束（35天内）
+  const today = new Date(); today.setHours(0,0,0,0);
+  const endTimeMap = {};
+  const startTimeMap = {};
+  PROJECT_LIST.forEach(p => { endTimeMap[p.project_id] = p.end_time || ''; startTimeMap[p.project_id] = p.start_time || ''; });
+  const activeProjects = [], endedProjects = [];
+  opts.projects.forEach(pid => {
+    const et = endTimeMap[pid], st = startTimeMap[pid];
+    if (!et && !st) return; // 无时间信息的项目不显示
+    const endDate = et ? new Date(et + 'T00:00:00') : null;
+    if (!endDate || endDate >= today) {
+      activeProjects.push(pid);
+    } else {
+      const daysSinceEnd = Math.floor((today - endDate) / 86400000);
+      if (daysSinceEnd <= 35) endedProjects.push(pid);
+    }
+  });
+
+  const chipHtml = (list) => list.map(p => '<button class="chip' + (filters.project === p ? ' active' : '') + '" data-value="' + p + '">' + pName(p) + '</button>').join('');
+  const endedSection = endedProjects.length
+    ? `<div class="filter-group" style="width:100%;margin-bottom:2px">
+        <span class="filter-label">结束项目</span>
+        <div class="chip-group" id="f-project-ended">${chipHtml(endedProjects)}</div>
+      </div>` : '';
+
   document.getElementById('toolbar-section').innerHTML = `
     <div class="toolbar" style="flex-wrap:wrap">
       <div class="filter-group" style="width:100%;margin-bottom:2px">
-        <span class="filter-label">所在项目</span>
+        <span class="filter-label">执行项目</span>
         <div class="chip-group" id="f-project">
-          ${opts.projects.map(p => '<button class="chip' + (filters.project === p ? ' active' : '') + '" data-value="' + p + '">' + pName(p) + '</button>').join('')}
+          ${chipHtml(activeProjects)}
         </div>
       </div>
+      ${endedSection}
       <div class="filter-group">
         <span class="filter-label">数据日期</span>
         <button class="chip${filters.dt === 'all' ? ' active' : ''}" id="dt-all-btn">全部</button>
@@ -1761,11 +1808,11 @@ function renderToolbar() {
       </div>
     </div>`;
 
-  // Project chips
-  document.querySelectorAll('#f-project .chip').forEach(btn => {
+  // Project chips（执行项目 + 结束项目）
+  document.querySelectorAll('#f-project .chip, #f-project-ended .chip').forEach(btn => {
     btn.addEventListener('click', () => {
       filters.project = btn.dataset.value;
-      document.querySelectorAll('#f-project .chip').forEach(b => b.classList.toggle('active', b.dataset.value === filters.project));
+      document.querySelectorAll('#f-project .chip, #f-project-ended .chip').forEach(b => b.classList.toggle('active', b.dataset.value === filters.project));
       renderSidebar();
       renderContent();
     });

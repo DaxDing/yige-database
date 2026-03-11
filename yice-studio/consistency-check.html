@@ -539,7 +539,7 @@ body {
   color: var(--text-3); transition: all 0.15s; font-size: 18px; flex-shrink: 0;
 }
 .drawer-close:hover { background: var(--surface-alt); color: var(--text-1); }
-.drawer-body { padding: 24px; overflow-y: auto; flex: 1; }
+.drawer-body { padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; }
 .drawer-stats {
   display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px;
 }
@@ -560,14 +560,22 @@ body {
 }
 .drawer-section-title .icon { font-size: 14px; color: var(--text-3); }
 .drawer-ids {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  padding: 16px; background: var(--bg); border-radius: 10px; border: 1px solid var(--border-light);
-  max-height: 300px; overflow-y: auto;
+  display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px;
+  padding: 12px; background: var(--bg); border-radius: 10px; border: 1px solid var(--border-light);
+  flex: 1; overflow-y: auto; min-height: 0;
 }
+.drawer-copy-btn {
+  border: none; background: transparent; cursor: pointer; color: var(--text-3);
+  display: flex; align-items: center; padding: 2px; border-radius: 4px; transition: all 0.15s;
+  margin-left: auto;
+}
+.drawer-copy-btn:hover { color: var(--blue); background: var(--blue-light); }
+.drawer-copy-btn.copied { color: var(--green); }
 .drawer-id {
-  font-family: var(--mono); font-size: 11px; padding: 5px 10px;
+  font-family: var(--mono); font-size: 11px; padding: 4px 10px;
   background: var(--surface); border: 1px solid var(--border-light);
   border-radius: 6px; color: var(--text-2); transition: all 0.15s; cursor: default;
+  line-height: 1.4;
 }
 .drawer-id:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
 .drawer-empty {
@@ -806,26 +814,21 @@ document.addEventListener('click', e => {
 });
 
 function transformCherkData(rows, targetDt) {
-  // targetDt: YYYY-MM-DD 格式，若无则取最新 dt
-  const allDt = [...new Set(rows.map(r => r.dt))].sort();
-  let matchDt;
-  // cherk dt 是离线批处理日期（T-1），核验日期 = dt + 1
+  // targetDt: YYYY-MM-DD 格式，用 cherk_time 筛选核验日期
+  const allCt = [...new Set(rows.map(r => r.cherk_time).filter(Boolean))].sort();
+  let matchCt;
   if (targetDt) {
-    // 核验日期 - 1 天 = 对应的 cherk dt
-    const d = new Date(targetDt);
-    d.setDate(d.getDate() - 1);
-    const cherkDt = d.toISOString().slice(0, 10).replace(/-/g, '');
-    if (allDt.includes(cherkDt)) {
-      matchDt = cherkDt;
+    const ct = targetDt.replace(/-/g, '');
+    if (allCt.includes(ct)) {
+      matchCt = ct;
     } else {
-      // 回退到最近可用的 cherk dt
-      const earlier = allDt.filter(x => x <= cherkDt);
-      matchDt = earlier.length ? earlier[earlier.length - 1] : null;
-      if (matchDt) bizDateSelected = cherkDtToBizDate(matchDt);
+      const earlier = allCt.filter(x => x <= ct);
+      matchCt = earlier.length ? earlier[earlier.length - 1] : null;
+      if (matchCt) bizDateSelected = fmtDt(matchCt);
     }
   } else {
-    matchDt = allDt[allDt.length - 1] || null;
-    if (matchDt) bizDateSelected = cherkDtToBizDate(matchDt);
+    matchCt = allCt[allCt.length - 1] || null;
+    if (matchCt) bizDateSelected = fmtDt(matchCt);
   }
 
   // 以 projects.json 为基准构建项目列表
@@ -835,8 +838,8 @@ function transformCherkData(rows, targetDt) {
   });
 
   // 填充 cherk 检查结果
-  if (matchDt) {
-    const filtered = rows.filter(r => r.dt === matchDt);
+  if (matchCt) {
+    const filtered = rows.filter(r => r.cherk_time === matchCt);
     filtered.forEach(row => {
       const pid = row.project_id;
       if (!pid) return;
@@ -1223,7 +1226,7 @@ function renderProjectContent(el, project) {
               <div class="cat-base-right">${baseRight}</div>
             </div>`;
           }
-          return prefix + `<div class="cat-item${hasGroup ? ' indent' : ''}" onclick="openModal('${c.id}', '${c.name}')">
+          return prefix + `<div class="cat-item${hasGroup ? ' indent' : ''}" onclick="openModal('${c.id}', '${c.name}', '${project.id}')">
             <span class="cat-item-name">${c.name}${c.tag ? `<span class="cat-item-tag">${c.tag}</span>` : ''}</span>
             ${countHTML(c.actual, c.expect, false, c.status)}
             <span class="cat-item-ts">${c.status === 'none' ? '' : tsDisplay}</span>
@@ -1256,17 +1259,18 @@ function showToast(msg) {
 }
 
 // ─── Modal ───
-function openModal(itemId, itemName) {
+function openModal(itemId, itemName, projectId) {
   const overlay = document.getElementById('drawerOverlay');
   const drawer = document.getElementById('drawer');
   const title = document.getElementById('modalTitle');
   const subtitle = document.getElementById('drawerSubtitle');
   const body = document.getElementById('modalBody');
 
+  const scope = projectId ? PROJECTS.filter(p => p.id === projectId) : PROJECTS;
   let totalActual = 0, totalExpect = 0;
   const allMissing = [];
 
-  PROJECTS.forEach(pr => {
+  scope.forEach(pr => {
     const c = pr.checks[itemId];
     if (c) {
       totalActual += c.actual;
@@ -1281,7 +1285,8 @@ function openModal(itemId, itemName) {
   const isOk = diff === 0;
 
   title.textContent = itemName;
-  subtitle.textContent = `${PROJECTS.length} 个项目 · ${bizDateSelected}`;
+  const scopeLabel = projectId ? (scope[0]?.name || projectId) : `${PROJECTS.length} 个项目`;
+  subtitle.textContent = `${scopeLabel} · ${bizDateSelected}`;
 
   let h = `<div class="drawer-stats">
     <div class="drawer-stat expect"><div class="drawer-stat-label">期望数量</div><div class="drawer-stat-value">${totalExpect.toLocaleString()}</div></div>
@@ -1290,7 +1295,8 @@ function openModal(itemId, itemName) {
   </div>`;
 
   if (allMissing.length > 0) {
-    h += `<div class="drawer-section-title"><span class="icon">warning</span>缺失 ID（${allMissing.length} 条）</div>
+    const allIds = allMissing.map(m => m.id).join('\n');
+    h += `<div class="drawer-section-title"><span class="icon">warning</span>缺失 ID（${allMissing.length} 条）<button class="drawer-copy-btn" onclick="copyMissingIds(this)" data-ids="${allIds.replace(/"/g, '&quot;')}"><span class="icon" style="font-size:16px">content_copy</span></button></div>
     <div class="drawer-ids">
       ${allMissing.map(m => `<span class="drawer-id" title="${m.project}">${m.id}</span>`).join('')}
     </div>`;
@@ -1308,6 +1314,16 @@ function openModal(itemId, itemName) {
 function closeModal() {
   document.getElementById('drawerOverlay').classList.remove('show');
   document.getElementById('drawer').classList.remove('show');
+}
+
+function copyMissingIds(btn) {
+  const ids = btn.dataset.ids;
+  navigator.clipboard.writeText(ids).then(() => {
+    const icon = btn.querySelector('.icon');
+    icon.textContent = 'check';
+    btn.classList.add('copied');
+    setTimeout(() => { icon.textContent = 'content_copy'; btn.classList.remove('copied'); }, 1500);
+  });
 }
 
 // ─── Init: 加载 API 数据，失败则用 mock ───

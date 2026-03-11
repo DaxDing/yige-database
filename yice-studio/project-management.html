@@ -1229,18 +1229,26 @@ document.addEventListener('click', e => {
 async function refreshAll() {
   const btn = document.getElementById('sync-btn');
   btn.classList.add('spinning');
+  btn.disabled = true;
   showToast('正在刷新数据…');
   const t0 = Date.now();
+  // 统一清除所有缓存
+  entDepts = null;
+  entEmpsCache = {};
+  // 并发刷新所有数据源
+  await Promise.all([
+    loadData(),
+    fetchEntDepts(true),
+    fetchEntEmps(null, true),
+  ]);
+  // 根据当前视图渲染
   if (document.getElementById('ent-content')) {
-    // 企业管理页面：只刷新飞书数据
-    entDepts = null;
-    entEmpsCache = {};
     await renderEnterprise();
   } else {
-    // 项目管理页面：刷新项目和账户
-    await loadData();
+    renderSidebar();
   }
   btn.classList.remove('spinning');
+  btn.disabled = false;
   const sec = ((Date.now() - t0) / 1000).toFixed(1);
   showToast('刷新完成 ' + sec + 's');
 }
@@ -1276,19 +1284,21 @@ let entDepts = null;
 let entEmpsCache = {};
 let entSelectedDept = null;
 
-async function fetchEntDepts() {
-  if (entDepts) return entDepts;
-  const resp = await fetch('/api/feishu/departments?recursive=1');
+async function fetchEntDepts(refresh = false) {
+  if (!refresh && entDepts) return entDepts;
+  const qs = 'recursive=1' + (refresh ? '&refresh=1' : '');
+  const resp = await fetch('/api/feishu/departments?' + qs);
   const data = await resp.json();
   if (data.error) throw new Error(data.error);
   entDepts = data.departments || [];
   return entDepts;
 }
 
-async function fetchEntEmps(deptId) {
+async function fetchEntEmps(deptId, refresh = false) {
   const key = deptId || '__all__';
-  if (entEmpsCache[key]) return entEmpsCache[key];
-  const url = deptId ? `/api/feishu/employees?department_id=${deptId}` : '/api/feishu/employees';
+  if (!refresh && entEmpsCache[key]) return entEmpsCache[key];
+  const rq = refresh ? '&refresh=1' : '';
+  const url = deptId ? `/api/feishu/employees?department_id=${deptId}${rq}` : `/api/feishu/employees?${rq.slice(1)}`;
   const resp = await fetch(url);
   const data = await resp.json();
   if (data.error) throw new Error(data.error);

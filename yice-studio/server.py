@@ -243,10 +243,11 @@ def query_ads(start_ds, end_ds, refresh=False):
 
 # ── PostgreSQL ──
 
-def query_project_names():
-    cached = _get_cache('project_names')
-    if cached:
-        return cached
+def query_project_names(refresh=False):
+    if not refresh:
+        cached = _get_cache('project_names')
+        if cached:
+            return cached
     with psycopg2.connect(**POSTGRES['cherk']) as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(
@@ -713,7 +714,8 @@ class APIHandler(SimpleHTTPRequestHandler):
             self.handle_ads(parsed)
         elif path == R['project_names']:
             try:
-                self.send_json(200, query_project_names())
+                refresh = parse_qs(parsed.query).get('refresh', ['0'])[0] == '1'
+                self.send_json(200, query_project_names(refresh))
             except Exception as e:
                 self.send_json(500, {'error': str(e)})
         elif path == R['cherk']:
