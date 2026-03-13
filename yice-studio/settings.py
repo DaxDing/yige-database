@@ -81,13 +81,20 @@ FEISHU = {
     'base_url': 'https://open.feishu.cn/open-apis',
 }
 
-# ── GLM (智谱) ──
+# ── Claude Code CLI ──
 
-GLM = {
-    'url': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-    'key': '4dcab4be8b714ed89f6e1e478320ffa2.hhU9M2n9kASctiYe',
-    'model': 'glm-4-flash',
-    'system_prompt': '你是 YICE 助手，一个专业的小红书营销数据分析助手。简洁、专业地回答问题。',
+CLAUDE_CLI = {
+    'command': 'claude',
+    'timeout': 120,  # 秒
+}
+
+# ── 火山引擎 ASR ──
+
+VOLC_ASR = {
+    'app_id': os.environ.get('VOLC_ASR_APP_ID', ''),
+    'access_token': os.environ.get('VOLC_ASR_ACCESS_TOKEN', ''),
+    'ws_url': 'wss://openspeech.bytedance.com/api/v3/sauc/bigmodel',
+    'uid': 'yice_chat',
 }
 
 # ── ECS ──
@@ -105,7 +112,18 @@ ECS = {
 
 # ── API 路由 ──
 
+AUTH = {
+    'salt': 'yice_studio_2026',
+    'session_ttl': 7 * 86400,   # 7 天
+    'cookie_name': 'yice_sid',
+}
+
 API_ROUTES = {
+    'login': '/api/login',
+    'logout': '/api/logout',
+    'me': '/api/me',
+    'auth_feishu': '/api/auth/feishu',
+    'auth_feishu_cb': '/api/auth/feishu/callback',
     'ads': '/api/ads',
     'project_names': '/api/project_names',
     'cherk': '/api/cherk',

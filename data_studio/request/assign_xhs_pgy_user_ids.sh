@@ -12,7 +12,7 @@ if [ -n "${pgy_manual_ids}" ]; then
 fi
 
 response=$(curl -s -H "x-api-key: feishu_key" "http://121.41.12.184/feishu_api/lookup/pgy?date=${bizdate}")
-ids=$(echo "$response" | sed 's/.*"user_id":\[//;s/\].*//;s/"//g')
+ids=$(echo "$response" | sed 's/.*"user_id":\[//;s/\].*//;s/"//g;s/ //g')
 
 if [ -z "$ids" ]; then
     safe_response=$(echo "$response" | sed 's/"/\\"/g')

@@ -10,10 +10,10 @@
 | ProjectId | `530486` |
 | MaxCompute | `df_ch_530486` |
 | Region | `cn-hangzhou` |
-| ECS | `114.55.242.136`（yice-studio 部署服务器） |
-| yice-studio | `http://114.55.242.136:8080/` |
+| ECS | `114.55.242.136`（暂停使用） |
+| yice-studio | `http://localhost:8080/`（本地运行） |
 
-> **CRITICAL**: 本项目 ECS 服务器凭证使用 `.env` 中 `ECS_` 前缀的变量，与 DataWorks/MaxCompute 的 `ALIYUN_ACCESS_KEY_*` 是不同账号，勿混用。
+> **注意**: ECS 云服务器暂时停用，yice-studio 仅在本地运行。部署相关操作暂不可用。
 
 ## Directory Structure
 

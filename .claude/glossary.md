@@ -1,6 +1,6 @@
 # 数据术语表
 
-小红书营销数仓标准术语（264 项），建表、字段命名、指标定义时引用。
+小红书营销数仓标准术语（267 项），建表、字段命名、指标定义时引用。
 
 - **attr**: 归因层级（创意/内容/任务组）
 - **scope**: 统计口径（每日/日累计/回溯至统计日）
@@ -78,6 +78,7 @@
 | en | cn | type | attr | scope | desc |
 |---|---|---|---|---|---|
 | content_category | 内容类目 | INT | - | - | - |
+| content_subtype | 内容分型 | STRING | - | - | 内容细分类型 |
 | content_theme | 内容方向 | STRING | - | - | 内容主题 |
 | note_source | 笔记来源 | STRING | - | - | - |
 | note_type | 笔记类型 | INT | - | - | - |
@@ -121,6 +122,8 @@
 |---|---|---|---|---|---|
 | bidding_strategy | 竞价策略 | INT | 创意 | - | 出价方式 |
 | delivery_days | 投放天数 | STRING | - | - | - |
+| execution_element | 执行要素 | STRING | - | - | 执行层面的关键要素 |
+| kfs_type | KFS | STRING | - | - | KOL/Feed/Search 投放策略类型 |
 | delivery_period | 投放节奏 | STRING | - | - | - |
 | delivery_strategy | 投放策略 | STRING | - | - | - |
 | marketing_target | 营销目标 | INT | 创意 | - | 营销诉求 |
@@ -147,6 +150,7 @@
 | plan_video_cnt | 视频规划数量 | INT | - | - | - |
 | planned_note_count | 笔记数量规划 | BIGINT | - | - | - |
 | search_budget | 搜索流预算 | DECIMAL | - | - | - |
+
 | total_budget | 总预算 | DECIMAL | - | - | - |
 | video_count_budget | 视频数量预估 | BIGINT | - | - | - |
 

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "admin",
+    "username": "admin",
+    "password_hash": "95919559cda17e1d9d99df7d56121ebe3f081f08e535b29093c190afafb4abdc",
+    "name": "管理员",
+    "role": "root",
+    "avatar": "",
+    "department": "",
+    "feishu_open_id": ""
+  }
+]

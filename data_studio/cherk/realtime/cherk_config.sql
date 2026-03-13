@@ -15,5 +15,6 @@ SELECT base_table, base_count, cherk_table, cherk_count,
            WHEN base_table = 'dim_xhs_keyword_df' AND cherk_table = 'dwd_xhs_keyword_realtime_hi' THEN '关键词层级实时报表'
            ELSE cherk_source
        END AS cherk_source,
-       dt, project_id, project_name, ds
+       dt, project_id, project_name, cherk_time,
+       cherk_min_ds, cherk_max_ds, ds
 FROM cherk_xhs_data_check_df;

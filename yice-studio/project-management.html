@@ -255,6 +255,7 @@ body {
 .main {
   overflow-y: auto; padding: 28px 36px;
   background: var(--bg);
+  overscroll-behavior-y: none;
 }
 .main::-webkit-scrollbar { width: 6px; }
 .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -275,6 +276,10 @@ body {
   background: var(--bg);
   z-index: 10;
   border-bottom: 1px solid transparent;
+}
+.detail-header::before {
+  content: ''; position: absolute; top: -28px; left: 0; right: 0; height: 28px;
+  background: var(--bg);
 }
 .detail-header.stuck {
   border-bottom-color: var(--border);
@@ -575,32 +580,13 @@ img.member-avatar { background: none; }
         <button class="hdr-btn" onclick="toggleMenu('settings-menu')" title="设置">
           <span class="icon">settings</span>
         </button>
-        <div class="hdr-menu" id="settings-menu">
-          <button class="hdr-menu-item" onclick="openResPage('accounts')"><span class="icon">key</span>资源管理</button>
-          <button class="hdr-menu-item" onclick="openResPage('enterprise')"><span class="icon">apartment</span>企业管理</button>
-        </div>
+        <div class="hdr-menu" id="settings-menu"></div>
       </div>
       <div class="hdr-menu-wrap">
-        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="丁旭义">
-          <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" alt="丁旭义" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
+        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="">
+          <img src="" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
         </button>
-        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0">
-          <div style="padding:20px 20px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
-            <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border-light,#f3f4f6)">
-            <div style="text-align:center">
-              <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:2px">
-                <span style="font-size:14px;font-weight:600;color:var(--text-1)">丁旭义</span>
-                <span style="font-size:10px;padding:1px 8px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-weight:500;letter-spacing:0.5px">root</span>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--text-3)">
-                <span class="icon" style="font-size:13px">corporate_fare</span>EMT执行管理团队
-              </div>
-            </div>
-          </div>
-          <div style="padding:4px">
-            <button class="hdr-menu-item"><span class="icon">logout</span>退出登录</button>
-          </div>
-        </div>
+        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0"></div>
       </div>
     </div>
   </header>
@@ -625,12 +611,15 @@ img.member-avatar { background: none; }
   </div>
 </div>
 
+<script src="widgets/auth/index.js"></script>
+<script src="widgets/settings-menu/index.js"></script>
+<script src="widgets/refresh/index.js"></script>
 <script>
 const COLORS = ['bg-blue', 'bg-violet', 'bg-emerald', 'bg-amber', 'bg-rose'];
 
 let PROJECTS = [];
 let ACCOUNTS = { jg: [], pgy: [], xh: [] };
-let selectedId = null;
+let selectedId = location.hash.slice(1) || null;
 let editMode = false; // false=查看, true=编辑/新增
 
 const PLATFORMS = {
@@ -649,6 +638,22 @@ const PLATFORMS = {
   feishu: { name: '飞书应用', icon: 'smart_toy', fields: [
     { key: 'app_id', label: 'App ID', icon: 'fingerprint' },
     { key: 'secret', label: 'App Secret', icon: 'lock', masked: true },
+  ]},
+  dw: { name: 'DataWorks 空间', icon: 'cloud', fields: [
+    { key: 'workspace_name', label: '工作空间名称', icon: 'badge' },
+    { key: 'workspace_id', label: '工作空间 ID', icon: 'tag' },
+    { key: 'resource_group_id', label: '资源组 ID', icon: 'dns' },
+    { key: 'members', label: '空间成员', icon: 'group' },
+  ]},
+  mc: { name: 'MaxCompute 项目', icon: 'cloud', fields: [
+    { key: 'project_name', label: '项目名称', icon: 'badge' },
+    { key: 'endpoint', label: 'Endpoint', icon: 'link' },
+  ]},
+  rds: { name: 'RDS 实例', icon: 'database', fields: [
+    { key: 'instance_id', label: '实例 ID', icon: 'tag' },
+    { key: 'host', label: '连接地址', icon: 'dns' },
+    { key: 'port', label: '端口', icon: 'tag' },
+    { key: 'db_name', label: '数据库名', icon: 'storage' },
   ]},
 };
 
@@ -881,6 +886,7 @@ async function handleAction() {
         end_time: form.end_time || project.end_time,
         advertiser_ids: form.advertiser_ids?.length ? form.advertiser_ids : project.advertiser_ids,
         brand_user_ids: form.brand_user_ids?.length ? form.brand_user_ids : project.brand_user_ids,
+        dw_workspace: form.dw_workspace || project.dw_workspace,
         links: { ...(project.links || {}), ...form.links },
         account_refs: form.account_refs || project.account_refs,
       });
@@ -895,6 +901,7 @@ async function handleAction() {
         start_time: form.start_time || null,
         end_time: form.end_time || null,
         advertiser_ids: form.advertiser_ids || [],
+        dw_workspace: form.dw_workspace || '',
         members: form.members || [],
         links: form.links || { content_exec: [], folder: null, budget: null },
         account_refs: form.account_refs || { jg: null, pgy: null, xh: null },
@@ -925,14 +932,18 @@ async function handleAction() {
 
 async function loadAccounts() {
   try {
-    const resp = await fetch('accounts.json');
+    const resp = await fetch('config/accounts.json');
     if (!resp.ok) throw new Error(resp.status);
     ACCOUNTS = await resp.json();
   } catch (e) {
     console.warn('加载 accounts.json 失败:', e.message);
-    ACCOUNTS = { jg: [], pgy: [], xh: [], feishu: [] };
+    ACCOUNTS = { jg: [], pgy: [], xh: [], feishu: [], dw: [] };
   }
   if (!ACCOUNTS.feishu) ACCOUNTS.feishu = [];
+  if (!ACCOUNTS.dw) ACCOUNTS.dw = [];
+  if (!ACCOUNTS.dw.length) {
+    ACCOUNTS.dw = [{ name: 'default_workspace_6lgj', id: 'dw_1', workspace_name: 'default_workspace_6lgj', workspace_id: '530486', resource_group_id: 'Serverless_res_group_751526408194944_764306250261154', members: 'YGALYUN' }];
+  }
   if (!ACCOUNTS.feishu.length) {
     try {
       const r = await fetch('/api/feishu/config');
@@ -944,7 +955,7 @@ async function loadAccounts() {
 
 async function loadData() {
   try {
-    const resp = await fetch('projects.json');
+    const resp = await fetch('config/projects.json');
     if (!resp.ok) throw new Error(resp.status);
     PROJECTS = await resp.json();
   } catch (e) {
@@ -982,6 +993,7 @@ function renderSidebar() {
 
 function selectProject(pid) {
   selectedId = pid;
+  location.hash = pid || '';
   editMode = false;
   renderSidebar();
   const project = PROJECTS.find(p => p.project_id === pid);
@@ -1044,7 +1056,7 @@ function renderDetail(p) {
     ? `<select class="form-select" data-field="marketing_target">${mktOpts.map(o => `<option value="${o}" ${p.marketing_target === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`
     : `<input class="form-input" value="${p.marketing_target || '-'}" readonly>`;
 
-  // 执行部门：多选，数据来源企业管理
+  // 执行部门：多选，数据来源组织配置
   const rawDepts = Array.isArray(p.departments) ? p.departments : (p.department ? [p.department] : []);
   const pDeptNames = rawDepts.map(d => typeof d === 'object' ? d.name : d);
   const deptChips = pDeptNames.map(d => `<div class="member-chip"><div class="member-avatar" style="background:linear-gradient(135deg,#3b82f6,#6366f1)"><span class="icon" style="font-size:12px;color:#fff">corporate_fare</span></div><span class="member-name">${d}</span></div>`).join('') || '<span style="color:var(--text-3);font-size:12px">未设置</span>';
@@ -1081,6 +1093,22 @@ function renderDetail(p) {
     ? `<div class="tag-input-wrap" data-field="brand_user_ids">${(p.brand_user_ids||[]).map(id => `<span class="form-tag">${id}<span class="tag-rm" onclick="this.parentElement.remove()">&times;</span></span>`).join('')}<input class="tag-input" placeholder="输入 ID 后回车" onkeydown="tagInputKey(event)"><button class="tag-add-btn" onclick="tagAddFromInput(this)" title="添加"><span class="icon">add</span></button></div>`
     : `<div class="form-tags">${brandTagsHtml}</div>`;
 
+  const dwWorkspaceField = editMode
+    ? `<input class="form-input" value="${p.dw_workspace || '530486'}" data-field="dw_workspace" placeholder="工作空间 ID">`
+    : `<input class="form-input" value="${p.dw_workspace || '530486'}" readonly>`;
+
+  const dwResGroupField = editMode
+    ? `<input class="form-input" value="${p.dw_res_group || 'Serverless_res_group_751526408194944_764306250261154'}" data-field="dw_res_group" placeholder="资源组 ID">`
+    : `<input class="form-input" value="${p.dw_res_group || 'Serverless_res_group_751526408194944_764306250261154'}" readonly>`;
+
+  const rdsField = editMode
+    ? `<input class="form-input" value="${p.rds_instance || 'pgm-bp17nt187ku2460h'}" data-field="rds_instance" placeholder="RDS 实例 ID">`
+    : `<input class="form-input" value="${p.rds_instance || 'pgm-bp17nt187ku2460h'}" readonly>`;
+
+  const mcField = editMode
+    ? `<input class="form-input" value="${p.mc_project || 'default_datasource_cn_hangzhou_530486'}" data-field="mc_project" placeholder="MaxCompute 项目">`
+    : `<input class="form-input" value="${p.mc_project || 'default_datasource_cn_hangzhou_530486'}" readonly>`;
+
   main.innerHTML = `<div class="fade-in">
     <div class="detail-header">
       <span class="detail-title">${p.project_name || '新增项目'}</span>
@@ -1111,11 +1139,21 @@ function renderDetail(p) {
           ${endField}
         </div>
         <div class="form-group">
-          <label class="form-label"><span class="icon">account_balance</span>投放账户 ID</label>
+          <label class="form-label"><span class="icon">schedule</span>取数时间</label>
+          <input class="form-input" value="${p.end_time ? (() => { const d = new Date(p.end_time); d.setDate(d.getDate() + 35); return d.toISOString().slice(0, 10); })() : '-'}" readonly>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">inventory_2</span>项目信息</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label"><span class="icon">account_balance</span>Advertiser ID（投放账户）</label>
           ${advField}
         </div>
         <div class="form-group">
-          <label class="form-label"><span class="icon">storefront</span>品牌 User ID</label>
+          <label class="form-label"><span class="icon">storefront</span>User ID（品牌/代理商）</label>
           ${brandField}
         </div>
       </div>
@@ -1141,7 +1179,7 @@ function renderDetail(p) {
     </div>
 
     <div class="section">
-      <div class="section-title"><span class="icon">key</span>关联账号</div>
+      <div class="section-title"><span class="icon">settings</span>资源管理</div>
       <div class="form-grid">
         ${Object.entries(PLATFORMS).map(([pk, pf]) => {
           const refId = p.account_refs?.[pk] || '';
@@ -1163,6 +1201,22 @@ function renderDetail(p) {
             </div>`;
           }
         }).join('')}
+        <div class="form-group">
+          <label class="form-label"><span class="icon">hub</span>DataWorks 工作空间 ID</label>
+          ${dwWorkspaceField}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">dns</span>DataWorks 资源组 ID</label>
+          ${dwResGroupField}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">cloud</span>MaxCompute 项目</label>
+          ${mcField}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="icon">database</span>RDS 实例 ID</label>
+          ${rdsField}
+        </div>
       </div>
     </div>
 
@@ -1199,6 +1253,7 @@ function newProject() {
     start_time: '',
     end_time: '',
     advertiser_ids: [],
+    dw_workspace: '530486',
     members: [],
     links: { content_exec: [], folder: null, budget: null },
     account_refs: { jg: null, pgy: null, xh: null },
@@ -1215,7 +1270,10 @@ loadData().then(() => {
   const urlPage = new URLSearchParams(location.search).get('page');
   if (urlPage === 'accounts') { openResPage('accounts'); return; }
   if (urlPage === 'enterprise') { openResPage('enterprise'); return; }
-  if (PROJECTS.length > 0) selectProject(PROJECTS[0].project_id);
+  const hashId = location.hash.slice(1);
+  const sorted = [...PROJECTS].sort((a, b) => (b.end_time || '').localeCompare(a.end_time || ''));
+  const target = hashId && PROJECTS.find(p => p.project_id === hashId) ? hashId : sorted[0]?.project_id;
+  if (target) selectProject(target);
 });
 
 // ─── Resource Menu ───
@@ -1226,40 +1284,18 @@ function toggleMenu(id) {
 document.addEventListener('click', e => {
   if (!e.target.closest('.hdr-menu-wrap') && !e.target.closest('.ws-wrap')) document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => m.classList.remove('open'));
 });
-async function refreshAll() {
-  const btn = document.getElementById('sync-btn');
-  btn.classList.add('spinning');
-  btn.disabled = true;
-  showToast('正在刷新数据…');
-  const t0 = Date.now();
-  // 统一清除所有缓存
-  entDepts = null;
-  entEmpsCache = {};
-  // 并发刷新所有数据源
-  await Promise.all([
-    loadData(),
-    fetchEntDepts(true),
-    fetchEntEmps(null, true),
-  ]);
-  // 根据当前视图渲染
-  if (document.getElementById('ent-content')) {
-    await renderEnterprise();
-  } else {
-    renderSidebar();
-  }
-  btn.classList.remove('spinning');
-  btn.disabled = false;
-  const sec = ((Date.now() - t0) / 1000).toFixed(1);
-  showToast('刷新完成 ' + sec + 's');
-}
-function showToast(msg) {
-  let el = document.getElementById('toast');
-  if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
-  el.textContent = msg; el.className = 'toast show';
-  clearTimeout(el._t); el._t = setTimeout(() => el.className = 'toast', 2500);
-}
+registerRefresh(async (refresh) => {
+  entDepts = null; entEmpsCache = {};
+  await Promise.all([loadData(), fetchEntDepts(refresh), fetchEntEmps(undefined, refresh)]);
+  if (document.getElementById('ent-content')) await renderEnterprise();
+  else renderSidebar();
+});
 function openResPage(type) {
   document.getElementById('settings-menu').classList.remove('open');
+  const url = new URL(location);
+  url.searchParams.set('page', type);
+  url.hash = '';
+  history.replaceState(null, '', url);
   if (type === 'accounts') {
     selectedId = null;
     editMode = false;
@@ -1316,6 +1352,9 @@ function showEnterprise() {
 }
 
 function exitEnterprise() {
+  const url = new URL(location);
+  url.searchParams.delete('page');
+  history.replaceState(null, '', url);
   const sidebar = document.querySelector('.sidebar');
   const layout = document.querySelector('.layout');
   sidebar.style.display = '';
@@ -1330,7 +1369,7 @@ async function renderEnterprise() {
   main.innerHTML = `
     <div style="margin-bottom:16px"><button class="ent-back-btn" onclick="exitEnterprise()"><span class="icon">arrow_back</span>返回项目管理</button></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="display:flex;align-items:center;gap:8px"><span class="icon" style="font-size:20px;color:var(--blue)">apartment</span><span style="font-size:16px;font-weight:600">企业管理</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="icon" style="font-size:20px;color:var(--blue)">apartment</span><span style="font-size:16px;font-weight:600">组织配置</span></div>
       <div class="ent-tabs">
         <button class="ent-tab${entTab === 'departments' ? ' active' : ''}" onclick="entTab='departments';entSelectedDept=null;renderEnterprise()"><span class="icon">account_tree</span>部门管理</button>
         <button class="ent-tab${entTab === 'employees' ? ' active' : ''}" onclick="entTab='employees';renderEnterprise()"><span class="icon">group</span>员工管理</button>
@@ -1534,7 +1573,7 @@ function renderAccountsView() {
   main.innerHTML = `<div class="fade-in">
     <div style="margin-bottom:16px"><button class="ent-back-btn" onclick="exitEnterprise()"><span class="icon">arrow_back</span>返回项目管理</button></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="display:flex;align-items:center;gap:8px"><span class="icon" style="font-size:20px;color:var(--blue)">key</span><span style="font-size:16px;font-weight:600">资源管理</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="icon" style="font-size:20px;color:var(--blue)">key</span><span style="font-size:16px;font-weight:600">资源配置</span></div>
       <button class="btn-action" onclick="editAccount('${acctActivePlatform}',-1)">
         <span class="icon">add</span><span>新增</span>
       </button>
@@ -1645,6 +1684,6 @@ async function deleteAccount(pk, idx) {
 
 </script>
 
-<script src="js/chat-widget.js"></script>
+<script src="widgets/chat/index.js"></script>
 </body>
 </html>

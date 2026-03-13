@@ -43,12 +43,6 @@ SELECT
     REPLACE(dt, '-', '') AS ds
 FROM ods_xhs_grass_bytask_conversion_df
 WHERE ds = '${bizdate}'
-    -- 转化数据 T-1，不产出 bizdate 当天分区
-    AND REPLACE(dt, '-', '') <= TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd')
-    -- 增量: 仅写 DWD 中不存在的分区
-    AND REPLACE(dt, '-', '') NOT IN (
-        SELECT DISTINCT ds FROM dwd_xhs_conversion_bytask_di
-    )
     -- 过滤所有指标均为空的行
     AND NOT (
         GET_JSON_OBJECT(raw_data, '$.read_uv') IS NULL

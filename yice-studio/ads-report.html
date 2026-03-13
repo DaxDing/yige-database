@@ -1031,32 +1031,13 @@ a.nav-tab { text-decoration: none; }
         <button class="hdr-btn" onclick="toggleMenu('settings-menu')" title="设置">
           <span class="icon">settings</span>
         </button>
-        <div class="hdr-menu" id="settings-menu">
-          <a class="hdr-menu-item" href="project-management.html?page=accounts"><span class="icon">key</span>资源管理</a>
-          <a class="hdr-menu-item" href="project-management.html?page=enterprise"><span class="icon">apartment</span>企业管理</a>
-        </div>
+        <div class="hdr-menu" id="settings-menu"></div>
       </div>
       <div class="hdr-menu-wrap">
-        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="丁旭义">
-          <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" alt="丁旭义" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
+        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="">
+          <img src="" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
         </button>
-        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0">
-          <div style="padding:20px 20px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
-            <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border-light,#f3f4f6)">
-            <div style="text-align:center">
-              <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:2px">
-                <span style="font-size:14px;font-weight:600;color:var(--text-1)">丁旭义</span>
-                <span style="font-size:10px;padding:1px 8px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-weight:500;letter-spacing:0.5px">root</span>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--text-3)">
-                <span class="icon" style="font-size:13px">corporate_fare</span>EMT执行管理团队
-              </div>
-            </div>
-          </div>
-          <div style="padding:4px">
-            <button class="hdr-menu-item"><span class="icon">logout</span>退出登录</button>
-          </div>
-        </div>
+        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0"></div>
       </div>
     </div>
   </header>
@@ -1070,178 +1051,23 @@ a.nav-tab { text-decoration: none; }
   </div>
 </div>
 
+<script src="widgets/auth/index.js"></script>
+<script src="dashboards/_shared.js"></script>
+<script src="dashboards/scheduled_tasks/index.js"></script>
+<script src="dashboards/fixed/cross_project.js"></script>
+<script src="dashboards/fixed/project.js"></script>
+<script src="dashboards/fixed/task_group.js"></script>
+<script src="dashboards/fixed/content_theme.js"></script>
+<script src="dashboards/fixed/content_selection.js"></script>
+<script src="dashboards/fixed/kpi_progress.js"></script>
+<script src="dashboards/fixed/note.js"></script>
+<script src="dashboards/free/free_spend.js"></script>
+<script src="widgets/settings-menu/index.js"></script>
+<script src="widgets/refresh/index.js"></script>
+
 <script>
-/* ═══════════════════════════════════════════
-   Config
-   ═══════════════════════════════════════════ */
+/* 看板配置从 dashboards/ 目录加载 */
 
-const METRIC_GROUPS_BYCONTENT = [
-  { label: '投入', tint: 'blue', cols: [
-    { key: 'fee', label: '总消费', fmt: 'currency' },
-    { key: 'ad_fee', label: '投流金额', fmt: 'currency' },
-    { key: 'kols_fee', label: '蒲公英金额', fmt: 'currency' },
-  ]},
-  { label: '流量', tint: 'green', cols: [
-    { key: 'note_count', label: '笔记数', fmt: 'int' },
-    { key: 'impression', label: '曝光', fmt: 'int' },
-    { key: 'read_uv', label: '阅读', fmt: 'int' },
-    { key: 'interaction', label: '互动', fmt: 'int' },
-  ]},
-  { label: '效率', tint: 'amber', cols: [
-    { key: 'cpm', label: 'CPM', fmt: 'dec2' },
-    { key: 'cpc', label: 'CPC', fmt: 'dec2' },
-    { key: 'cpe', label: 'CPE', fmt: 'dec2' },
-    { key: 'ctr', label: 'CTR', fmt: 'pct' },
-  ]},
-  { label: '搜索', tint: 'pink', cols: [
-    { key: 'search_cmt_impression', label: '组件曝光', fmt: 'int' },
-    { key: 'search_cmt_click', label: '组件点击', fmt: 'int' },
-    { key: 'search_cmt_click_ctr', label: '组件CTR', fmt: 'pct' },
-  ]},
-  { label: '转化', tint: 'purple', cols: [
-    { key: 'enter_shop_uv', label: '进店UV', fmt: 'int' },
-    { key: 'enter_shop_rate', label: '进店率', fmt: 'pct' },
-    { key: 'cpuv', label: 'CPUV', fmt: 'dec2' },
-    { key: 'shop_order_uv', label: '成交UV', fmt: 'int' },
-    { key: 'conversion_rate', label: '转化率', fmt: 'pct' },
-    { key: 'average_order_value', label: '客单价', fmt: 'currency' },
-  ]},
-  { label: '价值', tint: 'orange', cols: [
-    { key: 'shop_order_gmv', label: '全店GMV', fmt: 'currency' },
-    { key: 'task_product_gmv', label: '单品GMV', fmt: 'currency' },
-    { key: 'rpv', label: 'UV价值', fmt: 'dec2' },
-    { key: 'roi', label: 'ROI', fmt: 'dec2', cond: 'roi' },
-    { key: 'single_product_roi', label: '单品ROI', fmt: 'dec2', cond: 'roi' },
-  ]},
-  { label: '新客', tint: 'teal', cols: [
-    { key: 'shop_new_visitor_uv', label: '新访客', fmt: 'int' },
-    { key: 'new_visitor_rate', label: '新访客率', fmt: 'pct' },
-    { key: 'shop_new_customer_uv', label: '新客UV', fmt: 'int' },
-    { key: 'new_customer_rate', label: '新客率', fmt: 'pct' },
-    { key: 'cac', label: '新客成本', fmt: 'currency' },
-  ]},
-];
-
-const SCHEDULED_TASKS = [
-  { id: 'cron-8a3f01', name: '每日投放日报', desc: '汇总昨日投流数据，发送至飞书群', icon: 'msg', iconName: 'send', cron: '0 9 * * *', cronLabel: '每天 09:00', enabled: true, lastRun: '2026-03-10 09:00', status: 'success', runs: [
-    { time: '2026-03-10 09:00:03', status: 'success', duration: '4.2s', detail: '已推送至「投放日报群」，包含 3 个项目数据' },
-    { time: '2026-03-09 09:00:02', status: 'success', duration: '3.8s', detail: '已推送至「投放日报群」，包含 3 个项目数据' },
-    { time: '2026-03-08 09:00:01', status: 'success', duration: '5.1s', detail: '已推送至「投放日报群」，包含 3 个项目数据' },
-    { time: '2026-03-07 09:00:04', status: 'failed', duration: '1.2s', detail: '飞书 API 超时 (HTTP 504)' },
-    { time: '2026-03-06 09:00:02', status: 'success', duration: '3.5s', detail: '已推送至「投放日报群」，包含 2 个项目数据' },
-  ]},
-  { id: 'cron-5b7e02', name: '周度 ROI 周报', desc: '汇总本周项目 ROI，推送至飞书群', icon: 'report', iconName: 'bar_chart', cron: '0 10 * * 1', cronLabel: '每周一 10:00', enabled: true, lastRun: '2026-03-10 10:00', status: 'success', runs: [
-    { time: '2026-03-10 10:00:05', status: 'success', duration: '6.7s', detail: '周报已推送，本周 ROI 均值 1.82' },
-    { time: '2026-03-03 10:00:03', status: 'success', duration: '7.1s', detail: '周报已推送，本周 ROI 均值 1.65' },
-    { time: '2026-02-24 10:00:02', status: 'success', duration: '5.9s', detail: '周报已推送，本周 ROI 均值 1.73' },
-  ]},
-  { id: 'cron-c42d03', name: '异常消费预警', desc: '检测单日消费超预算 120%，即时告警', icon: 'alert', iconName: 'warning', cron: '*/30 * * * *', cronLabel: '每 30 分钟', enabled: true, lastRun: '2026-03-10 14:30', status: 'success', runs: [
-    { time: '2026-03-10 14:30:01', status: 'success', duration: '1.8s', detail: '无异常，全部账户消费在预算内' },
-    { time: '2026-03-10 14:00:01', status: 'success', duration: '1.6s', detail: '无异常' },
-    { time: '2026-03-10 13:30:02', status: 'success', duration: '2.1s', detail: '⚠️ 账户 7152346 消费达预算 118%，未触发阈值' },
-    { time: '2026-03-10 13:00:01', status: 'success', duration: '1.5s', detail: '无异常' },
-    { time: '2026-03-10 12:30:01', status: 'success', duration: '1.7s', detail: '无异常' },
-    { time: '2026-03-10 12:00:02', status: 'success', duration: '1.9s', detail: '🚨 已告警：账户 7152346 消费达预算 125%' },
-  ]},
-  { id: 'cron-d91a04', name: '预算进度提醒', desc: '每日推送各项目预算消耗进度至飞书群', icon: 'msg', iconName: 'send', cron: '0 18 * * *', cronLabel: '每天 18:00', enabled: true, lastRun: '2026-03-10 18:00', status: 'success', runs: [
-    { time: '2026-03-10 18:00:05', status: 'success', duration: '3.1s', detail: '已推送 3 个项目预算进度，春焕新颜消耗 78%' },
-    { time: '2026-03-09 18:00:03', status: 'success', duration: '2.9s', detail: '已推送 3 个项目预算进度，春焕新颜消耗 72%' },
-    { time: '2026-03-08 18:00:04', status: 'success', duration: '3.3s', detail: '已推送 3 个项目预算进度' },
-  ]},
-  { id: 'cron-e68b05', name: 'KPI 达成日报', desc: '对比当日 KPI 目标与实际完成情况', icon: 'report', iconName: 'bar_chart', cron: '0 20 * * *', cronLabel: '每天 20:00', enabled: true, lastRun: '2026-03-10 20:00', status: 'success', runs: [
-    { time: '2026-03-10 20:00:06', status: 'success', duration: '5.4s', detail: '已推送 KPI 日报，GMV 达成率 92%，进店 UV 达成率 87%' },
-    { time: '2026-03-09 20:00:04', status: 'success', duration: '4.8s', detail: '已推送 KPI 日报，GMV 达成率 88%，进店 UV 达成率 91%' },
-    { time: '2026-03-08 20:00:03', status: 'failed', duration: '1.0s', detail: '飞书群 webhook 地址失效，请检查配置' },
-  ]},
-  { id: 'cron-f73c06', name: '蒲公英订单同步', desc: '同步蒲公英新增订单至飞书多维表格', icon: 'sync', iconName: 'sync_alt', cron: '0 10,16 * * *', cronLabel: '每天 10:00/16:00', enabled: false, lastRun: '2026-03-09 16:00', status: 'success', runs: [
-    { time: '2026-03-09 16:00:08', status: 'success', duration: '8.2s', detail: '同步 5 条新订单，总金额 ¥42,800' },
-    { time: '2026-03-09 10:00:06', status: 'success', duration: '6.5s', detail: '同步 3 条新订单，总金额 ¥28,500' },
-    { time: '2026-03-08 16:00:07', status: 'success', duration: '7.1s', detail: '同步 2 条新订单，总金额 ¥15,000' },
-  ]},
-];
-
-const TABS = {
-  cross_project: {
-    label: '跨项目分析', icon: 'compare_arrows', iconClass: 'cross_project',
-    dims: [],
-    groups: [],
-    placeholder: true,
-  },
-  project: {
-    label: '项目分析', icon: 'folder', iconClass: 'project',
-    file: 'data/ads_project.json',
-    dims: [
-      { key: 'dt', label: '日期', w: 100 },
-    ],
-    groups: METRIC_GROUPS_BYCONTENT,
-  },
-  task_group: {
-    label: '任务组分析', icon: 'assignment', iconClass: 'task_group',
-    file: 'data/ads_task_group.json',
-    dims: [
-      { key: 'dt', label: '日期', w: 100 },
-      { key: 'task_group_name', label: '任务组', w: 140 },
-      { key: 'ad_product_name', label: '产品', w: 100 },
-    ],
-    groups: [
-      { label: '投入', tint: 'blue', cols: [
-        { key: 'fee', label: '总消费', fmt: 'currency' },
-        { key: 'ad_fee', label: '投流金额', fmt: 'currency' },
-        { key: 'kols_fee', label: '蒲公英金额', fmt: 'currency' },
-      ]},
-      { label: '流量', tint: 'green', cols: [
-        { key: 'read_uv', label: '阅读UV', fmt: 'int' },
-      ]},
-      { label: '转化', tint: 'purple', cols: [
-        { key: 'enter_shop_uv', label: '进店UV', fmt: 'int' },
-        { key: 'enter_shop_rate', label: '进店率', fmt: 'pct' },
-        { key: 'cpuv', label: 'CPUV', fmt: 'dec2' },
-        { key: 'shop_order_uv', label: '成交UV', fmt: 'int' },
-        { key: 'conversion_rate', label: '转化率', fmt: 'pct' },
-        { key: 'average_order_value', label: '客单价', fmt: 'currency' },
-      ]},
-      { label: '价值', tint: 'orange', cols: [
-        { key: 'shop_order_gmv', label: '成交GMV', fmt: 'currency' },
-        { key: 'task_product_gmv', label: '任务商品GMV', fmt: 'currency' },
-        { key: 'collect_rate', label: '收加率', fmt: 'pct' },
-        { key: 'rpv', label: 'UV价值', fmt: 'dec2' },
-        { key: 'roi', label: 'ROI', fmt: 'dec2', cond: 'roi' },
-      ]},
-    ],
-  },
-  content_theme: {
-    label: '内容方向分析', icon: 'category', iconClass: 'content_theme',
-    file: 'data/ads_content_theme.json',
-    dims: [
-      { key: 'dt', label: '日期', w: 100 },
-      { key: 'content_theme', label: '内容方向', w: 130 },
-      { key: 'delivery_product', label: '产品', w: 100 },
-    ],
-    groups: METRIC_GROUPS_BYCONTENT,
-  },
-  content_selection: {
-    label: '内容选号分析', icon: 'person_search', iconClass: 'content_selection',
-    dims: [],
-    groups: [],
-    placeholder: true,
-  },
-  kpi_progress: {
-    label: 'KPI 进度分析', icon: 'trending_up', iconClass: 'kpi_progress',
-    dims: [],
-    groups: [],
-    placeholder: true,
-  },
-  note: {
-    label: '笔记分析', icon: 'description', iconClass: 'note',
-    file: 'data/ads_note.json',
-    dims: [
-      { key: 'dt', label: '日期', w: 100 },
-      { key: 'kol_name', label: '博主', w: 100 },
-      { key: 'note_id', label: '笔记ID', w: 120 },
-    ],
-    groups: METRIC_GROUPS_BYCONTENT,
-  },
-};
 
 /* ═══════════════════════════════════════════
    State
@@ -1251,7 +1077,7 @@ let DATA = {};
 let META = null;
 let PROJECT_NAMES = {};
 let PROJECT_LIST = [];
-let activeTab = 'scheduled_tasks';
+let activeTab = (location.hash.slice(1) && DASHBOARDS[location.hash.slice(1)]) ? location.hash.slice(1) : 'project';
 let filters = { project: null, dt: 'all', attribution: '30', marketing: '产品种草', stat_mode: 'cum', search: '' };
 let sortKey = null;
 let sortDir = 'desc';
@@ -1311,13 +1137,6 @@ function fmtCompact(val, fmt) {
    Data Loading
    ═══════════════════════════════════════════ */
 
-function setLoading(on) {
-  const shell = document.querySelector('.shell');
-  if (shell) shell.classList.toggle('refreshing', on);
-  const btn = document.getElementById('sync-btn');
-  if (btn) { btn.disabled = on; btn.classList.toggle('spinning', on); }
-}
-
 function toggleMenu(id) {
   document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => { if (m.id !== id) m.classList.remove('open'); });
   document.getElementById(id).classList.toggle('open');
@@ -1365,29 +1184,16 @@ async function loadProjectNames(refresh = false) {
   } catch (_) {}
 }
 
-async function refreshAll() {
-  setLoading(true);
-  showToast('正在刷新数据…', true);
-  // 清除所有已加载标记
+registerRefresh(async (refresh) => {
   Object.keys(_tableLoaded).forEach(k => delete _tableLoaded[k]);
-  // 并发刷新所有数据 tab（强制刷新服务端缓存）
-  const dataTabs = Object.keys(TABS).filter(k => !TABS[k].placeholder && TABS[k].groups?.length);
-  await Promise.all([
-    loadProjectNames(true),
-    ...dataTabs.map(k => loadTable(k, true)),
-  ]);
-  // 渲染当前 tab
+  // 优先加载当前 tab + 项目名称，立即渲染
+  await Promise.all([loadProjectNames(refresh), loadTable(activeTab, refresh)]);
   switchTab(activeTab);
-  setLoading(false);
-  showToast('已刷新');
-}
-function showToast(msg, persist) {
-  let el = document.getElementById('toast');
-  if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
-  el.textContent = msg; el.className = 'toast show';
-  clearTimeout(el._t);
-  if (!persist) el._t = setTimeout(() => el.className = 'toast', 2500);
-}
+  // 后台加载其余 tab（不阻塞）
+  const otherTabs = Object.keys(DASHBOARDS)
+    .filter(k => k !== activeTab && !DASHBOARDS[k].placeholder && DASHBOARDS[k].groups?.length);
+  otherTabs.forEach(k => loadTable(k, refresh));
+});
 
 function switchModule(mod) {
   const layout = document.getElementById('layout');
@@ -1583,9 +1389,15 @@ function getFilterOptions() {
 }
 
 function filterRows(rows) {
+  let last7Set;
+  if (filters.dt === 'last7') {
+    const allDt = [...new Set(rows.map(r => r.dt).filter(Boolean))].sort().slice(-7);
+    last7Set = new Set(allDt);
+  }
   return rows.filter(r => {
     if (filters.project !== 'all' && r.project_id !== filters.project) return false;
-    if (filters.dt !== 'all' && String(r.dt) !== String(filters.dt)) return false;
+    if (last7Set) { if (!last7Set.has(r.dt)) return false; }
+    else if (filters.dt !== 'all' && String(r.dt) !== String(filters.dt)) return false;
     if (filters.attribution !== 'all' && String(r.attribution_period) !== filters.attribution) return false;
     if (filters.marketing !== 'all' && r.marketing_target && r.marketing_target !== filters.marketing) return false;
     if (filters.search) {
@@ -1599,7 +1411,7 @@ function filterRows(rows) {
 function sortRows(rows) {
   if (!sortKey) {
     // 全部日期时默认按 ds 降序
-    if (filters.dt === 'all') return [...rows].sort((a, b) => String(b.ds || b.dt || '').localeCompare(String(a.ds || a.dt || '')));
+    if (filters.dt === 'all' || filters.dt === 'last7') return [...rows].sort((a, b) => String(b.ds || b.dt || '').localeCompare(String(a.ds || a.dt || '')));
     return rows;
   }
   return [...rows].sort((a, b) => {
@@ -1681,37 +1493,39 @@ function condClass(col, val) {
 function renderSidebar() {
   ensureFilterDefaults();
   const el = document.getElementById('sidebar');
-  const schedActive = activeTab === 'scheduled_tasks' ? ' active' : '';
-  let html = `
-    <div class="sidebar-item${schedActive}" onclick="switchTab('scheduled_tasks')" style="margin-bottom:4px">
-      <div class="s-icon scheduled"><span class="icon">schedule_send</span></div>
-      <span class="s-name">定时任务</span>
-      <span class="icon" style="font-size:14px;color:var(--red);opacity:0.6">close</span>
-    </div>`;
-  html += '<div class="sidebar-gap"></div>';
-  html += '<div class="sidebar-section">固定看板</div>';
+  let html = '';
 
-  Object.entries(TABS).forEach(([key, tab]) => {
+  function renderItem(key, db, extraStyle) {
     const active = key === activeTab ? ' active' : '';
-    const badge = tab.placeholder
+    const badge = db.placeholder
       ? '<span class="icon" style="font-size:14px;color:var(--red);opacity:0.6">close</span>'
-      : '';
-    html += `
-      <div class="sidebar-item${active}" onclick="switchTab('${key}')">
-        <div class="s-icon ${tab.iconClass}"><span class="icon">${tab.icon}</span></div>
-        <span class="s-name">${tab.label}</span>
+      : (db.badge || '');
+    const style = extraStyle ? ` style="${extraStyle}"` : '';
+    return `
+      <div class="sidebar-item${active}" onclick="switchTab('${key}')"${style}>
+        <div class="s-icon ${db.iconClass}"><span class="icon">${db.icon}</span></div>
+        <span class="s-name">${db.label}</span>
         ${badge}
       </div>`;
+  }
+
+  DASHBOARD_SECTIONS.system.forEach(key => {
+    html += renderItem(key, DASHBOARDS[key], 'margin-bottom:4px');
+  });
+  if (DASHBOARD_SECTIONS.system.length) html += '<div class="sidebar-gap"></div>';
+
+  html += '<div class="sidebar-section">固定看板</div>';
+  DASHBOARD_SECTIONS.fixed.forEach(key => {
+    html += renderItem(key, DASHBOARDS[key]);
   });
 
-  html += '<div class="sidebar-section" style="margin-top:16px">自由看板</div>';
-  const freeActive = activeTab === 'free_spend' ? ' active' : '';
-  html += `
-    <div class="sidebar-item${freeActive}" onclick="switchTab('free_spend')">
-      <div class="s-icon free_spend"><span class="icon">show_chart</span></div>
-      <span class="s-name">消费趋势</span>
-      <span class="icon" style="font-size:14px;color:var(--red);opacity:0.6">close</span>
-    </div>`;
+  if (DASHBOARD_SECTIONS.free.length) {
+    html += '<div class="sidebar-section" style="margin-top:16px">自由看板</div>';
+    DASHBOARD_SECTIONS.free.forEach(key => {
+      html += renderItem(key, DASHBOARDS[key]);
+    });
+  }
+
   el.innerHTML = html;
 }
 
@@ -1725,8 +1539,8 @@ function renderToolbar() {
   const pName = (pid) => PROJECT_NAMES[pid] || pid;
   ensureFilterDefaults(opts);
 
-  const dtLabel = filters.dt === 'all' ? '全部日期' : fmtDate(filters.dt);
-  const dtActive = filters.dt !== 'all' ? ' active' : '';
+  const dtLabel = filters.dt === 'all' || filters.dt === 'last7' ? '全部日期' : fmtDate(filters.dt);
+  const dtActive = filters.dt !== 'all' && filters.dt !== 'last7' ? ' active' : '';
   const attrLabel = filters.attribution + '天';
   const mktLabel = filters.marketing;
   const mktActive = ' active';
@@ -1768,8 +1582,9 @@ function renderToolbar() {
       </div>
       ${endedSection}
       <div class="filter-group">
-        <span class="filter-label">数据日期</span>
+        <span class="filter-label">业务日期</span>
         <button class="chip${filters.dt === 'all' ? ' active' : ''}" id="dt-all-btn">全部</button>
+        <button class="chip${filters.dt === 'last7' ? ' active' : ''}" id="dt-last7-btn">近7天</button>
         <div class="cal-wrap" id="cal-dt">
           <div class="cal-trigger${dtActive}"><span class="icon">calendar_today</span>${dtLabel}</div>
           <div class="cal-popup"><div id="cal-dt-body"></div></div>
@@ -1826,6 +1641,14 @@ function renderToolbar() {
     renderContent();
   });
 
+  // Date: "近7天" button
+  document.getElementById('dt-last7-btn')?.addEventListener('click', () => {
+    filters.dt = 'last7';
+    renderSidebar();
+    renderToolbar();
+    renderContent();
+  });
+
   // Calendar: date
   initCalendar('cal-dt', opts.dates, val => {
     filters.dt = val;
@@ -1864,30 +1687,9 @@ function renderToolbar() {
    ═══════════════════════════════════════════ */
 
 function renderKPIs(rows) {
-  const sum = k => rows.reduce((s, r) => s + (Number(r[k]) || 0), 0);
-  const fee = sum('fee'), gmv = sum('shop_order_gmv');
-  const roi = fee > 0 ? gmv / fee : 0;
-  const roiClass = roi >= 2 ? 'good' : roi < 1 ? 'bad' : roi < 1.5 ? 'warn' : '';
-
-  let kpis;
-  if (activeTab === 'task_group') {
-    kpis = [
-      { label: '总消费', value: fee, fmt: 'currency', color: 'blue' },
-      { label: '阅读UV', value: sum('read_uv'), fmt: 'int', color: 'blue' },
-      { label: '进店UV', value: sum('enter_shop_uv'), fmt: 'int', color: 'green' },
-      { label: '成交GMV', value: gmv, fmt: 'currency', color: 'green' },
-      { label: 'ROI', value: roi, fmt: 'dec2', color: 'amber', valClass: roiClass },
-    ];
-  } else {
-    kpis = [
-      { label: '总消费', value: fee, fmt: 'currency', color: 'blue' },
-      { label: '曝光量', value: sum('impression'), fmt: 'int', color: 'blue' },
-      { label: '阅读量', value: sum('read_uv'), fmt: 'int', color: 'blue' },
-      { label: '进店UV', value: sum('enter_shop_uv'), fmt: 'int', color: 'green' },
-      { label: '全店GMV', value: gmv, fmt: 'currency', color: 'green' },
-      { label: 'ROI', value: roi, fmt: 'dec2', color: 'amber', valClass: roiClass },
-    ];
-  }
+  const db = DASHBOARDS[activeTab];
+  const getKPIs = db?.getKPIs || defaultGetKPIs;
+  const kpis = getKPIs(rows);
 
   document.getElementById('kpi-section').innerHTML =
     '<div class="kpi-row">' + kpis.map(k =>
@@ -1903,7 +1705,7 @@ function renderKPIs(rows) {
    ═══════════════════════════════════════════ */
 
 function renderTable(rows) {
-  const tab = TABS[activeTab];
+  const tab = DASHBOARDS[activeTab];
   const summary = calcSummary(rows, tab.groups);
 
   // Pre-calculate max values for data bar columns
@@ -2066,7 +1868,7 @@ function renderTable(rows) {
    ═══════════════════════════════════════════ */
 
 function renderContent(showLoading = true) {
-  const tab = TABS[activeTab];
+  const tab = DASHBOARDS[activeTab];
   if (tab && tab.placeholder) {
     document.getElementById('kpi-section').innerHTML = '';
     document.getElementById('tbl-section').innerHTML =
@@ -2087,14 +1889,18 @@ function renderContent(showLoading = true) {
   const rawRows = DATA[activeTab] || [];
   const filtered = filterRows(rawRows);
   const sorted = sortRows(filtered);
+  // 过滤整行指标全为零/空的行
+  const rows = sorted.filter(r => !tab.groups.every(g => g.cols.every(c => {
+    const v = r[c.key]; return v == null || Number(v) === 0;
+  })));
 
   const doRender = () => {
-    renderKPIs(sorted);
-    renderTable(sorted);
+    renderKPIs(rows);
+    renderTable(rows);
     const countEl = document.getElementById('row-count');
     if (countEl) {
-      countEl.textContent = filtered.length < rawRows.length
-        ? `${filtered.length} / ${rawRows.length}`
+      countEl.textContent = rows.length < rawRows.length
+        ? `${rows.length} / ${rawRows.length}`
         : `${rawRows.length} 条`;
     }
   };
@@ -2113,37 +1919,30 @@ function renderContent(showLoading = true) {
    ═══════════════════════════════════════════ */
 
 function switchTab(key) {
+  const db = DASHBOARDS[key];
+  if (!db) return;
+
   activeTab = key;
+  if (location.hash.slice(1) !== key) history.replaceState(null, '', '#' + key);
   sortKey = null;
   sortDir = 'desc';
   filters.search = '';
-  if (key === 'project') {
-    filters.dt = 'all';
+  if (db.defaultDt) {
+    filters.dt = db.defaultDt;
   } else {
     _pickDefaultDate();
   }
   renderSidebar();
 
-  // 先显示菊花
   document.getElementById('kpi-section').innerHTML = '';
   document.getElementById('tbl-section').innerHTML = '<div class="filter-loading"><span class="icon spinner">progress_activity</span></div>';
 
-  // 定时任务
-  if (key === 'scheduled_tasks') {
-    document.getElementById('toolbar-section').innerHTML = '';
-    document.getElementById('kpi-section').innerHTML = '';
-    renderScheduledTasks();
+  if (db.onActivate) {
+    db.onActivate();
     return;
   }
 
-  // 自由看板
-  if (key === 'free_spend') {
-    document.getElementById('toolbar-section').innerHTML = '';
-    setTimeout(() => renderFreeSpendChart(), 300);
-    return;
-  }
-
-  if (TABS[key]?.placeholder) {
+  if (db.placeholder) {
     document.getElementById('toolbar-section').innerHTML = '';
     document.getElementById('tbl-section').innerHTML =
       `<div style="text-align:center;padding:120px 0;color:var(--text-3)">
@@ -2154,256 +1953,14 @@ function switchTab(key) {
 
   ensureTabData(key).then(() => {
     _pickDefaultDate();
-    if (key === 'project') filters.dt = 'all';
+    if (db.defaultDt) filters.dt = db.defaultDt;
     renderToolbar();
     renderContent(false);
   });
 }
 
-/* ═══════════════════════════════════════════
-   Render: Scheduled Tasks
-   ═══════════════════════════════════════════ */
-
-function renderScheduledTasks() {
-  const active = SCHEDULED_TASKS.filter(t => t.enabled).length;
-  let html = `<div class="task-list">
-    <div class="task-list-header">
-      <div>
-        <div class="task-list-title">定时任务</div>
-        <div class="task-list-subtitle">${active} 个运行中 / ${SCHEDULED_TASKS.length} 个任务</div>
-      </div>
-    </div>`;
-
-  SCHEDULED_TASKS.forEach(t => {
-    const statusIcon = t.status === 'success'
-      ? '<span class="icon" style="font-size:14px;color:var(--green)">check_circle</span>'
-      : '<span class="icon" style="font-size:14px;color:var(--red)">error</span>';
-    html += `
-      <div class="task-card" id="task-card-${t.id}" style="cursor:pointer" onclick="openTaskModal('${t.id}')">
-        <div class="task-icon ${t.icon}"><span class="icon">smart_toy</span></div>
-        <div class="task-info">
-          <div class="task-name">${t.name} <span style="font-family:var(--mono);font-size:10px;color:var(--text-3);font-weight:400;margin-left:6px">${t.id}</span></div>
-          <div class="task-detail">
-            <span class="task-cron">${t.cronLabel}</span>
-            <span class="task-next">上次: ${t.lastRun}</span>
-            ${statusIcon}
-          </div>
-        </div>
-        <div class="task-right">
-          <button class="task-run-btn" id="run-btn-${t.id}" onclick="event.stopPropagation();runTask('${t.id}')" title="立即执行"><span class="icon">play_arrow</span></button>
-          <button class="task-toggle${t.enabled ? ' on' : ''}" onclick="event.stopPropagation();toggleTask('${t.id}')" title="${t.enabled ? '运行中' : '已暂停'}"></button>
-        </div>
-      </div>`;
-  });
-
-  html += '</div>';
-  document.getElementById('tbl-section').innerHTML = html;
-}
-
-function toggleTask(id) {
-  const t = SCHEDULED_TASKS.find(t => t.id === id);
-  if (t) { t.enabled = !t.enabled; renderScheduledTasks(); renderSidebar(); }
-}
-
-function runTask(id) {
-  const btn = document.getElementById('run-btn-' + id);
-  if (!btn || btn.classList.contains('running')) return;
-  btn.classList.add('running');
-  btn.innerHTML = '<span class="icon">progress_activity</span>';
-
-  const card = document.getElementById('task-card-' + id);
-  if (card) card.classList.add('running');
-
-  // 模拟执行
-  const duration = (1 + Math.random() * 4).toFixed(1);
-  setTimeout(() => {
-    const t = SCHEDULED_TASKS.find(t => t.id === id);
-    if (t) {
-      const now = new Date();
-      const pad = v => String(v).padStart(2, '0');
-      const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-      t.lastRun = ts.slice(0, 16);
-      t.status = 'success';
-      t.runs.unshift({ time: ts, status: 'success', duration: duration + 's', detail: '手动触发执行成功' });
-    }
-    showToast(t.name + ' 执行完成');
-    renderScheduledTasks();
-  }, duration * 1000);
-}
-
-function openTaskModal(id) {
-  const t = SCHEDULED_TASKS.find(t => t.id === id);
-  if (!t) return;
-  closeTaskModal();
-
-  const statusLabel = t.enabled
-    ? '<span style="color:var(--green);font-weight:500">运行中</span>'
-    : '<span style="color:var(--text-3);font-weight:500">已暂停</span>';
-
-  let runsHtml = '';
-  (t.runs || []).forEach(r => {
-    runsHtml += `
-      <div class="run-row">
-        <div class="run-dot ${r.status}"></div>
-        <div class="run-content">
-          <div class="run-header">
-            <span class="run-time">${r.time}</span>
-            <span class="run-duration">${r.duration}</span>
-          </div>
-          <div class="run-detail">${r.detail}</div>
-        </div>
-      </div>`;
-  });
-
-  const el = document.createElement('div');
-  el.className = 'task-modal-backdrop';
-  el.id = 'task-modal';
-  el.onclick = function(e) { if (e.target === el) closeTaskModal(); };
-  el.innerHTML = `
-    <div class="task-modal">
-      <div class="task-modal-head">
-        <div class="task-icon ${t.icon}"><span class="icon">${t.iconName}</span></div>
-        <div>
-          <div class="task-modal-title">${t.name}</div>
-          <div class="task-modal-desc">${t.desc}</div>
-        </div>
-        <button class="task-modal-close" onclick="closeTaskModal()"><span class="icon">close</span></button>
-      </div>
-      <div class="task-modal-meta">
-        <div class="task-modal-meta-item">
-          <span class="task-modal-meta-label">调度频率</span>
-          <span class="task-modal-meta-value">${t.cronLabel}</span>
-        </div>
-        <div class="task-modal-meta-item">
-          <span class="task-modal-meta-label">Cron</span>
-          <span class="task-modal-meta-value">${t.cron}</span>
-        </div>
-        <div class="task-modal-meta-item">
-          <span class="task-modal-meta-label">状态</span>
-          <span class="task-modal-meta-value">${statusLabel}</span>
-        </div>
-        <div class="task-modal-meta-item">
-          <span class="task-modal-meta-label">执行次数</span>
-          <span class="task-modal-meta-value">${(t.runs || []).length}</span>
-        </div>
-      </div>
-      <div class="task-modal-body">
-        <div class="task-modal-section-title">执行记录</div>
-        ${runsHtml || '<div style="color:var(--text-3);font-size:12px;padding:20px 0;text-align:center">暂无记录</div>'}
-      </div>
-    </div>`;
-  document.body.appendChild(el);
-}
-
-function closeTaskModal() {
-  const el = document.getElementById('task-modal');
-  if (el) el.remove();
-}
-
-/* ═══════════════════════════════════════════
-   Free Dashboard: 消费趋势折线图
-   ═══════════════════════════════════════════ */
-function renderFreeSpendChart() {
-  const rows = DATA.project || [];
-  if (!rows.length) {
-    document.getElementById('tbl-section').innerHTML =
-      '<div style="text-align:center;padding:80px 0;color:var(--text-3)">暂无数据</div>';
-    return;
-  }
-
-  // 按 dt 聚合 fee 和 ad_fee
-  const map = {};
-  rows.forEach(r => {
-    const dt = String(r.dt);
-    if (!map[dt]) map[dt] = { fee: 0, ad_fee: 0 };
-    map[dt].fee += Number(r.fee) || 0;
-    map[dt].ad_fee += Number(r.ad_fee) || 0;
-  });
-  const dates = Object.keys(map).sort();
-  const fees = dates.map(d => map[d].fee);
-  const adFees = dates.map(d => map[d].ad_fee);
-  const labels = dates.map(d => d.length === 8 ? d.slice(4,6) + '.' + d.slice(6) : d);
-
-  document.getElementById('tbl-section').innerHTML = `
-    <div class="chart-card">
-      <div class="chart-title">每日消费趋势</div>
-      <div class="chart-subtitle">数据来源：项目分析 · 按日期汇总</div>
-      <canvas id="spend-chart" height="480"></canvas>
-      <div class="chart-legend">
-        <span><span class="chart-legend-dot" style="background:#2563eb"></span>总消费</span>
-        <span><span class="chart-legend-dot" style="background:#f59e0b"></span>投流消费</span>
-      </div>
-    </div>`;
-
-  const canvas = document.getElementById('spend-chart');
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = 480 * dpr;
-  ctx.scale(dpr, dpr);
-  canvas.style.width = rect.width + 'px';
-  canvas.style.height = '480px';
-
-  const W = rect.width, H = 480;
-  const pad = { t: 20, r: 20, b: 40, l: 60 };
-  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
-
-  const allVals = [...fees, ...adFees];
-  const maxV = Math.max(...allVals) * 1.15 || 1;
-  const minV = 0;
-
-  const x = i => pad.l + (i / (dates.length - 1 || 1)) * cw;
-  const y = v => pad.t + ch - ((v - minV) / (maxV - minV)) * ch;
-
-  // Grid
-  ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 0.5;
-  for (let i = 0; i <= 4; i++) {
-    const yy = pad.t + ch * i / 4;
-    ctx.beginPath(); ctx.moveTo(pad.l, yy); ctx.lineTo(W - pad.r, yy); ctx.stroke();
-    const val = maxV - (maxV * i / 4);
-    ctx.fillStyle = '#9ca3af'; ctx.font = '10px system-ui';
-    ctx.textAlign = 'right'; ctx.fillText(val >= 1000 ? (val/1000).toFixed(1) + 'k' : val.toFixed(0), pad.l - 8, yy + 3);
-  }
-
-  // X labels
-  ctx.fillStyle = '#9ca3af'; ctx.font = '10px system-ui'; ctx.textAlign = 'center';
-  const step = Math.max(1, Math.floor(dates.length / 10));
-  dates.forEach((_, i) => {
-    if (i % step === 0 || i === dates.length - 1) {
-      ctx.fillText(labels[i], x(i), H - pad.b + 18);
-    }
-  });
-
-  // Line helper
-  function drawLine(data, color, fill) {
-    if (data.length < 2) return;
-    ctx.beginPath();
-    data.forEach((v, i) => { i === 0 ? ctx.moveTo(x(i), y(v)) : ctx.lineTo(x(i), y(v)); });
-    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
-
-    // Fill area
-    ctx.beginPath();
-    data.forEach((v, i) => { i === 0 ? ctx.moveTo(x(i), y(v)) : ctx.lineTo(x(i), y(v)); });
-    ctx.lineTo(x(data.length - 1), pad.t + ch);
-    ctx.lineTo(x(0), pad.t + ch);
-    ctx.closePath();
-    ctx.fillStyle = fill; ctx.fill();
-
-    // Dots
-    data.forEach((v, i) => {
-      ctx.beginPath(); ctx.arc(x(i), y(v), 3, 0, Math.PI * 2);
-      ctx.fillStyle = color; ctx.fill();
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
-    });
-  }
-
-  drawLine(fees, '#2563eb', 'rgba(37,99,235,0.08)');
-  drawLine(adFees, '#f59e0b', 'rgba(245,158,11,0.08)');
-}
-
 function exportCSV() {
-  const tab = TABS[activeTab];
+  const tab = DASHBOARDS[activeTab];
   if (!tab || tab.placeholder) return;
   const rawRows = DATA[activeTab] || [];
   const filtered = filterRows(rawRows);
@@ -2470,8 +2027,9 @@ function renderAdsModule() {
    ═══════════════════════════════════════════ */
 
 function _pickDefaultDate() {
-  // 项目分析默认全部，其他 tab 默认：16点后=昨天，16点前=前天
-  if (activeTab === 'project') { filters.dt = 'all'; return; }
+  const db = DASHBOARDS[activeTab];
+  if (db?.defaultDt) { filters.dt = db.defaultDt; return; }
+
   const now = new Date();
   const offset = now.getHours() >= 17 ? 1 : 2;
   const d = new Date();
@@ -2495,8 +2053,13 @@ async function init() {
   switchTab(activeTab);
 }
 
+window.addEventListener('hashchange', () => {
+  const key = location.hash.slice(1);
+  if (key && DASHBOARDS[key] && key !== activeTab) switchTab(key);
+});
+
 init();
 </script>
-<script src="js/chat-widget.js"></script>
+<script src="widgets/chat/index.js"></script>
 </body>
 </html>

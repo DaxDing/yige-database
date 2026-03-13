@@ -5,6 +5,8 @@
 -- 说明: 仅对桥表存在的笔记进行累计，JOIN 维度和转化（转化数据按归因周期聚合）
 -- ============================================================
 
+SET odps.sql.allow.fullscan=true;
+
 INSERT OVERWRITE TABLE dws_xhs_note_cum PARTITION (ds)
 SELECT
     n.note_id,
@@ -101,36 +103,36 @@ SELECT
     c.30d_presale_deposit_uv,
     GETDATE() AS etl_time,
     -- 金额汇总（来源于 dws_xhs_creative_cum）
-    ad.ad_fee,
+    COALESCE(ad.ad_fee, 0) AS ad_fee,
     CAST(COALESCE(n.pgy_actual_amt, 0) + COALESCE(ad.ad_fee, 0) AS DECIMAL(18,2)) AS fee,
     n.read_num,                                              -- 阅读量PV
     n.ds                                                  AS ds                     -- 动态分区字段
 FROM dwd_xhs_note_cum n
-INNER JOIN brg_xhs_note_project_df b
-    ON n.note_id = b.note_id
-    AND b.ds = '${bizdate}'
 LEFT JOIN dim_xhs_note_df d
     ON n.note_id = d.note_id
-    AND d.ds = '${bizdate}'
+    AND d.ds = n.ds
 LEFT JOIN dim_xhs_ad_product_df p
     ON d.ad_product_id = p.ad_product_id
-    AND p.ds = '${bizdate}'
+    AND p.ds = n.ds
 LEFT JOIN dim_xhs_task_group_df t
     ON d.task_group_id = t.task_group_id
-    AND t.ds = '${bizdate}'
+    AND t.ds = n.ds
 LEFT JOIN (
-    -- 广告费用按 note_id 预聚合（creative_cum 固定分区，取最新累计值）
+    -- 广告费用按 note_id+ds 预聚合（creative_cum 按目标分区取累计值）
     SELECT note_id,
+           ds,
            CAST(SUM(fee) AS DECIMAL(18,2)) AS ad_fee
     FROM dws_xhs_creative_cum
-    WHERE ds = '${bizdate}'
-    GROUP BY note_id
+    WHERE ds IN ('${bizdate}', TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd'))
+    GROUP BY note_id, ds
 ) ad
     ON n.note_id = ad.note_id
+    AND n.ds = ad.ds
 LEFT JOIN (
-    -- 转化数据历史累计（按项目时间范围汇总所有 ds，行转列 15d/30d）
-    SELECT
+    -- 转化数据历史累计（按目标分区分别累加，行转列 15d/30d）
+    SELECT /*+ MAPJOIN(dates) */
         cv.note_id,
+        dates.target_ds,
         -- 15d 归因
         SUM(CASE WHEN cv.attribution_period = '15' THEN cv.read_uv ELSE 0 END)                      AS 15d_read_uv,
         SUM(CASE WHEN cv.attribution_period = '15' THEN cv.enter_shop_uv ELSE 0 END)                AS 15d_enter_shop_uv,
@@ -166,17 +168,26 @@ LEFT JOIN (
         SUM(CASE WHEN cv.attribution_period = '30' THEN cv.presale_estimated_gmv ELSE 0 END)        AS 30d_presale_estimated_gmv,
         SUM(CASE WHEN cv.attribution_period = '30' THEN cv.presale_deposit_uv ELSE 0 END)           AS 30d_presale_deposit_uv
     FROM dwd_xhs_conversion_bycontent_di cv
+    CROSS JOIN (
+        SELECT '${bizdate}' AS target_ds
+        UNION ALL
+        SELECT TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd') AS target_ds
+    ) dates
     INNER JOIN brg_xhs_note_project_df b2
         ON cv.note_id = b2.note_id
-        AND b2.ds = '${bizdate}'
+        AND b2.ds = dates.target_ds
     INNER JOIN dim_xhs_project_df p2
         ON b2.project_id = p2.project_id
-        AND p2.ds = '${bizdate}'
-    WHERE cv.ds <= TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd')
-      AND cv.ds >= REPLACE(p2.valid_from, '-', '')
-      AND cv.ds <= REPLACE(LEAST(p2.kpi_fetch_time, TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyy-mm-dd')), '-', '')
-    GROUP BY cv.note_id
+        AND p2.ds = dates.target_ds
+    WHERE cv.ds >= REPLACE(p2.valid_from, '-', '')
+      AND cv.ds <= REPLACE(LEAST(p2.kpi_fetch_time, CONCAT(SUBSTR(dates.target_ds,1,4),'-',SUBSTR(dates.target_ds,5,2),'-',SUBSTR(dates.target_ds,7,2))), '-', '')
+    GROUP BY cv.note_id, dates.target_ds
 ) c
     ON n.note_id = c.note_id
+    AND n.ds = c.target_ds
 WHERE n.ds IN ('${bizdate}', TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd'))
+  AND EXISTS (
+      SELECT 1 FROM brg_xhs_note_project_df b
+      WHERE n.note_id = b.note_id AND b.ds = n.ds
+  )
 ;

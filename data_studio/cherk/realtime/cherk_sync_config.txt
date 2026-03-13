@@ -1,0 +1,8 @@
+== 数据来源 > 数据过滤 ==
+
+ds >= TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -2, 'dd'), 'yyyymmdd') AND ds <= '${bizdate}' AND cherk_table IN ('dwd_xhs_creative_realtime_hi','dwd_xhs_campaign_realtime_hi','dwd_xhs_target_realtime_hi','dwd_xhs_keyword_realtime_hi')
+
+
+== 数据去向 > 导入前准备语句 ==
+
+DELETE FROM cherk_xhs_data_check_df WHERE dt >= TO_CHAR(TO_DATE('${bizdate}', 'yyyymmdd') - INTERVAL '2 days', 'yyyymmdd') AND dt <= '${bizdate}' AND cherk_table IN ('dwd_xhs_creative_realtime_hi','dwd_xhs_campaign_realtime_hi','dwd_xhs_target_realtime_hi','dwd_xhs_keyword_realtime_hi');

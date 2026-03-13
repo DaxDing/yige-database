@@ -17,7 +17,7 @@ SELECT /*+ MAPJOIN(attr) */
     TRIM(e.content_theme)                                                            AS content_theme,
 
     -- ============ 金额指标 ============
-    CAST(SUM(COALESCE(e.pgy_actual_amt, 0)) + SUM(COALESCE(e.ad_fee, 0)) AS DECIMAL(20,6)) AS fee,
+    CAST(SUM(COALESCE(e.fee, 0)) AS DECIMAL(20,6))                                         AS fee,
     CAST(SUM(COALESCE(e.ad_fee, 0)) AS DECIMAL(20,6))                               AS ad_fee,
     CAST(SUM(COALESCE(e.pgy_actual_amt, 0)) AS BIGINT)                              AS kols_fee,
 

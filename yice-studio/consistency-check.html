@@ -413,10 +413,34 @@ body {
 .cat-item:hover { background: var(--surface-alt); cursor: pointer; }
 .cat-item.indent { padding-left: 36px; }
 
-.cat-item-name { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+.cat-item-name { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 8px; position: relative; }
 
 .cat-item-tag {
   font-size: 10px; font-weight: 500;
+  color: var(--text-3); background: var(--surface-alt);
+  border: 1px solid var(--border);
+  padding: 1px 6px; border-radius: 4px;
+}
+
+.cat-item-tag-tip {
+  display: none; position: absolute; left: 0; bottom: calc(100% + 6px);
+  font-size: 11px; font-weight: 500; white-space: nowrap;
+  color: var(--text-1); background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 6px;
+  box-shadow: var(--shadow-md);
+  pointer-events: none; z-index: 10;
+}
+
+.cat-item-tag-tip::after {
+  content: ''; position: absolute; left: 16px; top: 100%;
+  border: 5px solid transparent; border-top-color: var(--border);
+}
+
+.cat-item-name:hover .cat-item-tag-tip { display: block; }
+
+.cat-item-ds-range {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
   color: var(--text-3); background: var(--surface-alt);
   border: 1px solid var(--border);
   padding: 1px 6px; border-radius: 4px;
@@ -465,14 +489,43 @@ body {
   color: var(--text-1); background: var(--surface-alt);
   border: 1px solid var(--border); border-radius: 6px;
   padding: 5px 10px; cursor: pointer; outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s; position: relative; user-select: none;
 }
+.toolbar-date:hover { border-color: var(--blue); }
+.toolbar-date.no-data { color: var(--text-3); }
 
-.toolbar-date:focus { border-color: var(--blue); }
+.cal-wrap { position: fixed; z-index: 9999; }
+.cal-panel {
+  background: #fff; border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12); padding: 12px; width: 260px;
+  animation: fadeIn 0.12s ease-out;
+}
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.cal-header span { font-size: 13px; font-weight: 600; color: var(--text-1); }
+.cal-header button { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px; color: var(--text-2); font-size: 16px; line-height: 1; }
+.cal-header button:hover { background: var(--surface-alt); }
+.cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; font-size: 11px; color: var(--text-3); margin-bottom: 4px; font-weight: 500; }
+.cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.cal-day {
+  text-align: center; font-size: 12px; padding: 6px 0; border-radius: 6px;
+  cursor: pointer; transition: all 0.1s; color: var(--text-3); opacity: 0.35;
+}
+.cal-day.has-data { color: var(--text-1); opacity: 1; font-weight: 500; }
+.cal-day.has-data:hover { background: var(--blue-light); color: var(--blue); }
+.cal-day.active { background: var(--blue); color: #fff !important; opacity: 1; }
+.cal-day.other-month { opacity: 0.2; }
+.cal-day.today { box-shadow: inset 0 0 0 1px var(--blue); }
 
 .toolbar-sep { width: 1px; height: 20px; background: var(--border); }
 
 .toolbar-lag { display: flex; align-items: center; gap: 12px; }
+
+.toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+.toolbar-project-date {
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  color: var(--text-2);
+}
 
 .lag-chip {
   display: flex; align-items: center; gap: 5px;
@@ -630,32 +683,13 @@ body {
         <button class="hdr-btn" onclick="toggleMenu('settings-menu')" title="设置">
           <span class="icon">settings</span>
         </button>
-        <div class="hdr-menu" id="settings-menu">
-          <a class="hdr-menu-item" href="project-management.html?page=accounts"><span class="icon">key</span>资源管理</a>
-          <a class="hdr-menu-item" href="project-management.html?page=enterprise"><span class="icon">apartment</span>企业管理</a>
-        </div>
+        <div class="hdr-menu" id="settings-menu"></div>
       </div>
       <div class="hdr-menu-wrap">
-        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="丁旭义">
-          <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" alt="丁旭义" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
+        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="">
+          <img src="" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
         </button>
-        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0">
-          <div style="padding:20px 20px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
-            <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border-light,#f3f4f6)">
-            <div style="text-align:center">
-              <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:2px">
-                <span style="font-size:14px;font-weight:600;color:var(--text-1)">丁旭义</span>
-                <span style="font-size:10px;padding:1px 8px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-weight:500;letter-spacing:0.5px">root</span>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--text-3)">
-                <span class="icon" style="font-size:13px">corporate_fare</span>EMT执行管理团队
-              </div>
-            </div>
-          </div>
-          <div style="padding:4px">
-            <button class="hdr-menu-item"><span class="icon">logout</span>退出登录</button>
-          </div>
-        </div>
+        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0"></div>
       </div>
     </div>
   </header>
@@ -665,6 +699,9 @@ body {
   </div>
 </div>
 
+<script src="widgets/auth/index.js"></script>
+<script src="widgets/settings-menu/index.js"></script>
+<script src="widgets/refresh/index.js"></script>
 <script>
 /*
  * lag: 业务时间偏移（可选）
@@ -797,6 +834,13 @@ function fmtDt(dt) {
   return `${dt.slice(0,4)}-${dt.slice(4,6)}-${dt.slice(6,8)}`;
 }
 
+function dsRangeHTML(minDs, maxDs) {
+  if (!minDs && !maxDs) return '';
+  const fmt = ds => ds ? ds.slice(4,6) + '.' + ds.slice(6,8) : '?';
+  if (minDs === maxDs) return `<span class="cat-item-ds-range">有数日期: ${fmt(minDs)}</span>`;
+  return `<span class="cat-item-ds-range">有数日期: ${fmt(minDs)}~${fmt(maxDs)}</span>`;
+}
+
 // cherk dt (离线 T-1) + 1 天 = 核验日期
 function cherkDtToBizDate(dt) {
   const s = fmtDt(dt);
@@ -804,6 +848,92 @@ function cherkDtToBizDate(dt) {
   d.setDate(d.getDate() + 1);
   return fmtDate(d);
 }
+
+// ─── Custom Calendar ───
+let _calMonth = null; // Date object for current calendar view month
+
+function toggleCal() {
+  let wrap = document.getElementById('calWrap');
+  if (!wrap) { wrap = document.createElement('div'); wrap.id = 'calWrap'; wrap.className = 'cal-wrap'; wrap.style.display = 'none'; document.body.appendChild(wrap); }
+  if (wrap.style.display !== 'none') { wrap.style.display = 'none'; return; }
+  const btn = document.getElementById('bizDateBtn');
+  const rect = btn.getBoundingClientRect();
+  wrap.style.left = rect.left + 'px';
+  wrap.style.top = (rect.bottom + 4) + 'px';
+  const [y, m] = bizDateSelected.split('-').map(Number);
+  _calMonth = new Date(y, m - 1, 1);
+  renderCal();
+  wrap.style.display = 'block';
+}
+
+function renderCal() {
+  const wrap = document.getElementById('calWrap');
+  if (!wrap) return;
+  const y = _calMonth.getFullYear(), m = _calMonth.getMonth();
+  const today = new Date(); const todayStr = fmtDate(today);
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const daysInPrev = new Date(y, m, 0).getDate();
+
+  const weekdays = '日一二三四五六'.split('').map(d => `<div>${d}</div>`).join('');
+  let days = '';
+
+  // prev month padding
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const d = daysInPrev - i;
+    const dt = fmtDate(new Date(y, m - 1, d));
+    const has = _availableDates.has(dt);
+    days += `<div class="cal-day other-month${has ? ' has-data' : ''}" data-date="${dt}">${d}</div>`;
+  }
+  // current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dt = fmtDate(new Date(y, m, d));
+    const has = _availableDates.has(dt);
+    const active = dt === bizDateSelected;
+    const isToday = dt === todayStr;
+    days += `<div class="cal-day${has ? ' has-data' : ''}${active ? ' active' : ''}${isToday ? ' today' : ''}" data-date="${dt}">${d}</div>`;
+  }
+  // next month padding
+  const total = firstDay + daysInMonth;
+  const remaining = (7 - total % 7) % 7;
+  for (let d = 1; d <= remaining; d++) {
+    const dt = fmtDate(new Date(y, m + 1, d));
+    const has = _availableDates.has(dt);
+    days += `<div class="cal-day other-month${has ? ' has-data' : ''}" data-date="${dt}">${d}</div>`;
+  }
+
+  const monthLabel = `${y}年${String(m + 1).padStart(2, '0')}月`;
+  wrap.innerHTML = `<div class="cal-panel">
+    <div class="cal-header">
+      <button onclick="calNav(-1)">‹</button>
+      <span>${monthLabel}</span>
+      <button onclick="calNav(1)">›</button>
+    </div>
+    <div class="cal-weekdays">${weekdays}</div>
+    <div class="cal-days">${days}</div>
+  </div>`;
+  wrap.querySelectorAll('.cal-day').forEach(el => el.addEventListener('click', () => selectCalDate(el.dataset.date)));
+}
+
+function calNav(dir) {
+  _calMonth.setMonth(_calMonth.getMonth() + dir);
+  renderCal();
+}
+
+async function selectCalDate(dt) {
+  bizDateSelected = dt;
+  PROJECTS = transformCherkData(_allRows, bizDateSelected);
+  document.getElementById('calWrap').style.display = 'none';
+  await fetchDimStats(bizDateSelected);
+  renderSidebar();
+  renderMain();
+}
+
+// close calendar on outside click
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('calWrap');
+  if (wrap && !e.target.closest('#bizDateBtn') && !e.target.closest('#calWrap')) wrap.style.display = 'none';
+});
 
 function toggleMenu(id) {
   document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => { if (m.id !== id) m.classList.remove('open'); });
@@ -813,9 +943,12 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.hdr-menu-wrap') && !e.target.closest('.ws-wrap')) document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => m.classList.remove('open'));
 });
 
+let _availableDates = new Set();
+
 function transformCherkData(rows, targetDt) {
   // targetDt: YYYY-MM-DD 格式，用 cherk_time 筛选核验日期
   const allCt = [...new Set(rows.map(r => r.cherk_time).filter(Boolean))].sort();
+  _availableDates = new Set(allCt.map(ct => fmtDt(ct)));
   let matchCt;
   if (targetDt) {
     const ct = targetDt.replace(/-/g, '');
@@ -834,7 +967,7 @@ function transformCherkData(rows, targetDt) {
   // 以 projects.json 为基准构建项目列表
   const projectMap = {};
   _projectList.forEach(p => {
-    projectMap[p.id] = { id: p.id, name: p.name, end_time: p.end_time || '', checks: {} };
+    projectMap[p.id] = { id: p.id, name: p.name, start_time: p.start_time || '', end_time: p.end_time || '', checks: {} };
   });
 
   // 填充 cherk 检查结果
@@ -864,6 +997,8 @@ function transformCherkData(rows, targetDt) {
         expect: row.base_count || 0,
         ts: fmtDt(row.dt),
         missing_ids: missing,
+        min_ds: row.cherk_min_ds || '',
+        max_ds: row.cherk_max_ds || '',
       };
     });
   }
@@ -922,10 +1057,10 @@ async function fetchDimStats(dt, refresh = false) {
 
 async function loadProjectList() {
   try {
-    const resp = await fetch('projects.json');
+    const resp = await fetch('config/projects.json');
     if (resp.ok) {
       const list = await resp.json();
-      _projectList = list.map(p => ({ id: p.project_id, name: p.project_name, end_time: p.end_time || '' }));
+      _projectList = list.map(p => ({ id: p.project_id, name: p.project_name, start_time: p.start_time || '', end_time: p.end_time || '' }));
     }
   } catch (_) {}
 }
@@ -1021,7 +1156,7 @@ function projectStatus(pr) {
 }
 
 // ─── State ───
-let selected = '__all__';
+let selected = location.hash.slice(1) || '__all__';
 
 // 默认业务日期 = 今天
 function fmtDate(d) { const p = v => String(v).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; }
@@ -1038,9 +1173,17 @@ function toolbarHTML() {
   const d0 = bizDateSelected;                    // 实时：当日
   const d1 = dataDate(bizDateSelected, 1);       // 离线：T-1
   const d2 = dataDate(bizDateSelected, 2);       // 转化：T-2
+  let projectDateHTML = '';
+  if (selected !== '__all__') {
+    const pr = PROJECTS.find(p => p.id === selected);
+    if (pr && (pr.start_time || pr.end_time)) {
+      const fmt = d => d ? d.slice(5).replace('-', '.') : '?';
+      projectDateHTML = `<div class="toolbar-right"><span class="toolbar-label">项目周期</span><span class="toolbar-project-date">${fmt(pr.start_time)} ~ ${fmt(pr.end_time)}</span></div>`;
+    }
+  }
   return `<div class="toolbar">
     <span class="toolbar-label">核验日期</span>
-    <input type="date" class="toolbar-date" id="bizDate" value="${d0}">
+    <div class="toolbar-date${_availableDates.has(d0) ? '' : ' no-data'}" id="bizDateBtn" onclick="toggleCal()">${d0}</div>
     <div class="toolbar-sep"></div>
     <span class="toolbar-label">业务日期</span>
     <div class="toolbar-lag">
@@ -1048,6 +1191,7 @@ function toolbarHTML() {
       <div class="lag-chip"><span class="lag-dot offline"></span>离线 <span class="lag-date">T-1</span></div>
       <div class="lag-chip"><span class="lag-dot convert"></span>转化 <span class="lag-date">T-2</span></div>
     </div>
+    ${projectDateHTML}
   </div>`;
 }
 
@@ -1064,7 +1208,7 @@ function renderSidebar() {
     h += `<div class="sidebar-item ${selected === p.id ? 'active' : ''}" data-id="${p.id}"><span class="s-dot ${st}"></span><span class="s-name">${p.name}</span>${issues > 0 ? `<span class="s-count warn">${issues}</span>` : ''}</div>`;
   });
   el.innerHTML = h;
-  el.querySelectorAll('.sidebar-item').forEach(item => item.addEventListener('click', () => { selected = item.dataset.id; renderSidebar(); renderMain(); }));
+  el.querySelectorAll('.sidebar-item').forEach(item => item.addEventListener('click', () => { selected = item.dataset.id; location.hash = selected === '__all__' ? '' : selected; renderSidebar(); renderMain(); }));
 }
 
 // ─── Main ───
@@ -1074,14 +1218,7 @@ function renderMain() {
   const tmp = document.createElement('div');
   if (selected === '__all__') { renderAllContent(tmp); } else { renderProjectContent(tmp, PROJECTS.find(p => p.id === selected)); }
   el.innerHTML = content + tmp.innerHTML;
-  const dateInput = document.getElementById('bizDate');
-  if (dateInput) dateInput.addEventListener('change', async e => {
-    bizDateSelected = e.target.value;
-    PROJECTS = transformCherkData(_allRows, bizDateSelected);
-    await fetchDimStats(bizDateSelected);
-    renderSidebar();
-    renderMain();
-  });
+  // 日历由 toggleCal / selectCalDate 处理
 }
 
 function statsHTML(s) {
@@ -1227,7 +1364,7 @@ function renderProjectContent(el, project) {
             </div>`;
           }
           return prefix + `<div class="cat-item${hasGroup ? ' indent' : ''}" onclick="openModal('${c.id}', '${c.name}', '${project.id}')">
-            <span class="cat-item-name">${c.name}${c.tag ? `<span class="cat-item-tag">${c.tag}</span>` : ''}</span>
+            <span class="cat-item-name">${c.name}${c.tag ? `<span class="cat-item-tag-tip">${c.tag}</span>` : ''}${dsRangeHTML(c.min_ds, c.max_ds)}</span>
             ${countHTML(c.actual, c.expect, false, c.status)}
             <span class="cat-item-ts">${c.status === 'none' ? '' : tsDisplay}</span>
             <div class="cat-item-status">${badgeHTML(c.status)}</div>
@@ -1240,23 +1377,9 @@ function renderProjectContent(el, project) {
   el.innerHTML = h;
 }
 
-// ─── Sync ───
-async function refreshAll() {
-  const btn = document.getElementById('sync-btn');
-  btn.classList.add('spinning');
-  showToast('正在刷新数据…');
-  const t0 = Date.now();
-  await loadData(true);
-  btn.classList.remove('spinning');
-  const sec = ((Date.now() - t0) / 1000).toFixed(1);
-  showToast('刷新完成 ' + sec + 's');
-}
-function showToast(msg) {
-  let el = document.getElementById('toast');
-  if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
-  el.textContent = msg; el.className = 'toast show';
-  clearTimeout(el._t); el._t = setTimeout(() => el.className = 'toast', 2500);
-}
+registerRefresh(async (refresh) => {
+  await loadData(refresh);
+});
 
 // ─── Modal ───
 function openModal(itemId, itemName, projectId) {
@@ -1338,6 +1461,6 @@ loadData().then(() => {
 
 </script>
 
-<script src="js/chat-widget.js"></script>
+<script src="widgets/chat/index.js"></script>
 </body>
 </html>

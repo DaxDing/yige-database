@@ -8,6 +8,8 @@
 --       输出粒度: project_id + dt + ds
 -- ============================================================
 
+SET odps.sql.allow.fullscan=true;
+
 INSERT OVERWRITE TABLE dws_xhs_project_cum PARTITION (ds)
 SELECT
     b.project_id,
@@ -105,10 +107,10 @@ SELECT
 FROM dws_xhs_note_cum n
 INNER JOIN brg_xhs_note_project_df b
     ON n.note_id = b.note_id
-    AND b.ds = '${bizdate}'
+    AND b.ds = n.ds
 LEFT JOIN (
-    -- creative 按 project_id+note_id 聚合项目时间段内数据（替代 dws_xhs_creative_cum + ADS 差值）
-    SELECT b2.project_id, cr.note_id,
+    -- creative 按 project_id+note_id+target_ds 聚合项目时间段内数据（替代 dws_xhs_creative_cum + ADS 差值）
+    SELECT b2.project_id, cr.note_id, dates.target_ds,
            SUM(cr.impression)  AS impression,
            SUM(cr.click)       AS click,
            SUM(cr.`comment`)   AS `comment`,
@@ -118,19 +120,24 @@ LEFT JOIN (
            SUM(cr.follow)      AS follow,
            SUM(cr.interaction) AS interaction
     FROM dwd_xhs_creative_hi cr
+    CROSS JOIN (
+        SELECT '${bizdate}' AS target_ds
+        UNION ALL
+        SELECT TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd') AS target_ds
+    ) dates
     INNER JOIN brg_xhs_note_project_df b2
         ON cr.note_id = b2.note_id
-        AND b2.ds = '${bizdate}'
+        AND b2.ds = dates.target_ds
     INNER JOIN dim_xhs_project_df p
         ON b2.project_id = p.project_id
-        AND p.ds = '${bizdate}'
-    WHERE cr.ds <= '${bizdate}'
-      AND cr.ds >= REPLACE(p.valid_from, '-', '')
-      AND cr.ds <= REPLACE(LEAST(p.kpi_fetch_time, TO_CHAR(TO_DATE('${bizdate}', 'yyyymmdd'), 'yyyy-mm-dd')), '-', '')
-    GROUP BY b2.project_id, cr.note_id
+        AND p.ds = dates.target_ds
+    WHERE cr.ds >= REPLACE(p.valid_from, '-', '')
+      AND cr.ds <= REPLACE(LEAST(p.kpi_fetch_time, CONCAT(SUBSTR(dates.target_ds,1,4),'-',SUBSTR(dates.target_ds,5,2),'-',SUBSTR(dates.target_ds,7,2))), '-', '')
+    GROUP BY b2.project_id, cr.note_id, dates.target_ds
 ) c
     ON b.project_id = c.project_id
     AND n.note_id = c.note_id
+    AND n.ds = c.target_ds
 WHERE n.ds IN ('${bizdate}', TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd'))
 GROUP BY b.project_id, n.dt, n.ds
 ;

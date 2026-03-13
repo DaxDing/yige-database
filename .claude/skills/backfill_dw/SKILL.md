@@ -27,11 +27,29 @@ allowed-tools: ["Bash", "Read"]
 
 ## 1. 创意层补数据
 
-API → `ods_xhs_creative_report_hi` → `dwd_xhs_creative_hi`，10 并发。
+API → 核对 ODS → 合并写入 → 重跑 DWD。
 
 ```bash
-bash .claude/skills/backfill_dw/scripts/backfill.sh <advertiser_id> <start_date> <end_date>
+bash .claude/skills/backfill_dw/scripts/backfill.sh <advertiser_ids> <start_date> <end_date>
+# 示例
+bash .claude/skills/backfill_dw/scripts/backfill.sh 9590195,8936364,8517830 2026-02-14 2026-03-12
 ```
+
+### 流程（4 步）
+
+| Step | 说明 | 并发 |
+|------|------|------|
+| 1. API 拉取 | 多账号并发拉取，page_size=500 | 10 |
+| 2. 核对 ODS | 按 (creativity_id, dt) 比对已有数据，仅标记缺失分区 | - |
+| 3. ODS 写入 | 合并写入（读已有 + 合并新数据 + 覆写），不丢其他广告主数据 | 10 |
+| 4. ODS → DWD | 仅重跑 Step 3 成功的分区 | 10 |
+
+### 特性
+
+- 多 advertiser_id 逗号分隔，自动逐个获取 token、并发拉取 API
+- end 自动截断为昨天（T-1），不补当天数据
+- 核对已有数据，跳过完整分区，仅补缺失
+- 合并写入保留已有数据，不覆盖其他广告主
 
 ## 2. 维表同步（PG → MaxCompute）
 

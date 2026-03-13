@@ -24,7 +24,7 @@ TABLES = [
     ("dim_xhs_ad_product_df", "Ad product"),
     ("dim_xhs_note_df", "Note"),
     ("brg_xhs_note_project_df", "Note-project bridge"),
-    ("dim_xhs_creative_df", "Creative"),
+    ("dim_xhs_creativity_df", "Creative"),
     ("dim_xhs_keyword_df", "Keyword"),
     ("dim_xhs_target_df", "Target"),
     ("dim_xhs_audience_segment_df", "Audience segment"),

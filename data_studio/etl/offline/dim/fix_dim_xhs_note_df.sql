@@ -6,7 +6,8 @@ SELECT
     tg.task_group_id,
     n.etl_time,
     n.dt,
-    ap.ad_product_id
+    ap.ad_product_id,
+    n.note_type
 FROM dim_xhs_note_df n
 LEFT JOIN (
     -- 每个 note_id 取最新的 pgy_project_id，避免历史多项目关联导致膨胀

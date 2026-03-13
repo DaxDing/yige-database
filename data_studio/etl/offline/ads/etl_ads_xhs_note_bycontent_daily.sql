@@ -35,76 +35,76 @@ SELECT /*+ MAPJOIN(attr) */
     -- ============ 派生指标（效率） ============
     -- CPM
     CAST(CASE WHEN COALESCE(e.impression, 0) > 0
-         THEN COALESCE(e.fee, 0) * 1000.0 / COALESCE(e.impression, 0)
+         THEN COALESCE(e.fee, 0) * 1000.0 / e.impression
          ELSE 0 END AS DECIMAL(20,6))                                             AS cpm,
     -- CPE
     CAST(CASE WHEN COALESCE(e.interaction, 0) > 0
-         THEN COALESCE(e.fee, 0) * 1.0 / COALESCE(e.interaction, 0)
+         THEN COALESCE(e.fee, 0) * 1.0 / e.interaction
          ELSE 0 END AS DECIMAL(20,6))                                             AS cpe,
     -- CPC
     CAST(CASE WHEN COALESCE(e.click, 0) > 0
-         THEN COALESCE(e.fee, 0) * 1.0 / COALESCE(e.click, 0)
+         THEN COALESCE(e.fee, 0) * 1.0 / e.click
          ELSE 0 END AS DECIMAL(20,6))                                             AS cpc,
     -- CTR
     CAST(CASE WHEN COALESCE(e.impression, 0) > 0
-         THEN COALESCE(e.click, 0) * 1.0 / COALESCE(e.impression, 0)
+         THEN COALESCE(e.click, 0) * 1.0 / e.impression
          ELSE 0 END AS DECIMAL(20,6))                                             AS ctr,
     -- 搜索组件CTR
     CAST(CASE WHEN COALESCE(e.search_cmt_impression, 0) > 0
-         THEN COALESCE(e.search_cmt_click, 0) * 1.0 / COALESCE(e.search_cmt_impression, 0)
+         THEN COALESCE(e.search_cmt_click, 0) * 1.0 / e.search_cmt_impression
          ELSE 0 END AS DECIMAL(20,6))                                             AS search_cmt_click_ctr,
     -- CPUV（费用 / 进店UV）
     CAST(CASE WHEN attr.attribution_period = '15' AND COALESCE(e.15d_enter_shop_uv, 0) > 0
-         THEN COALESCE(e.fee, 0) * 1.0 / COALESCE(e.15d_enter_shop_uv, 0)
+         THEN COALESCE(e.fee, 0) * 1.0 / e.15d_enter_shop_uv
          WHEN attr.attribution_period = '30' AND COALESCE(e.30d_enter_shop_uv, 0) > 0
-         THEN COALESCE(e.fee, 0) * 1.0 / COALESCE(e.30d_enter_shop_uv, 0)
+         THEN COALESCE(e.fee, 0) * 1.0 / e.30d_enter_shop_uv
          ELSE 0 END AS DECIMAL(20,6))                                             AS cpuv,
 
     -- ============ 转化指标（按归因口径） ============
     -- 进店率（进店UV/阅读UV）
     CAST(CASE WHEN attr.attribution_period = '15' AND COALESCE(e.15d_read_uv, 0) > 0
-         THEN COALESCE(e.15d_enter_shop_uv, 0) * 1.0 / COALESCE(e.15d_read_uv, 0)
+         THEN COALESCE(e.15d_enter_shop_uv, 0) * 1.0 / e.15d_read_uv
          WHEN attr.attribution_period = '30' AND COALESCE(e.30d_read_uv, 0) > 0
-         THEN COALESCE(e.30d_enter_shop_uv, 0) * 1.0 / COALESCE(e.30d_read_uv, 0)
+         THEN COALESCE(e.30d_enter_shop_uv, 0) * 1.0 / e.30d_read_uv
          ELSE 0 END AS DECIMAL(20,6))                                             AS enter_shop_rate,
     -- 进店UV
     CAST(CASE WHEN attr.attribution_period = '15' THEN COALESCE(e.15d_enter_shop_uv, 0)
          ELSE COALESCE(e.30d_enter_shop_uv, 0) END AS BIGINT)                    AS enter_shop_uv,
     -- 新访客率
     CAST(CASE WHEN attr.attribution_period = '15' AND COALESCE(e.15d_enter_shop_uv, 0) > 0
-         THEN COALESCE(e.15d_shop_new_visitor_uv, 0) * 1.0 / COALESCE(e.15d_enter_shop_uv, 0)
+         THEN COALESCE(e.15d_shop_new_visitor_uv, 0) * 1.0 / e.15d_enter_shop_uv
          WHEN attr.attribution_period = '30' AND COALESCE(e.30d_enter_shop_uv, 0) > 0
-         THEN COALESCE(e.30d_shop_new_visitor_uv, 0) * 1.0 / COALESCE(e.30d_enter_shop_uv, 0)
+         THEN COALESCE(e.30d_shop_new_visitor_uv, 0) * 1.0 / e.30d_enter_shop_uv
          ELSE 0 END AS DECIMAL(20,6))                                             AS new_visitor_rate,
     -- 店铺新访客
     CAST(CASE WHEN attr.attribution_period = '15' THEN COALESCE(e.15d_shop_new_visitor_uv, 0)
          ELSE COALESCE(e.30d_shop_new_visitor_uv, 0) END AS BIGINT)              AS shop_new_visitor_uv,
     -- 转化率
     CAST(CASE WHEN attr.attribution_period = '15' AND COALESCE(e.15d_enter_shop_uv, 0) > 0
-         THEN COALESCE(e.15d_shop_order_uv, 0) * 1.0 / COALESCE(e.15d_enter_shop_uv, 0)
+         THEN COALESCE(e.15d_shop_order_uv, 0) * 1.0 / e.15d_enter_shop_uv
          WHEN attr.attribution_period = '30' AND COALESCE(e.30d_enter_shop_uv, 0) > 0
-         THEN COALESCE(e.30d_shop_order_uv, 0) * 1.0 / COALESCE(e.30d_enter_shop_uv, 0)
+         THEN COALESCE(e.30d_shop_order_uv, 0) * 1.0 / e.30d_enter_shop_uv
          ELSE 0 END AS DECIMAL(20,6))                                             AS conversion_rate,
     -- 全店成交UV
     CAST(CASE WHEN attr.attribution_period = '15' THEN COALESCE(e.15d_shop_order_uv, 0)
          ELSE COALESCE(e.30d_shop_order_uv, 0) END AS BIGINT)                    AS shop_order_uv,
     -- 客单价
     CAST(CASE WHEN attr.attribution_period = '15' AND COALESCE(e.15d_shop_order_uv, 0) > 0
-         THEN COALESCE(e.15d_shop_order_gmv, 0) * 1.0 / COALESCE(e.15d_shop_order_uv, 0)
+         THEN COALESCE(e.15d_shop_order_gmv, 0) * 1.0 / e.15d_shop_order_uv
          WHEN attr.attribution_period = '30' AND COALESCE(e.30d_shop_order_uv, 0) > 0
-         THEN COALESCE(e.30d_shop_order_gmv, 0) * 1.0 / COALESCE(e.30d_shop_order_uv, 0)
+         THEN COALESCE(e.30d_shop_order_gmv, 0) * 1.0 / e.30d_shop_order_uv
          ELSE 0 END AS DECIMAL(20,6))                                             AS average_order_value,
     -- UV价值（RPV）
     CAST(CASE WHEN attr.attribution_period = '15' AND COALESCE(e.15d_enter_shop_uv, 0) > 0
-         THEN COALESCE(e.15d_shop_order_gmv, 0) * 1.0 / COALESCE(e.15d_enter_shop_uv, 0)
+         THEN COALESCE(e.15d_shop_order_gmv, 0) * 1.0 / e.15d_enter_shop_uv
          WHEN attr.attribution_period = '30' AND COALESCE(e.30d_enter_shop_uv, 0) > 0
-         THEN COALESCE(e.30d_shop_order_gmv, 0) * 1.0 / COALESCE(e.30d_enter_shop_uv, 0)
+         THEN COALESCE(e.30d_shop_order_gmv, 0) * 1.0 / e.30d_enter_shop_uv
          ELSE 0 END AS DECIMAL(20,6))                                             AS rpv,
     -- 新客率（新客UV/全店成交UV）
     CAST(CASE WHEN attr.attribution_period = '15' AND COALESCE(e.15d_shop_order_uv, 0) > 0
-         THEN COALESCE(e.15d_shop_new_customer_uv, 0) * 1.0 / COALESCE(e.15d_shop_order_uv, 0)
+         THEN COALESCE(e.15d_shop_new_customer_uv, 0) * 1.0 / e.15d_shop_order_uv
          WHEN attr.attribution_period = '30' AND COALESCE(e.30d_shop_order_uv, 0) > 0
-         THEN COALESCE(e.30d_shop_new_customer_uv, 0) * 1.0 / COALESCE(e.30d_shop_order_uv, 0)
+         THEN COALESCE(e.30d_shop_new_customer_uv, 0) * 1.0 / e.30d_shop_order_uv
          ELSE 0 END AS DECIMAL(20,6))                                             AS new_customer_rate,
     -- 店铺新客UV
     CAST(CASE WHEN attr.attribution_period = '15' THEN COALESCE(e.15d_shop_new_customer_uv, 0)
@@ -114,19 +114,19 @@ SELECT /*+ MAPJOIN(attr) */
          ELSE COALESCE(e.30d_shop_order_gmv, 0) END AS DECIMAL(20,6))            AS shop_order_gmv,
     -- 新客成本
     CAST(CASE WHEN attr.attribution_period = '15' AND COALESCE(e.15d_shop_new_customer_uv, 0) > 0
-         THEN COALESCE(e.fee, 0) * 1.0 / COALESCE(e.15d_shop_new_customer_uv, 0)
+         THEN COALESCE(e.fee, 0) * 1.0 / e.15d_shop_new_customer_uv
          WHEN attr.attribution_period = '30' AND COALESCE(e.30d_shop_new_customer_uv, 0) > 0
-         THEN COALESCE(e.fee, 0) * 1.0 / COALESCE(e.30d_shop_new_customer_uv, 0)
+         THEN COALESCE(e.fee, 0) * 1.0 / e.30d_shop_new_customer_uv
          ELSE 0 END AS DECIMAL(20,6))                                             AS cac,
     -- 全店ROI
     CAST(CASE WHEN COALESCE(e.fee, 0) > 0
-         THEN CASE WHEN attr.attribution_period = '15' THEN COALESCE(e.15d_shop_order_gmv, 0) * 1.0 / COALESCE(e.fee, 0)
-                   ELSE COALESCE(e.30d_shop_order_gmv, 0) * 1.0 / COALESCE(e.fee, 0) END
+         THEN CASE WHEN attr.attribution_period = '15' THEN COALESCE(e.15d_shop_order_gmv, 0) * 1.0 / e.fee
+                   ELSE COALESCE(e.30d_shop_order_gmv, 0) * 1.0 / e.fee END
          ELSE 0 END AS DECIMAL(20,6))                                              AS roi,
     -- 单品ROI
     CAST(CASE WHEN COALESCE(e.fee, 0) > 0
-         THEN CASE WHEN attr.attribution_period = '15' THEN COALESCE(e.15d_task_product_gmv, 0) * 1.0 / COALESCE(e.fee, 0)
-                   ELSE COALESCE(e.30d_task_product_gmv, 0) * 1.0 / COALESCE(e.fee, 0) END
+         THEN CASE WHEN attr.attribution_period = '15' THEN COALESCE(e.15d_task_product_gmv, 0) * 1.0 / e.fee
+                   ELSE COALESCE(e.30d_task_product_gmv, 0) * 1.0 / e.fee END
          ELSE 0 END AS DECIMAL(20,6))                                              AS single_product_roi,
 
     -- ============ 系统字段 ============

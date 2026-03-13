@@ -54,7 +54,8 @@ for row in projects:
     SELECT '{base_table}', {base_count},
            '{cherk_table}', {cherk_count},
            {missing_count}, '{missing_sample}', '{status}', GETDATE(),
-           '{cherk_source}', '{ds}', '{project_id}', '{project_name}'
+           '{cherk_source}', '{ds}', '{project_id}', '{project_name}', NULL,
+           NULL, NULL
     """
     o.execute_sql(insert_sql)
 

@@ -8,20 +8,20 @@ SELECT
     ad_product_name,             -- 归属产品
     task_group_name,             -- 任务组
     read_uv,                     -- 阅读/播放UV
-    enter_shop_rate,             -- 进店率 = enter_shop_uv / read_uv
+    enter_shop_rate,             -- 进店率
     enter_shop_uv,               -- 进店UV
-    conversion_rate,             -- 成交转化率 = shop_order_uv / enter_shop_uv
+    conversion_rate,             -- 成交转化率
     shop_order_uv,               -- 成交UV
-    average_order_value,         -- 客单价 = shop_order_gmv / shop_order_uv
+    average_order_value,         -- 客单价
     shop_order_gmv,              -- 成交GMV
     task_product_gmv,            -- 任务商品成交GMV
-    collect_rate,                -- 收加率 = (collect + add_cart_uv) / enter_shop_uv
-    rpv,                         -- UV价值 = shop_order_gmv / enter_shop_uv
+    collect_rate,                -- 收加率
+    rpv,                         -- UV价值
     kols_fee,                    -- 蒲公英金额
     ad_fee,                      -- 投流金额
     fee,                         -- 总金额
-    cpuv,                        -- CPUV【综合】 = fee / enter_shop_uv
-    roi                          -- ROI = shop_order_gmv / fee
+    cpuv,                        -- CPUV【综合】
+    roi                          -- ROI
 FROM ads_xhs_task_group_bytask_daily_agg
 WHERE ds >= '00000000' AND ds <= '99999999'
 AND (dt = '${dt}' OR '${dt}' IN ('', 'all'))

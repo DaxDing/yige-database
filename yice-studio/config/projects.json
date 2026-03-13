@@ -50,39 +50,12 @@
       "jg": null,
       "pgy": null,
       "xh": null,
-      "feishu": "feishu_1"
+      "feishu": "feishu_1",
+      "dw": "default_workspace_6lgj"
     },
     "brand_user_ids": [
       "5cf89d080000000018003029"
     ],
-    "departments": [
-      {
-        "name": "项目2部",
-        "department_id": "od-f2d878a26b047db085ee5f385510b338"
-      }
-    ]
-  },
-  {
-    "project_id": "000017",
-    "project_name": "泡泡骚年货节",
-    "department": "项目2部",
-    "marketing_target": "产品种草",
-    "start_time": null,
-    "end_time": null,
-    "advertiser_ids": [
-      "896869"
-    ],
-    "members": [],
-    "links": {
-      "content_exec": [],
-      "folder": null,
-      "budget": null
-    },
-    "account_refs": {
-      "jg": null,
-      "pgy": null,
-      "xh": null
-    },
     "departments": [
       {
         "name": "项目2部",
@@ -133,7 +106,8 @@
       "jg": null,
       "pgy": null,
       "xh": null,
-      "feishu": null
+      "feishu": null,
+      "dw": "default_workspace_6lgj"
     },
     "brand_user_ids": [
       "5cf89d080000000018003029"
@@ -204,7 +178,8 @@
     "account_refs": {
       "jg": null,
       "pgy": null,
-      "xh": null
+      "xh": null,
+      "dw": "default_workspace_6lgj"
     },
     "departments": [
       {
@@ -256,18 +231,79 @@
       "content_exec": [
         "https://ygwhcm.feishu.cn/wiki/安吉尔产品26年3月执行表"
       ],
-      "folder": null,
+      "folder": "https://ygwhcm.feishu.cn/drive/folder/HUiDfrclulNfXAdhu8AcDZWLnpf",
       "budget": "https://ygwhcm.feishu.cn/sheets/EnEss8pV5hpS52tktmTcYH8Vnjj"
     },
     "account_refs": {
       "jg": null,
       "pgy": null,
-      "xh": null
+      "xh": null,
+      "dw": "default_workspace_6lgj"
     },
     "departments": [
       {
         "name": "项目1部",
         "department_id": "od-277f5d2530064b94dcf9d9cd7f0d3ed9"
+      }
+    ]
+  },
+  {
+    "project_id": "000030",
+    "project_name": "科大讯飞Q1投放",
+    "department": "项目2部",
+    "marketing_target": "产品种草",
+    "start_time": "2026-01-01",
+    "end_time": "2026-03-31",
+    "advertiser_ids": [
+      "8192269",
+      "9116033",
+      "9119449"
+    ],
+    "members": [
+      {
+        "name": "Banko",
+        "open_id": "",
+        "avatar": ""
+      },
+      {
+        "name": "菌菌",
+        "open_id": "",
+        "avatar": ""
+      },
+      {
+        "name": "干脆面",
+        "open_id": "",
+        "avatar": ""
+      },
+      {
+        "name": "山药",
+        "open_id": "",
+        "avatar": ""
+      },
+      {
+        "name": "只狼",
+        "open_id": "ou_29565f4d1cdb8d12d88d4155d1d38d3a",
+        "avatar": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_0088_fe59f0ca-8f0e-4229-b238-4d472e9c85bg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp"
+      }
+    ],
+    "links": {
+      "content_exec": [
+        "https://ygwhcm.feishu.cn/wiki/LFVBwNmyyiNSkzkQHHdcGCRanZb"
+      ],
+      "folder": "https://ygwhcm.feishu.cn/drive/folder/PD1pfVH1dllnqYdxbfqcoWQTnzd",
+      "budget": null
+    },
+    "account_refs": {
+      "jg": null,
+      "pgy": null,
+      "xh": null,
+      "dw": "default_workspace_6lgj"
+    },
+    "brand_user_ids": [],
+    "departments": [
+      {
+        "name": "项目2部",
+        "department_id": "od-f2d878a26b047db085ee5f385510b338"
       }
     ]
   }

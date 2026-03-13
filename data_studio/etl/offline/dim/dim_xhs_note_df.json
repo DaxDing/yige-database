@@ -14,7 +14,8 @@
                     "content_theme",
                     "ad_product_name",
                     "now()",
-                    "dt"
+                    "dt",
+                    "note_type"
                 ],
                 "where": "dt = TO_DATE('${bizdate}', 'YYYYMMDD') ",
                 "splitPk": "",
@@ -44,7 +45,8 @@
                     "content_theme",
                     "ad_product_name",
                     "etl_time",
-                    "dt"
+                    "dt",
+                    "note_type"
                 ],
                 "emptyAsNull": true,
                 "tableComment": "小红书笔记维度表",

@@ -95,10 +95,11 @@ SELECT /*+ MAPJOIN(attr) */
 
 FROM dws_xhs_task_group_cum e
 LEFT JOIN (
-    SELECT DISTINCT task_group_id, project_id
+    SELECT DISTINCT task_group_id, project_id, ds
     FROM dim_xhs_task_group_df
-    WHERE ds = '${bizdate}'
+    WHERE ds IN ('${bizdate}', TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd'))
 ) d ON e.task_group_id = d.task_group_id
+   AND e.ds = d.ds
 CROSS JOIN (
     SELECT '15' AS attribution_period
     UNION ALL

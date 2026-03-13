@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YICE 登录</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@20,400,1" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --border: #e8eaed;
+  --text-1: #111827;
+  --text-2: #4b5563;
+  --text-3: #9ca3af;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  padding: 40px 32px 32px;
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.brand-logo .icon {
+  font-family: 'Material Symbols Rounded';
+  font-size: 28px;
+  color: #fff;
+}
+.brand h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+}
+.brand p {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.form-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-1);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.form-input::placeholder { color: var(--text-3); }
+
+.btn-primary {
+  width: 100%;
+  height: 42px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-primary:hover { opacity: 0.92; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary .icon { font-family: 'Material Symbols Rounded'; font-size: 18px; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--text-3);
+  font-size: 12px;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.btn-feishu {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-feishu:hover { background: var(--blue-light); border-color: #bfdbfe; }
+.btn-feishu svg { width: 20px; height: 20px; }
+
+.error-msg {
+  display: none;
+  background: var(--red-light);
+  color: var(--red);
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.error-msg.show { display: block; }
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="brand">
+    <div class="brand-logo"><span class="icon">monitoring</span></div>
+    <h1>YICE Studio</h1>
+    <p>小红书营销数据平台</p>
+  </div>
+
+  <div class="error-msg" id="error-msg"></div>
+
+  <form id="login-form" onsubmit="return handleLogin(event)">
+    <div class="form-group">
+      <label>用户名</label>
+      <input class="form-input" id="username" type="text" placeholder="请输入用户名" autocomplete="username" autofocus>
+    </div>
+    <div class="form-group">
+      <label>密码</label>
+      <input class="form-input" id="password" type="password" placeholder="请输入密码" autocomplete="current-password">
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text-2);margin:0">
+        <input type="checkbox" id="remember" style="accent-color:var(--blue);width:15px;height:15px;cursor:pointer">记住账号
+      </label>
+    </div>
+    <button class="btn-primary" type="submit" id="login-btn">
+      <span class="icon">login</span>登录
+    </button>
+  </form>
+
+  <div class="divider">或</div>
+
+  <button class="btn-feishu" onclick="feishuLogin()">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M3.5 7.5L10.5 3L20.5 11L13 17L3.5 7.5Z" fill="#3370FF"/><path d="M3.5 7.5L8 15.5L13 17L3.5 7.5Z" fill="#2B5BDB"/><path d="M8 15.5L13 17L20.5 11L15 21L8 15.5Z" fill="#3370FF"/><path d="M13 17L15 21L20.5 11L13 17Z" fill="#2B5BDB" opacity="0.7"/></svg>
+    飞书登录
+  </button>
+</div>
+
+<script>
+// 已登录则跳转
+fetch('/api/me').then(r => { if (r.ok) location.href = '/ads-report.html'; });
+
+// 恢复记住的账号
+const saved = JSON.parse(localStorage.getItem('yice_remember') || 'null');
+if (saved) {
+  document.getElementById('username').value = saved.username || '';
+  document.getElementById('password').value = saved.password || '';
+  document.getElementById('remember').checked = true;
+}
+
+// URL 参数错误提示
+const urlErr = new URLSearchParams(location.search).get('error');
+if (urlErr) {
+  const msg = urlErr === 'feishu_denied' ? '飞书授权被取消' : urlErr === 'feishu_fail' ? '飞书登录失败，请重试' : urlErr;
+  showError(msg);
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  if (!username || !password) { showError('请输入用户名和密码'); return false; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+  document.getElementById('error-msg').classList.remove('show');
+
+  try {
+    const resp = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      showError(data.error || '登录失败');
+      return false;
+    }
+    // 记住账号
+    if (document.getElementById('remember').checked) {
+      localStorage.setItem('yice_remember', JSON.stringify({ username, password }));
+    } else {
+      localStorage.removeItem('yice_remember');
+    }
+    location.href = '/ads-report.html';
+  } catch {
+    showError('网络错误，请重试');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span class="icon">login</span>登录';
+  }
+  return false;
+}
+
+function feishuLogin() {
+  location.href = '/api/auth/feishu';
+}
+</script>
+</body>
+</html>

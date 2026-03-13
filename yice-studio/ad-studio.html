@@ -483,29 +483,14 @@ body { background: var(--bg); color: var(--text-1); font-family: var(--ui); -web
         <div class="hdr-menu" id="settings-menu">
           <a class="hdr-menu-item" href="#"><span class="icon">warning</span>预警规则</a>
           <a class="hdr-menu-item" href="#"><span class="icon">dashboard_customize</span>策略模版</a>
+          <div id="settings-menu-extra"></div>
         </div>
       </div>
       <div class="hdr-menu-wrap">
-        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="丁旭义">
-          <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" alt="丁旭义" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
+        <button class="hdr-btn user-avatar-btn" onclick="toggleMenu('user-menu')" title="">
+          <img src="" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover">
         </button>
-        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0">
-          <div style="padding:20px 20px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
-            <img src="https://s1-imfile.feishucdn.com/static-resource/v1/v3_00r3_89d743ec-b6f8-4c8d-bcd1-ca823ac315fg~?image_size=72x72&cut_type=&quality=&format=png&sticker_format=.webp" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border-light,#f3f4f6)">
-            <div style="text-align:center">
-              <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:2px">
-                <span style="font-size:14px;font-weight:600;color:var(--text-1)">丁旭义</span>
-                <span style="font-size:10px;padding:1px 8px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-weight:500;letter-spacing:0.5px">root</span>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--text-3)">
-                <span class="icon" style="font-size:13px">corporate_fare</span>EMT执行管理团队
-              </div>
-            </div>
-          </div>
-          <div style="padding:4px">
-            <a class="hdr-menu-item" href="#"><span class="icon">logout</span>退出登录</a>
-          </div>
-        </div>
+        <div class="hdr-menu" id="user-menu" style="min-width:200px;padding:0"></div>
       </div>
     </div>
   </header>
@@ -525,7 +510,10 @@ body { background: var(--bg); color: var(--text-1); font-family: var(--ui); -web
   </div>
 </div>
 
-<script src="js/chat-widget.js"></script>
+<script src="widgets/auth/index.js"></script>
+<script src="widgets/settings-menu/index.js"></script>
+<script src="widgets/refresh/index.js"></script>
+<script src="widgets/chat/index.js"></script>
 <script>
 /* ═══ Data ═══ */
 let PROJECTS = [];
@@ -1468,7 +1456,7 @@ async function renderEnterprise() {
   main.innerHTML = `
     <div class="ent-back-btn" onclick="exitEnterprise()"><span class="icon">arrow_back</span>返回工作台</div>
     <div class="ent-header">
-      <h2><span class="icon" style="font-size:20px;color:var(--blue)">apartment</span>企业管理</h2>
+      <h2><span class="icon" style="font-size:20px;color:var(--blue)">apartment</span>组织配置</h2>
       <div class="ent-tabs">
         <button class="ent-tab${entTab === 'departments' ? ' active' : ''}" onclick="entTab='departments';entSelectedDept=null;renderEnterprise()">
           <span class="icon">account_tree</span>部门管理
@@ -1641,31 +1629,12 @@ document.addEventListener('click', e => {
     document.querySelectorAll('.hdr-menu, .ws-menu').forEach(m => m.classList.remove('show'));
 });
 
-/* ═══ Refresh ═══ */
-async function refreshAll() {
-  const btn = document.getElementById('sync-btn');
-  const shell = document.querySelector('.shell');
-  btn.classList.add('spinning');
-  shell.classList.add('refreshing');
-  showToast('正在刷新数据…', true);
-  const t0 = Date.now();
+registerRefresh(async () => {
   await loadProjects();
   renderSidebar();
   if (activeProject) renderProject(activeProject);
   else renderDashboard();
-  btn.classList.remove('spinning');
-  shell.classList.remove('refreshing');
-  const sec = ((Date.now() - t0) / 1000).toFixed(1);
-  showToast('刷新完成 ' + sec + 's');
-}
-
-function showToast(msg, persist) {
-  let el = document.getElementById('toast');
-  if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
-  el.textContent = msg; el.className = 'toast show';
-  clearTimeout(el._t);
-  if (!persist) el._t = setTimeout(() => el.className = 'toast', 2500);
-}
+});
 
 /* ═══ Init ═══ */
 loadProjects().then(() => {

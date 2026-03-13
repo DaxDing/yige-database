@@ -2,5 +2,33 @@
   "jg": [],
   "pgy": [],
   "xh": [],
-  "feishu": []
+  "feishu": [],
+  "dw": [
+    {
+      "id": "default_workspace_6lgj",
+      "name": "伊阁数据仓库 (530486)",
+      "workspace_name": "default_workspace_6lgj",
+      "workspace_id": "530486",
+      "resource_group_id": "Serverless_res_group_751526408194944_764306250261154",
+      "members": "YGALYUN"
+    }
+  ],
+  "mc": [
+    {
+      "id": "default_datasource_cn_hangzhou_530486",
+      "name": "伊阁数据仓库 MaxCompute",
+      "project_name": "default_datasource_cn_hangzhou_530486",
+      "endpoint": "http://service.cn-hangzhou.maxcompute.aliyun.com/api"
+    }
+  ],
+  "rds": [
+    {
+      "id": "pgm-bp17nt187ku2460h",
+      "name": "伊阁数据仓库 RDS",
+      "instance_id": "pgm-bp17nt187ku2460h",
+      "host": "pgm-bp17nt187ku2460h.pg.rds.aliyuncs.com",
+      "port": "5432",
+      "db_name": "yige_dw"
+    }
+  ]
 }

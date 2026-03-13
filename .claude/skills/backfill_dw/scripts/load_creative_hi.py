@@ -1,13 +1,13 @@
 """
-拉取聚光离线创意报表 → 写入 MaxCompute ODS → 重跑 DWD（10并发）
+拉取聚光离线创意报表 → 核对 ODS → 合并写入 → 重跑 DWD（10并发）
 
 用法:
   export $(cat .env | xargs)
   python3 load_creative_hi.py \
-    --start 2025-11-28 \
-    --end 2026-01-25 \
-    --advertiser-id 6209396 \
-    --token <access_token>
+    --start 2026-02-14 \
+    --end 2026-03-12 \
+    --advertiser-ids 9590195,8936364,8517830 \
+    --tokens token1,token2,token3
 """
 import argparse, os, json, time, sys, requests
 from datetime import datetime, timedelta
@@ -18,7 +18,7 @@ from odps import ODPS
 API_URL = "https://adapi.xiaohongshu.com/api/open/jg/data/report/offline/creative"
 ODS_TABLE = "ods_xhs_creative_report_hi"
 DWD_TABLE = "dwd_xhs_creative_hi"
-PAGE_SIZE = 100
+PAGE_SIZE = 500
 WORKERS = 10
 SPLIT_COLUMNS = [
     "marketingTarget", "deliveryMode", "placement",
@@ -35,8 +35,8 @@ def get_odps():
     )
 
 
-def fetch_day(date_str, advertiser_id, session):
-    """拉取单日全量数据（自动翻页，指数退避重试）"""
+def fetch_range(start_date, end_date, advertiser_id, session):
+    """拉取日期范围全量数据（自动翻页，指数退避重试）"""
     records = []
     page = 1
     while True:
@@ -44,8 +44,8 @@ def fetch_day(date_str, advertiser_id, session):
             try:
                 resp = session.post(API_URL, json={
                     "advertiser_id": advertiser_id,
-                    "start_date": date_str,
-                    "end_date": date_str,
+                    "start_date": start_date,
+                    "end_date": end_date,
                     "time_unit": "HOUR",
                     "split_columns": SPLIT_COLUMNS,
                     "page_num": page,
@@ -67,11 +67,42 @@ def fetch_day(date_str, advertiser_id, session):
         items = data.get("data", {}).get("data_list", [])
         records.extend(items)
         total = data["data"].get("total_count", 0)
+        print(f"\r  已拉取 {len(records)}/{total} 条", end="", flush=True)
         if page * PAGE_SIZE >= total:
             break
         page += 1
-        time.sleep(1)
+        time.sleep(0.3)
+    print()
     return records
+
+
+def group_by_ds(records):
+    """按 time 字段的日期部分分组，返回 {ds: [records]}"""
+    groups = {}
+    for r in records:
+        dt = r.get("time", "")
+        ds = dt[:10].replace("-", "") if len(dt) >= 10 else "unknown"
+        groups.setdefault(ds, []).append(r)
+    return groups
+
+
+def check_ods_existing(ds_list):
+    """批量查询 ODS 中已有的 (creativity_id, dt) 集合，按 ds 分组"""
+    o = get_odps()
+    existing = {}
+    # 分批查询，每批 10 个分区
+    for i in range(0, len(ds_list), 10):
+        batch = ds_list[i:i + 10]
+        ds_in = ",".join(f"'{ds}'" for ds in batch)
+        sql = f"SELECT ds, creativity_id, dt FROM {ODS_TABLE} WHERE ds IN ({ds_in})"
+        try:
+            with o.execute_sql(sql).open_reader() as reader:
+                for row in reader:
+                    ds = row['ds']
+                    existing.setdefault(ds, set()).add((row['creativity_id'], row['dt']))
+        except Exception as e:
+            print(f"  查询分区 {batch} 失败: {e}", file=sys.stderr)
+    return existing
 
 
 def transform_to_ods(record):
@@ -82,6 +113,38 @@ def transform_to_ods(record):
         json.dumps(record, ensure_ascii=False),
         datetime.now(),
     ]
+
+
+def merge_write_ods(table_name, ds, new_items):
+    """合并写入 ODS 分区：读已有 + 合并新数据 + 覆写（保留其他广告主数据）"""
+    o = get_odps()
+    table = o.get_table(table_name)
+    partition = f"ds='{ds}'"
+
+    # 读取已有数据，以 (creativity_id, dt) 为 key
+    merged = {}
+    try:
+        sql = f"SELECT creativity_id, dt, raw_data, etl_time FROM {table_name} WHERE ds = '{ds}'"
+        with o.execute_sql(sql).open_reader() as reader:
+            for row in reader:
+                key = (row['creativity_id'], row['dt'])
+                merged[key] = [row['creativity_id'], row['dt'], row['raw_data'], row['etl_time']]
+    except Exception:
+        pass
+
+    old_count = len(merged)
+
+    # 新数据覆盖同 key 的已有数据
+    for item in new_items:
+        key = (item.get("creativity_id", ""), item.get("time", ""))
+        merged[key] = transform_to_ods(item)
+
+    rows = list(merged.values())
+    with table.open_writer(partition=partition, create_partition=True, overwrite=True) as writer:
+        writer.write(rows)
+
+    added = len(rows) - old_count
+    return ds, added, len(rows)
 
 
 DWD_SQL = """
@@ -196,80 +259,129 @@ def run_dwd(ds):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="拉取聚光离线创意报表 → ODS → DWD")
+    parser = argparse.ArgumentParser(description="拉取聚光离线创意报表 → 核对 → ODS → DWD")
     parser.add_argument("--start", required=True, help="开始日期 (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="结束日期 (YYYY-MM-DD)")
-    parser.add_argument("--advertiser-id", type=int, required=True, help="投放账号ID")
-    parser.add_argument("--token", required=True, help="API Access-Token")
+    parser.add_argument("--advertiser-ids", required=True, help="投放账号ID，逗号分隔")
+    parser.add_argument("--tokens", required=True, help="Access-Token，逗号分隔，与 advertiser-ids 对应")
     args = parser.parse_args()
 
-    o = get_odps()
-    table = o.get_table(ODS_TABLE)
+    # 日期校验：end 不超过昨天
+    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    if args.end > yesterday:
+        print(f"end={args.end} 超过昨天({yesterday})，自动截断")
+        args.end = yesterday
 
-    session = requests.Session()
-    session.headers.update({
-        "Content-Type": "application/json",
-        "Access-Token": args.token
-    })
+    adv_ids = [int(x.strip()) for x in args.advertiser_ids.split(",")]
+    tokens = [t.strip() for t in args.tokens.split(",")]
+    if len(adv_ids) != len(tokens):
+        print(f"advertiser-ids({len(adv_ids)}) 与 tokens({len(tokens)}) 数量不匹配", file=sys.stderr)
+        sys.exit(1)
 
-    # ========== Step 1: API → ODS ==========
+    # ========== Step 1: API 并发拉取全量数据 ==========
     print("=" * 50)
-    print("Step 1: API → ODS")
+    print(f"Step 1: API 并发拉取 ({len(adv_ids)} 个账号)")
     print("=" * 50)
 
-    cur = datetime.strptime(args.start, "%Y-%m-%d")
-    end = datetime.strptime(args.end, "%Y-%m-%d")
-    total_written = 0
-    ds_list = []
+    def _fetch_one(adv_id, token):
+        s = requests.Session()
+        s.headers.update({"Content-Type": "application/json", "Access-Token": token})
+        print(f"[advertiser={adv_id}] 开始拉取...")
+        records = fetch_range(args.start, args.end, adv_id, s)
+        print(f"[advertiser={adv_id}] 完成: {len(records)} 条")
+        return records
 
-    while cur <= end:
-        date_str = cur.strftime("%Y-%m-%d")
-        ds = cur.strftime("%Y%m%d")
-        print(f"[{ds}] 拉取中...", end=" ", flush=True)
+    all_records = []
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        futures = {pool.submit(_fetch_one, aid, tok): aid for aid, tok in zip(adv_ids, tokens)}
+        for future in as_completed(futures):
+            all_records.extend(future.result())
 
-        items = fetch_day(date_str, args.advertiser_id, session)
-        print(f"{len(items)} 条", end=" ", flush=True)
-
-        if items:
-            partition = f"ds='{ds}'"
-            with table.open_writer(partition=partition, create_partition=True, overwrite=True) as writer:
-                writer.write([transform_to_ods(r) for r in items])
-            total_written += len(items)
-            ds_list.append(ds)
-            print("✓")
-        else:
-            print("跳过(无数据)")
-
-        cur += timedelta(days=1)
-        time.sleep(2)
-
-    print(f"\nODS 写入完成: {total_written} 条 → {ODS_TABLE}")
-
-    if not ds_list:
-        print("无数据，跳过 DWD")
+    print(f"共拉取 {len(all_records)} 条")
+    if not all_records:
+        print("无数据，退出")
         return
 
-    # ========== Step 2: ODS → DWD (10并发) ==========
+    groups = group_by_ds(all_records)
+    ds_list = sorted(groups.keys())
+    print(f"覆盖 {len(ds_list)} 个分区: {ds_list[0]} ~ {ds_list[-1]}")
+
+    # ========== Step 2: 核对 ODS 已有数据 ==========
     print(f"\n{'=' * 50}")
-    print(f"Step 2: ODS → DWD ({WORKERS}并发)")
+    print("Step 2: 核对 ODS 已有数据")
     print("=" * 50)
-    print(f"共 {len(ds_list)} 个分区待重跑")
+
+    existing = check_ods_existing(ds_list)
+
+    need_write = []
+    skip_count = 0
+    for ds in ds_list:
+        api_keys = {(r.get("creativity_id", ""), r.get("time", "")) for r in groups[ds]}
+        ods_keys = existing.get(ds, set())
+        missing = api_keys - ods_keys
+        if missing:
+            need_write.append(ds)
+            print(f"  {ds}: API {len(api_keys)}, ODS {len(api_keys) - len(missing)}, 缺 {len(missing)} → 需补")
+        else:
+            skip_count += 1
+            print(f"  {ds}: API {len(api_keys)}, ODS {len(ods_keys)} → 跳过")
+
+    print(f"\n需补 {len(need_write)} 个分区，跳过 {skip_count} 个")
+
+    if not need_write:
+        print("全部已有数据，无需补数据")
+        return
+
+    # ========== Step 3: 合并写入 ODS ==========
+    print(f"\n{'=' * 50}")
+    print(f"Step 3: ODS 合并写入 ({WORKERS}并发)")
+    print("=" * 50)
+
+    total_added = 0
+    ok_ds = []
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        futures = {
+            pool.submit(merge_write_ods, ODS_TABLE, ds, groups[ds]): ds
+            for ds in need_write
+        }
+        for future in as_completed(futures):
+            ds = futures[future]
+            try:
+                _, added, total = future.result()
+                total_added += added
+                ok_ds.append(ds)
+                print(f"  [{len(ok_ds)}/{len(need_write)}] {ds} +{added} (共{total})")
+            except Exception as e:
+                print(f"  {ds} ✗ {e}")
+
+    ok_ds.sort()
+    print(f"\nODS 写入完成: 新增 {total_added} 条 → {ODS_TABLE}")
+
+    if not ok_ds:
+        print("ODS 全部失败，跳过 DWD")
+        return
+
+    # ========== Step 4: ODS → DWD (并发) ==========
+    print(f"\n{'=' * 50}")
+    print(f"Step 4: ODS → DWD ({WORKERS}并发)")
+    print("=" * 50)
+    print(f"共 {len(ok_ds)} 个分区待重跑")
 
     ok = 0
     fail = 0
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        futures = {pool.submit(run_dwd, ds): ds for ds in ds_list}
+        futures = {pool.submit(run_dwd, ds): ds for ds in ok_ds}
         for future in as_completed(futures):
             ds, success, err = future.result()
             if success:
                 ok += 1
-                print(f"[{ok + fail}/{len(ds_list)}] {ds} ✓")
+                print(f"  [{ok + fail}/{len(ok_ds)}] {ds} ✓")
             else:
                 fail += 1
-                print(f"[{ok + fail}/{len(ds_list)}] {ds} ✗ {err}")
+                print(f"  [{ok + fail}/{len(ok_ds)}] {ds} ✗ {err}")
 
-    print(f"\nDWD 重跑完成: {ok}/{len(ds_list)} 成功, {fail} 失败")
-    print(f"\n汇总: ODS {total_written} 条, DWD {ok}/{len(ds_list)} 分区")
+    print(f"\nDWD 重跑完成: {ok}/{len(ok_ds)} 成功, {fail} 失败")
+    print(f"\n汇总: API {len(all_records)} 条, ODS +{total_added}, DWD {ok}/{len(ok_ds)} 分区")
 
 
 if __name__ == "__main__":

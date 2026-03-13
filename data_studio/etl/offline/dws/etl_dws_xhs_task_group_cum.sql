@@ -9,6 +9,8 @@
 --       pgy_actual_amt/fee 仅计 is_proxy=FALSE 的笔记（与 project_cum 一致）
 -- ============================================================
 
+SET odps.sql.allow.fullscan=true;
+
 INSERT OVERWRITE TABLE dws_xhs_task_group_cum PARTITION (ds)
 SELECT
     n.task_group_id,
@@ -88,20 +90,19 @@ FROM (
     FROM dws_xhs_note_cum e
     INNER JOIN brg_xhs_note_project_df b
         ON e.note_id = b.note_id
-        AND b.ds = '${bizdate}'
+        AND b.ds = e.ds
     LEFT JOIN dim_xhs_task_group_df t
         ON e.task_group_id = t.task_group_id
-        AND t.ds = '${bizdate}'
+        AND t.ds = e.ds
     WHERE e.ds IN ('${bizdate}', TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd'))
       AND e.task_group_id IS NOT NULL
     GROUP BY e.task_group_id, e.ds
 ) n
 LEFT JOIN (
-    -- 转化数据按 task_id→task_group_id 聚合，行转列 15d/30d
-    -- project_id 通过笔记路径获取（dim_xhs_task_group_df.project_id 可能为 NULL）
-    -- 时间范围: valid_from ~ MIN(kpi_fetch_time, bizdate)
-    SELECT
+    -- 转化数据按 task_id→task_group_id 聚合，按目标分区分别累加，行转列 15d/30d
+    SELECT /*+ MAPJOIN(dates) */
         t.task_group_id,
+        dates.target_ds,
         -- 15d
         SUM(CASE WHEN cv.attribution_period = '15' THEN cv.read_uv ELSE 0 END)                      AS 15d_read_uv,
         SUM(CASE WHEN cv.attribution_period = '15' THEN cv.enter_shop_uv ELSE 0 END)                AS 15d_enter_shop_uv,
@@ -131,16 +132,21 @@ LEFT JOIN (
         SUM(CASE WHEN cv.attribution_period = '30' THEN cv.non_task_product_gmv ELSE 0 END)         AS 30d_non_task_product_gmv,
         SUM(CASE WHEN cv.attribution_period = '30' THEN cv.shop_new_customer_uv ELSE 0 END)         AS 30d_shop_new_customer_uv
     FROM dwd_xhs_conversion_bytask_di cv
+    CROSS JOIN (
+        SELECT '${bizdate}' AS target_ds
+        UNION ALL
+        SELECT TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd') AS target_ds
+    ) dates
     INNER JOIN dim_xhs_task_group_df t
         ON cv.task_id = t.task_id
-        AND t.ds = '${bizdate}'
+        AND t.ds = dates.target_ds
     INNER JOIN dim_xhs_project_df p
         ON t.project_id = p.project_id
-        AND p.ds = '${bizdate}'
-    WHERE cv.ds <= TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyymmdd')
-      AND cv.ds >= REPLACE(p.valid_from, '-', '')
-      AND cv.ds <= REPLACE(LEAST(p.kpi_fetch_time, TO_CHAR(DATEADD(TO_DATE('${bizdate}', 'yyyymmdd'), -1, 'dd'), 'yyyy-mm-dd')), '-', '')
-    GROUP BY t.task_group_id
+        AND p.ds = dates.target_ds
+    WHERE cv.ds >= REPLACE(p.valid_from, '-', '')
+      AND cv.ds <= REPLACE(LEAST(p.kpi_fetch_time, CONCAT(SUBSTR(dates.target_ds,1,4),'-',SUBSTR(dates.target_ds,5,2),'-',SUBSTR(dates.target_ds,7,2))), '-', '')
+    GROUP BY t.task_group_id, dates.target_ds
 ) c
     ON n.task_group_id = c.task_group_id
+    AND n.ds = c.target_ds
 ;
